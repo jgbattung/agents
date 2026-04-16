@@ -83,5 +83,23 @@ All 7 files were reviewed:
 - Model: `Claude Sonnet 4.6 (copilot)` → `claude-sonnet-4-6`
 - Removed "Standup Script" section from Phase 3 walkthrough template
 
+### Additional Decisions
+
+| Topic | Decision |
+|---|---|
+| **`model` field in agent files** | Keep the field. VSCode warning is from GitHub Copilot extension misreading Claude Code agent files — not a real error. Claude Code uses the model correctly. Opus for Architect + QA Engineer (complex reasoning); Sonnet for Builder, Integrator, Guide (execution). |
+| **ui-ux-pro-max placement** | Moved from `.claude/skills/` (where uipro-cli installed it) to `skills/ui-ux-pro-max/` to align with the symlinked repo structure. The `.claude/` folder created by the installer inside the agents repo was deleted. |
+
+### Commits Made (Session 1)
+All changes were committed atomically to `main`:
+```
+6480496 chore: add workflow refinement log
+8dedea4 docs: add project README
+8b6fe61 feat: add ui-ux-pro-max design skill
+c0b200a feat: add agent pipeline
+86dec58 feat: add workflow skills
+```
+
 ### Remaining Open Items
-- None currently. Workflow is ready to use on personal projects.
+1. **Update `README.md`** — Still has work-specific content: GitLab clone URL, HCL DX domain skills table, Jira language in Quick Start.
+2. **Architect default base branch** — Phase 4 spec template says `assume 'develop' unless told otherwise`. Personal projects use `main` — needs updating.
