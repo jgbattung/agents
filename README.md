@@ -12,7 +12,7 @@ This workflow mimics a real-world engineering team, compartmentalizing tasks to 
 
 | Agent | Role | Responsibility |
 |---|---|---|
-| **@Architect** | The Planner | Analyzes Jira requirements, deduces branch strategies, researches approaches, and outputs a strict XML execution plan and feature spec. |
+| **@Architect** | The Planner | Analyzes feature requirements, deduces branch strategies, researches approaches, and outputs a strict XML execution plan and feature spec. |
 | **@Builder** | The Executor | Implements the Architect's XML plan phase-by-phase. Enforces manual git commits at every checkpoint and strictly logs all code changes and deviations. |
 | **@QAEngineer** | The Tester | Reads the Builder's logs, pattern-matches existing repository test styles, writes comprehensive tests, and self-heals minor implementation bugs until the suite is green. |
 | **@Integrator** | The Tech Lead | Verifies the plan was completed, scrubs the branch of debug artifacts (`console.log`, `.skip`), and drafts a standardized Pull Request. |
@@ -27,7 +27,7 @@ To allow agents to pause, hand off tasks, and recover from failures, all state i
 | File | Purpose |
 |---|---|
 | `.gsd/project-context.md` | Repo framework, stack, and test commands. |
-| `.gsd/[feature]-spec.md` | Jira requirements and architectural decisions. |
+| `.gsd/[feature]-spec.md` | Feature requirements and architectural decisions. |
 | `.gsd/[feature]-plan.xml` | The atomic, phase-by-phase task list. |
 | `.gsd/[feature]-log.md` | The Builder & QA's running ledger of changes. |
 | `.gsd/[feature]-pr-draft.md` | The Integrator's final GitHub PR copy. |
@@ -53,13 +53,8 @@ Domain skills are project-specific knowledge files that agents load automaticall
 
 The **Architect** scans this folder during its context-gathering phase, reads each skill's frontmatter `description` field, and selects the ones relevant to the current work item. Selected skills are recorded in `.gsd/project-context.md` under `## Active Domain Skills` so that all downstream agents (Builder, QA Engineer, Integrator, Guide) can load and apply them without re-discovering them.
 
-| Skill | Description |
-|---|---|
-| `cet-ant-tasks` | Writing and updating CET/ANT task XML files for HCL WebSphere Portal / DX Theme. |
-| `dx-auth-simple` | Simple authentication mechanism for connecting to HCL DX API endpoints. |
-| `dx-base-url` | Reference for HCL DX server base URL shapes across on-premises, Kubernetes, and REST API patterns. |
-| `wcm-library-structure` | HCL DX WCM library organization, item types, and folder structure conventions. |
-
+> No domain skills are bundled by default. Add new domain skills as needed per project and tech stack.
+>
 > To add a new domain skill, create a `SKILL.md` inside a new subfolder under `domain-skills/`. The YAML frontmatter must include a `name` and a `description` written as `"Use this skill when..."` — the Architect uses this description to decide relevance.
 
 ---
@@ -68,14 +63,14 @@ The **Architect** scans this folder during its context-gathering phase, reads ea
 
 1. Clone this repository into your global agents directory:
    ```bash
-   git clone https://git.cwp.pnp-hcl.com/jirehjohn-battung/agents.git ~/.agents/
+   git clone https://github.com/jgbattung/agents.git ~/agents/
    ```
 
 2. Navigate to your target project repository.
 
 3. Open a chat session and invoke the Architect to begin planning a feature:
    ```
-   @Architect I need to build [Feature Name]. Here are the Jira details: ...
+   @Architect I need to build [Feature Name]. Here's the description: ...
    ```
 
 4. Follow the agent handoff instructions as you move through the lifecycle.

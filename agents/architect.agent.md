@@ -52,7 +52,7 @@ Once approved, execute the following actions:
    1. **`.gsd/[feature]-spec.md`** — The full design spec. It must follow this exact structure:
       - **Requirements**: Save the feature Title, Description, and Acceptance Criteria here so downstream agents can reference them.
       - **Branch Name**: Record the exact branch name created for this work item.
-      - **Base Branch**: Record the base branch for this work item (assume `develop` unless explicitly told otherwise by the user).
+      - **Base Branch**: Record the base branch for this work item (assume `main` unless explicitly told otherwise by the user).
       - **Project Context & Tech Stack**: A brief summary of the current repo's framework/tools (pulled from Phase 1).
       - **Executive Summary**
       - **Background & Research**

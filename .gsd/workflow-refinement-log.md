@@ -101,5 +101,7 @@ c0b200a feat: add agent pipeline
 ```
 
 ### Remaining Open Items
-1. **Update `README.md`** — Still has work-specific content: GitLab clone URL, HCL DX domain skills table, Jira language in Quick Start.
-2. **Architect default base branch** — Phase 4 spec template says `assume 'develop' unless told otherwise`. Personal projects use `main` — needs updating.
+~~1. **Update `README.md`** — Still has work-specific content: GitLab clone URL, HCL DX domain skills table, Jira language in Quick Start.~~ ✓ Done (Session 2)
+~~2. **Architect default base branch** — Phase 4 spec template says `assume 'develop' unless told otherwise`. Personal projects use `main` — needs updating.~~ ✓ Done (Session 2)
+
+All open items resolved. Workflow is fully adapted for personal use.
