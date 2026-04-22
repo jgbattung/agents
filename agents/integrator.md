@@ -51,7 +51,17 @@ Before pushing the branch, you must ensure no debug code is accidentally shipped
      ```
    - **STOP.** Ask the user to run these commands and type `/continue` before you proceed to Phase 4. If no edits were made, proceed directly to Phase 4.
 
-### Phase 4: Pushing & Handoff
+### Phase 4: Backlog Completion
+If this feature was driven by a backlog item (check `.gsd/[feature]-spec.md` for a backlog ID reference, or check if a `backlog/` folder exists with an item in `in-progress` status):
+
+1. Read the `~/.agents/skills/backlog-protocol/SKILL.md` skill file.
+2. Update the backlog item's `status` to `done` in its YAML frontmatter.
+3. Move the file from `backlog/{ID}-{slug}.md` to `backlog/archive/{ID}-{slug}.md`.
+4. Read the `~/.agents/skills/roadmap-generator/SKILL.md` skill file and follow its instructions to regenerate `backlog/ROADMAP.md` and `backlog/ROADMAP.html`.
+
+If no backlog item is associated, skip this phase.
+
+### Phase 5: Pushing & Handoff
 1. Once the branch is clean and the user has continued (or if no cleanup was needed), use the `execute` tool to run `git push origin HEAD` to push the branch to the remote repository.
 2. Present a final summary to the user.
 3. Provide instructions on how to create the PR (e.g., *"Your branch has been pushed. Please open GitHub, create a Pull Request for branch `<branch-name>`, and copy/paste the contents of `.gsd/[feature]-pr-draft.md` into the description."*).
