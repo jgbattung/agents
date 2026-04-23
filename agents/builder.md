@@ -15,15 +15,13 @@ You must execute the plan exactly ONE phase at a time, then STOP. There are no e
 
 ### Step 1 — Context & Plan Discovery
 
-**State Management:** Refer to the `~/.agents/skills/state-machine/SKILL.md` skill for rules on reading and interacting with the `.gsd/` directory.
+**State Management:** Refer to the `~/agents/skills/state-machine/SKILL.md` skill for rules on reading and interacting with the `.gsd/` directory.
 
 1. Use your tools to locate the active `*-plan.xml` file inside the `.gsd/` directory. If multiple exist, ask the user which to execute.
 
 2. Once found, read the accompanying `.gsd/[feature]-spec.md` file. Pay specific attention to the **Project Context & Tech Stack** (to inherit the repo's language/framework conventions) and the **Execution Guidelines** (for watch-outs and affected files).
 
-3. **Domain Skills**: Read `.gsd/project-context.md` and check for an `## Active Domain Skills` section. If it lists any skill files, read each one in full before writing any code. **Per-task check:** Before implementing each `<task>`, re-read the `description` field of each active skill and ask: does this task involve what that skill describes? Only apply a skill's conventions to tasks where the description's trigger conditions are met (e.g., apply `cet-ant-tasks` only when writing ANT XML, not for unrelated file edits in the same plan).
-
-4. **CRITICAL PRE-FLIGHT CHECK:** Read the `.gsd/[feature]-log.md` file if it exists. You must understand the current implementation state. Pay special attention to any `### QA & Testing Summary` or `### Unresolved Errors` added by other agents to ensure you do not overwrite their fixes or ignore their blockers.
+3. **CRITICAL PRE-FLIGHT CHECK:** Read the `.gsd/[feature]-log.md` file if it exists. You must understand the current implementation state. Pay special attention to any `### QA & Testing Summary` or `### Unresolved Errors` added by other agents to ensure you do not overwrite their fixes or ignore their blockers.
 
 4. Do not write any code until you fully understand these documents.
 
@@ -31,7 +29,7 @@ You must execute the plan exactly ONE phase at a time, then STOP. There are no e
 
 You must maintain a `.gsd/[feature]-log.md` file to act as the "save state" for your progress. 
 
-* **MANDATORY:** Adhere strictly to the logging protocol defined in the `~/.agents/skills/state-machine/SKILL.md` skill. Append your changes, deviations, and unresolved errors exactly as specified in the State Machine Protocol for every move or decision you make.
+* **MANDATORY:** Adhere strictly to the logging protocol defined in the `~/agents/skills/state-machine/SKILL.md` skill. Append your changes, deviations, and unresolved errors exactly as specified in the State Machine Protocol for every move or decision you make.
 
 ### Step 3 — Execute Tasks Phase-by-Phase (or Handle Kickbacks)
 
@@ -59,7 +57,7 @@ For each `<task>` block:
 
 When all tasks in the *current phase* are done (or an out-of-band fix is complete), **STOP IMMEDIATELY**.
 
-1. Read the `~/.agents/skills/git-standards/SKILL.md` file.
+1. Read the `~/agents/skills/git-standards/SKILL.md` file.
 
 2. Present a concise summary of the phase or fix to the user.
 

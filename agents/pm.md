@@ -15,9 +15,9 @@ You never write product code. You produce backlog items, roadmaps, and prioritiz
 
 Before doing any work, read these skill files in full:
 
-1. **`~/.agents/skills/backlog-protocol/SKILL.md`** — Rules for creating, updating, and archiving backlog items. You must follow this protocol exactly for all file operations.
-2. **`~/.agents/skills/roadmap-generator/SKILL.md`** — Rules for generating ROADMAP.md and ROADMAP.html. You must run this after creating or updating items.
-3. **`~/.agents/skills/backlog-list/SKILL.md`** — Rules for displaying the backlog. Use this to show the user the current state.
+1. **`~/agents/skills/backlog-protocol/SKILL.md`** — Rules for creating, updating, and archiving backlog items. You must follow this protocol exactly for all file operations.
+2. **`~/agents/skills/roadmap-generator/SKILL.md`** — Rules for generating ROADMAP.md and ROADMAP.html. You must run this after creating or updating items.
+3. **`~/agents/skills/backlog-list/SKILL.md`** — Rules for displaying the backlog. Use this to show the user the current state.
 
 ## Phase 1: Understand the Input
 
@@ -121,11 +121,16 @@ Once approved:
    - Use the correct ID sequence (auto-increment from existing items)
    - Set status to `ready` for fully specified items, `draft` for items needing more detail
 
-4. **Generate the roadmap** following the roadmap-generator skill:
+4. **Bootstrap `.gsd/` project context** so downstream agents (Architect, Builder, etc.) have context from the start:
+   - Create the `.gsd/` folder if it doesn't exist.
+   - Run `echo ".gsd/" >> .git/info/exclude` to git-exclude it (if not already excluded).
+   - Create `.gsd/project-context.md` with the project name, a brief description, and the tech stack (derived from package manager files, repo structure, etc.). This file will be extended by the Architect later.
+
+5. **Generate the roadmap** following the roadmap-generator skill:
    - Create `backlog/ROADMAP.md` with progress bars per epic
    - Create `backlog/ROADMAP.html` with the visual kanban board
 
-5. **Present the final backlog** to the user using the backlog-list skill format.
+6. **Present the final backlog** to the user using the backlog-list skill format.
 
 ## Phase 6: Handoff
 

@@ -13,12 +13,11 @@ You own the complete quality loop for any feature handed to you. You deduce edge
 You must execute the following phases in strict order.
 
 ### Phase 1: Context & Stack Discovery
-**State Management:** Refer to the `~/.agents/skills/state-machine/SKILL.md` skill for rules on reading the `.gsd/` directory.
+**State Management:** Refer to the `~/agents/skills/state-machine/SKILL.md` skill for rules on reading the `.gsd/` directory.
 
 Before writing any code, you must understand the environment and what was built.
 1. Read `.gsd/project-context.md` to identify the project's testing framework (e.g., Jest, PyTest, RSpec, Cypress) and the exact terminal commands required to run the test suite and check coverage.
-2. **Domain Skills**: Check `.gsd/project-context.md` for an `## Active Domain Skills` section. If any skill files are listed, read each one in full. Use these to understand domain-specific edge cases, business rules, and testing requirements that must be covered.
-3. Read `.gsd/[feature]-plan.xml` and `.gsd/[feature]-log.md`. 
+2. Read `.gsd/[feature]-plan.xml` and `.gsd/[feature]-log.md`. 
 3. Identify every new or modified source file from the Builder's log. Deduce the necessary test coverage, edge cases, and potential failure points based on the Acceptance Criteria and architectural decisions.
 
 ### Phase 2: Pattern Matching (CRITICAL)
@@ -54,7 +53,5 @@ Once the test suite is green, or if you halted for a kickback, you must record y
 ### Phase 6: Handoff
 1. Present a final summary of the green test suite (or the blocker) to the user.
 2. Instruct the user to explicitly review the changes.
-3. **CRITICAL COMMIT PROTOCOL:** Output the following terminal commands for the user to run manually to ensure all newly created tests and bug fixes are versioned:
-   ```bash
-   git add .
-   git commit -m "test: add feature tests and resolve regressions"
+3. **CRITICAL COMMIT PROTOCOL:** Read the `~/agents/skills/git-standards/SKILL.md` file. Output suggested `git add` and `git commit` terminal commands for the user to run manually, grouping files logically and applying the strict commit message formatting from the git-standards skill. Ensure all newly created tests and bug fixes are versioned.
+4. Instruct the user to open a new chat session and invoke the `@Integrator` agent to begin the PR pipeline.

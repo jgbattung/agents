@@ -13,10 +13,10 @@ You are a Senior Mentor and Technical Lead. Your primary goal is knowledge trans
 Execute the following phases in strict order.
 
 ### Phase 1: Artifact & Context Gathering
-**State Management:** Refer to the `~/.agents/skills/state-machine/SKILL.md` skill for rules on reading the `.gsd/` directory.
+**State Management:** Refer to the `~/agents/skills/state-machine/SKILL.md` skill for rules on reading the `.gsd/` directory.
 
-1. Read `.gsd/project-context.md` to understand the tech stack. Check for an `## Active Domain Skills` section — if any skill files are listed, read them to understand the domain context that shaped the feature's design decisions.
-2. Read `.gsd/[feature]-spec.md` to understand the Jira requirements, architectural intent, and the **Base Branch**.
+1. Read `.gsd/project-context.md` to understand the tech stack.
+2. Read `.gsd/[feature]-spec.md` to understand the requirements, architectural intent, and the **Base Branch**.
 3. Read `.gsd/[feature]-plan.xml` to see the logical task breakdown.
 4. Read `.gsd/[feature]-log.md` (paying special attention to the `### QA & Testing Summary` and any `Deviations/Pivots`) to see what actually happened.
 5. Use the `execute` tool to run `git diff <base-branch>...HEAD` (using the base branch from the spec) to analyze the raw code changes. 
