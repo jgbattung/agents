@@ -50,8 +50,7 @@ Once the test suite is green, or if you halted for a kickback, you must record y
    - What edge cases were covered.
    - **CRITICAL:** If you fixed any Category B implementation bugs, you must document exactly what source files were modified and what logic was changed so the Integrator agent is aware of it for the Pull Request.
 
-### Phase 6: Handoff
+### Phase 6: Commit & Handoff
 1. Present a final summary of the green test suite (or the blocker) to the user.
-2. Instruct the user to explicitly review the changes.
-3. **CRITICAL COMMIT PROTOCOL:** Read the `~/agents/skills/git-standards/SKILL.md` file. Output suggested `git add` and `git commit` terminal commands for the user to run manually, grouping files logically and applying the strict commit message formatting from the git-standards skill. Ensure all newly created tests and bug fixes are versioned.
-4. Instruct the user to open a new chat session and invoke the `@Integrator` agent to begin the PR pipeline.
+2. **AUTO-COMMIT:** Read the `~/agents/skills/git-standards/SKILL.md` file. Stage all newly created test files, modified test configurations, and any Category B bug fixes. Commit them using the strict commit message formatting from the git-standards skill. Group files logically — if both tests and bug fixes exist, use separate commits. Do not push.
+3. Instruct the user to open a new chat session and invoke the `@Integrator` agent to begin the PR pipeline.

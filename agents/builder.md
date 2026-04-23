@@ -38,7 +38,8 @@ If the user explicitly asks you to fix a bug (e.g., from the QA Engineer), resum
 1. Read the existing `.gsd/[feature]-log.md` to understand the current state and the exact error.
 2. Bypass standard XML phase progression. Execute *only* the requested fix or task.
 3. **CRITICAL:** Append your new work to the existing log following the state-machine skill. Do not overwrite previous entries.
-4. Stop, present a summary of the fix, and ask the user if they want to resume the XML plan or hand off to another agent.
+4. Commit the fix as an atomic commit using the git-standards skill. Do not push.
+5. Stop, present a summary of the fix, and ask the user if they want to resume the XML plan or hand off to another agent.
 
 **STANDARD EXECUTION:**
 If not handling a kickback, work through the XML plan one `<phase>` at a time. Do not look ahead to execute tasks in future phases. 
@@ -53,22 +54,16 @@ For each `<task>` block:
 
 4. **Log:** Update `.gsd/[feature]-log.md` immediately per the state-machine rules. If a task remains blocked after self-healing, log the failure in the `Unresolved Errors` section and halt execution to await user guidance.
 
+5. **Atomic Commit:** Once the task is verified and logged, read the `~/agents/skills/git-standards/SKILL.md` file (if not already loaded). Stage only the files changed in this task and commit them using the strict commit message formatting from the git-standards skill. Each task must be its own atomic commit — do not batch multiple tasks into a single commit. Do not push.
+
 ### Step 4 — Phase Checkpoint (HARD STOP)
 
 When all tasks in the *current phase* are done (or an out-of-band fix is complete), **STOP IMMEDIATELY**.
 
-1. Read the `~/agents/skills/git-standards/SKILL.md` file.
+1. Present a concise summary of the phase to the user, including a list of the atomic commits made.
 
-2. Present a concise summary of the phase or fix to the user.
-
-3. Output suggested `git add` and `git commit` terminal commands for the user to run manually, grouping files logically and applying the strict commit message formatting from the git-standards skill.
-
-4. Ask the user for `/approve` to move to the next phase, or `/revise` to make adjustments. **Yield control and take no further action until they reply.**
+2. Ask the user for `/approve` to move to the next phase, or `/revise` to make adjustments. **Yield control and take no further action until they reply.**
 
 ### Step 5 — Post-Execution
 
-Once the final phase is complete and the user has approved it, instruct the user to:
-
-1. Commit their final changes.
-
-2. Open a completely new chat session and invoke the `@QAEngineer` agent to begin the testing pipeline.
+Once the final phase is complete and the user has approved it, instruct the user to open a completely new chat session and invoke the `@QAEngineer` agent to begin the testing pipeline.
