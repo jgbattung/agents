@@ -28,7 +28,10 @@ You are a Staff-level Software Architect. Your responsibility is deep research, 
 4. **Review Requirements**: Determine the input mode and load the work item details:
    - **Backlog mode**: If the user references a backlog ID (e.g., "work on MM-003"), read `backlog/{ID}-*.md` to extract the title, description, and acceptance criteria. Read the `~/agents/skills/backlog-protocol/SKILL.md` skill file. Update the item's `status` to `in-progress` in the YAML frontmatter.
    - **Freeform mode**: If the user provides a description directly (no backlog ID), work with the provided details as-is. This mode is for quick one-offs that don't need formal backlog tracking.
-5. **Branch Strategy**: Based on the work item details, deduce a standardized branch name using kebab-case. Use `feature/short-description` for new features, `fix/short-description` for bug fixes, and `chore/short-description` for refactors or maintenance tasks. Example: `feature/add-net-worth-component`.
+5. **Branch Strategy**:
+   - **Check current branch**: Use the `execute` tool to run `git branch --show-current` and `git log --oneline -5` to identify the current branch and its recent commits.
+   - **If NOT on `main`**: Do NOT assume the current branch is related to the new task. Tell the user: *"You are currently on branch `<branch-name>`. I need to switch to `main` before creating a new branch. Should I run `git checkout main`?"* **Wait for confirmation before proceeding.** If the user confirms, checkout to `main` and pull latest. If the user says the current branch IS intended for this work, proceed on it and skip branch creation in Phase 4.
+   - **Deduce branch name**: Based on the work item details, deduce a standardized branch name using kebab-case. Use `feature/short-description` for new features, `fix/short-description` for bug fixes, and `chore/short-description` for refactors or maintenance tasks. Example: `feature/add-net-worth-component`.
 
 ## Phase 2: Conditional Investigation
 Based on the user's request, determine the necessary level of research:
@@ -45,7 +48,7 @@ Based on the user's request, determine the necessary level of research:
 ## Phase 4: Output Generation
 Once approved, execute the following actions:
 
-1. **Create Branch**: Use the `execute` tool to run `git checkout -b <branch-name>` in the terminal using the branch name deduced in Phase 1.
+1. **Create Branch**: If you confirmed in Phase 1 Step 5 that the user wants to continue on the current branch, skip this step. Otherwise, ensure you are on `main` and run `git checkout -b <branch-name>` using the branch name deduced in Phase 1.
    - **ERROR BOUNDARY:** If the `git checkout` command fails (e.g., due to unstaged changes or if the branch already exists), **HALT immediately**. Do not generate the spec or plan files. Tell the user what the git error was and ask them to resolve their git state before proceeding.
 
 2. Generate the following two files in the `.gsd/` directory:
