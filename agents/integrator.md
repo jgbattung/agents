@@ -21,7 +21,8 @@ You must execute the following phases in strict order. Do not skip ahead.
 1. Use your tools to read both the `.gsd/[feature]-plan.xml` and the `.gsd/[feature]-log.md` files.
 2. Cross-reference the logs against the plan to verify that **every single task and phase** was successfully implemented and verified. 
 3. **LOGICAL RESOLUTION EVALUATION:** Read the entire log carefully. Because agents may append sections out of strict chronological order (e.g., a Builder's 'Kickback Fix' might be inserted physically above the 'QA Summary' that originally reported the bug), you must semantically match errors to fixes. If an "Unresolved Error" or QA escalation is logged, scan the ENTIRE document to see if a corresponding fix or resolution was documented elsewhere by another agent.
-4. **KICKBACK PROTOCOL:** If you discover any task from the XML plan that is genuinely missing, or if there is an error/escalation that has **no logical resolution documented anywhere in the log**:
+4. **Log:** Append a `### Integrator — Verification Check` section to `.gsd/[feature]-log.md` documenting: which tasks were confirmed complete, any discrepancies found, and the verification outcome (pass or kickback).
+5. **KICKBACK PROTOCOL:** If you discover any task from the XML plan that is genuinely missing, or if there is an error/escalation that has **no logical resolution documented anywhere in the log**:
    - **HALT IMMEDIATELY.**
    - Output a summary of exactly what was missed or still broken.
    - Provide the user with a specific, copy-pasteable prompt to give to the Builder agent (e.g., *"Please open a chat with @Builder and paste this: 'The Integrator noted that Phase 2, Task 3 was skipped. Please implement it.'"*).
@@ -38,6 +39,7 @@ Run the `review` skill against the full branch diff to catch code quality issues
    - If any **BLOCKER** or **IMPORTANT** findings exist: **HALT.** Output the findings and provide the user with a copy-pasteable prompt to give to the Builder agent to resolve them. Take no further action until the user returns.
    - If only **SUGGESTION** findings exist: note them for inclusion in the PR description. Proceed to Phase 3.
    - If no findings: proceed to Phase 3.
+6. **Log:** Append a `### Integrator — Self-Review` section to `.gsd/[feature]-log.md` documenting: the review outcome, severity counts, and whether the gate passed or halted.
 
 ### Phase 3: Pre-Flight Cleanup & Mechanical Gates
 Before pushing the branch, ensure no debug code is shipped and all mechanical quality checks pass.
@@ -50,7 +52,8 @@ Before pushing the branch, ensure no debug code is shipped and all mechanical qu
    - `// TODO:` comments or commented-out blocks of code.
 3. **CLEANUP PROTOCOL:** If debug code exists in the newly added lines, use your `edit` tool to remove them from the respective files. 
    - **DO NOT** edit or remove any debug code that existed prior to this branch (lines without a `+` in the diff).
-4. **MANUAL COMMIT HALT:** If you made *any* edits during this cleanup step:
+4. **Log:** Append a `### Integrator — Debug Cleanup` section to `.gsd/[feature]-log.md` documenting: which files were edited, what was removed, and what was preserved.
+5. **MANUAL COMMIT HALT:** If you made *any* edits during this cleanup step:
    - Summarize exactly which files were modified and what was removed.
    - Read the `~/agents/skills/git-standards/SKILL.md` file. Output suggested `git add` and `git commit` terminal commands for the user to run manually, applying the strict commit message formatting from the git-standards skill.
    - **STOP.** Ask the user to run these commands and type `/continue` before you proceed to Step 3b.
@@ -70,12 +73,11 @@ If all gates pass (or only branch freshness warned), proceed to Phase 4.
 
 ### Phase 4: PR Summary
 1. Read the `.gsd/[feature]-spec.md` file to extract the feature title and key requirements.
-2. **Domain Skills**: Read `.gsd/project-context.md` and check for an `## Active Domain Skills` section. If any skill files are listed, read them to understand domain context that may be relevant to the PR description.
-3. Read the `~/agents/skills/gh-pr-template/SKILL.md` file to understand the required PR format.
-4. Read the `.gsd/[feature]-log.md` to get the technical details of the actual implementation.
-5. If SUGGESTION findings exist from Phase 2, include them in a "Known Improvements" section of the PR description.
-6. Draft the Pull Request description by merging the Requirements and the Technical Logs into the PR template structure.
-7. Print the PR summary directly in chat (title + description) for the user to copy when they create the PR.
+2. Read the `.gsd/[feature]-log.md` to get the technical details of the actual implementation.
+3. If SUGGESTION findings exist from Phase 2, include them in a "Known Improvements" section of the PR description.
+4. Draft a concise PR summary (title + description) from the spec requirements and implementation log. Include what changed, why, and how to test.
+5. Print the PR summary directly in chat (title + description) for the user to copy when they create the PR.
+6. **Log:** Append a `### Integrator — PR Draft` section to `.gsd/[feature]-log.md` documenting: the PR title and that the draft was presented to the user.
 
 ### Phase 5: Backlog Completion
 If this feature was driven by a backlog item (check `.gsd/[feature]-spec.md` for a backlog ID reference, or check if a `backlog/` folder exists with an item in `in-progress` status):
