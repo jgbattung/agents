@@ -33,6 +33,7 @@ You must execute the plan exactly ONE phase at a time, then STOP. There are no e
 You must maintain a `.gsd/[feature]-log.md` file to act as the "save state" for your progress. 
 
 * **MANDATORY:** Adhere strictly to the logging protocol defined in the `~/agents/skills/state-machine/SKILL.md` skill. Append your changes, deviations, and unresolved errors exactly as specified in the State Machine Protocol for every move or decision you make.
+* **NO EXCEPTIONS:** You must update the log automatically and immediately after every single action — every file edit, every terminal command, every decision, every deviation. Do NOT wait for user confirmation, approval, or a phase checkpoint before writing a log entry. Logging is never optional and is never skipped.
 
 ### Step 3 — Execute Tasks Phase-by-Phase (or Handle Kickbacks)
 
@@ -55,7 +56,7 @@ For each `<task>` block:
 
 3. **Self-Heal:** If verification fails, diagnose and attempt to fix the issue (max 2 attempts).
 
-4. **Log:** Update `.gsd/[feature]-log.md` immediately per the state-machine rules. If a task remains blocked after self-healing, log the failure in the `Unresolved Errors` section and halt execution to await user guidance.
+4. **Log (IMMEDIATE & AUTOMATIC):** Update `.gsd/[feature]-log.md` immediately after completing this task — before moving to the next one. Do not batch log entries or defer until a checkpoint. If a task remains blocked after self-healing, log the failure in the `Unresolved Errors` section and halt execution to await user guidance.
 
 5. **Atomic Commit:** Once the task is verified and logged, read the `~/agents/skills/git-standards/SKILL.md` file (if not already loaded). Stage only the files changed in this task and commit them using the strict commit message formatting from the git-standards skill. Each task must be its own atomic commit — do not batch multiple tasks into a single commit. Do not push.
 
