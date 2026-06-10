@@ -26,7 +26,9 @@ You must execute the plan exactly ONE phase at a time, then STOP. There are no e
 
 3. **CRITICAL PRE-FLIGHT CHECK:** Read the `.gsd/[feature]-log.md` file if it exists. You must understand the current implementation state. Pay special attention to any `### QA & Testing Summary` or `### Unresolved Errors` added by other agents to ensure you do not overwrite their fixes or ignore their blockers.
 
-4. Do not write any code until you fully understand these documents.
+4. **UI/UX Design (NON-NEGOTIABLE):** Read the `~/agents/skills/ui-ux-pro-max/SKILL.md` skill in full. Use it to guide all visual implementation — styles, spacing, colors, typography, layout, and component patterns. If the spec or user prompt specifies explicit design directives (brand colors, specific design system, visual requirements), those take precedence, but the skill is always loaded as the baseline.
+
+5. Do not write any code until you fully understand these documents.
 
 ### Step 2 — The Logging Rule
 
