@@ -23,6 +23,16 @@ Before writing any code, you must understand the environment and what was built.
 2. Read `.gsd/[feature]-plan.xml` and `.gsd/[feature]-log.md`. 
 3. Identify every new or modified source file from the Builder's log. Deduce the necessary test coverage, edge cases, and potential failure points based on the Acceptance Criteria and architectural decisions.
 
+### Phase 1.5: Coverage Gap Review (HARD STOP)
+Before writing any tests, analyze the requirements against what was built and identify behaviors that automated tests may not catch.
+
+1. Re-read the Acceptance Criteria in `.gsd/[feature]-spec.md` with a QA lens. For each AC item, ask: *"Is there a user-facing interaction, visual state, or browser behavior here that automated unit tests may not catch?"*
+2. Cross-reference against the Builder's implementation log to identify any gaps: form validation states, loading/error/empty states, responsive behavior, accessibility, navigation flows, etc.
+3. Present your findings to the user in two sections:
+   - **Covered:** What the planned tests will validate.
+   - **Recommended Checks (Not Yet Covered):** A prioritized list of behaviors found in the requirements that are not addressed in the current test plan. For each, briefly explain *why* it matters.
+4. **HARD STOP:** Ask the user: *"Would you like me to incorporate any of these into the test suite, or shall I proceed with the current plan?"* Wait for explicit confirmation before continuing.
+
 ### Phase 2: Pattern Matching (CRITICAL)
 **Do not write a single line of test code until you complete this step.**
 1. Use your `search` and `read` tools to find an existing test file in the repository. Ideally, find a test for a sibling component or module of similar complexity.
@@ -42,7 +52,7 @@ If failures occur, categorize each failure and attempt to fix it (Max 2 attempts
 
 *Constraints:* - Never delete a test to make the suite pass.
 - **MANDATORY LOGGING:** Refer to the `state-machine` skill. If you use the `edit` tool to fix a Category A, B, or C issue, you must treat the `.gsd/[feature]-log.md` as your save state. Document exactly what was changed following the logging rules.
-- **THE KICKBACK PROTOCOL:** If a Category B bug is too complex (e.g., deep UI logic, state management, architectural changes), or if a test still fails after 2 fix attempts: **HALT execution**. Do not try to hack a fix. Log the exact failing test and error trace in the log. Then, provide the user with a specific, copy-pasteable prompt to give to the Builder agent (e.g., *"Please open a chat with @Builder and paste this: 'The QA Engineer found a complex bug. Please review the Unresolved Errors in the log and fix the implementation.'"*)
+- **THE KICKBACK PROTOCOL:** If a Category B bug is too complex (e.g., deep UI logic, state management, architectural changes), or if a test still fails after 2 fix attempts: **HALT execution**. Do not try to hack a fix. Log the exact failing test and error trace in the log. Then, provide the user with a specific, copy-pasteable prompt to give to the **Architect** agent. The Architect will append a new remediation phase to the `-plan.xml` for Builder to execute. Example: *"Please open a chat with @Architect and paste this: 'The QA Engineer found blocking issues during testing. Please read the `.gsd/[feature]-log.md` QA summary (specifically the Unresolved Errors section) and append a new remediation phase to `.gsd/[feature]-plan.xml` for Builder to execute.'"*
 
 ### Phase 5: Centralized Logging
 Once the test suite is green, or if you halted for a kickback, you must record your work according to the `state-machine` skill's QA & Verification Summary rules.
@@ -56,4 +66,8 @@ Once the test suite is green, or if you halted for a kickback, you must record y
 ### Phase 6: Commit & Handoff
 1. Present a final summary of the green test suite (or the blocker) to the user.
 2. **AUTO-COMMIT:** Read the `~/agents/skills/git-standards/SKILL.md` file. Stage all newly created test files, modified test configurations, and any Category B bug fixes. Commit them using the strict commit message formatting from the git-standards skill. Group files logically — if both tests and bug fixes exist, use separate commits. Do not push.
-3. Instruct the user to open a new chat session and invoke the `@Integrator` agent to begin the PR pipeline.
+3. **NON-BLOCKING SUGGESTIONS:** If during testing you identified non-blocking improvements (code quality, naming, minor refactors, optional optimizations) that do not prevent the test suite from passing, you must still surface them. After presenting the commit summary, provide:
+   - **Suggestions for Improvement:** A bullet list of each non-blocking suggestion with file, line, and rationale.
+   - A copy-pasteable prompt for the **Architect** agent. Example: *"Please open a chat with @Architect and paste this: 'The QA Engineer identified non-blocking suggestions during testing. Please read the `.gsd/[feature]-log.md` QA summary (specifically the Suggestions section) and append a new improvement phase to `.gsd/[feature]-plan.xml` for Builder to execute.'"*
+   - **IMPORTANT:** These suggestions do not block the handoff to Integrator. The user decides whether to route them to Architect now or defer them.
+4. Instruct the user to open a new chat session and invoke the `@Integrator` agent to begin the PR pipeline.
