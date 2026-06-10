@@ -8,6 +8,9 @@ user-invocable: false
 
 When generating `git commit` command suggestions for the user at phase checkpoints or handoffs, you must strictly follow the conventional commits format.
 
+## Atomic Commits
+Every commit must represent exactly **one logical change**. If a phase or fix touches multiple unrelated concerns (e.g., a new component, a config change, and a dependency update), output a separate `git add` + `git commit` block for each. Never bundle unrelated changes into a single commit.
+
 ## Commit Message Format
 Do not generate single-line `-m` commits for complex changes. You must provide the user with a multi-line commit command using the `EOF` heredoc format.
 
