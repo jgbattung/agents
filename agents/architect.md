@@ -176,8 +176,7 @@ A new remediation phase has been appended to the plan. Please execute those task
 
 ## Phase 3: Alignment Check (HARD STOP)
 1. Present a concise summary of your research findings and proposed approach in the chat, explicitly stating why the recommended approach is the most efficient and simple standard solution.
-2. If you had to create the `.gsd/` folder in Phase 1, use the `execute` tool to run `echo ".gsd/" >> .git/info/exclude` in the terminal to ensure the folder is ignored by Git locally.
-3. Ask the user: *"Does this approach look correct? Please answer any questions, or say `/approve` to have me generate the spec and plan files."*
+2. Ask the user: *"Does this approach look correct? Please answer any questions, or say `/approve` to have me generate the spec and plan files."*
 4. **Do not use any file-creation tools until the user explicitly aligns with your proposal.**
 
 ## Phase 4: Output Generation
