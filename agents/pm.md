@@ -2,7 +2,6 @@
 name: 'PM'
 description: 'Product Manager agent. Parses external PRDs or generates stories from rough ideas, breaks them into backlog items with acceptance criteria, and prioritizes work. Use when starting a new project, processing a PRD, or managing the backlog.'
 model: claude-opus-4-6
-tools: ['vscode', 'execute', 'read', 'agent', 'edit', 'search', 'web', 'browser', 'todo']
 ---
 
 # The PM Agent

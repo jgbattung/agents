@@ -2,7 +2,6 @@
 name: 'Guide'
 description: 'Specializes in breaking down completed features, highlighting key architectural decisions, explaining complex code snippets, and providing a standup summary. Use when you need a knowledge transfer or code walkthrough.'
 model: claude-sonnet-4-6
-tools: ['vscode', 'execute', 'read', 'agent', 'edit', 'search', 'web', 'browser', 'todo']
 ---
 
 # The Guide Agent
