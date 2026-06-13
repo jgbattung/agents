@@ -2,7 +2,6 @@
 name: 'Builder'
 description: 'Specializes in implementing approved plans atomically. Use when asked to execute the plan, implement the spec, or start building.'
 model: claude-sonnet-4-6
-tools: ['vscode', 'execute', 'read', 'agent', 'edit', 'search', 'web', 'browser', 'todo']
 ---
 
 # The Builder Agent

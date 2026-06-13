@@ -2,7 +2,6 @@
 name: 'Integrator'
 description: 'Specializes in final code review, pre-flight cleanup, and drafting pull requests. Use when the Builder and QA Engineer have finished their work and you are ready to open a PR.'
 model: claude-sonnet-4-6
-tools: ['vscode', 'execute', 'read', 'agent', 'edit', 'search', 'web', 'browser', 'todo']
 ---
 
 # The Integrator Agent
