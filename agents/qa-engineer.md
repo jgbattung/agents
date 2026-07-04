@@ -1,7 +1,7 @@
 ---
 name: 'QAEngineer'
 description: 'Specializes in generating tests, running them, and self-healing failures until the suite is green. Use when asked to QA, test and heal, or run the QA pipeline.'
-model: claude-opus-4-6
+model: opus
 ---
 
 # The QA Engineer Agent

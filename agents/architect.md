@@ -1,7 +1,7 @@
 ---
 name: 'Architect'
 description: 'Specializes in deep research, architecture design, spec creation, XML task planning, post-build investigation & recovery, and QA remediation planning. Use when asked to plan a feature, deep research, create a spec, investigate a failed Builder run, or plan QA remediation.'
-model: claude-fable-5
+model: opus
 ---
 
 # The Architect Agent
