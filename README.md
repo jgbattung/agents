@@ -63,6 +63,42 @@ Skills are knowledge files that define standards, protocols, and domain expertis
 
 ---
 
+## Machine Setup
+
+This repo is the **source of truth** for the entire AI workflow. Nothing works until
+it is projected into the locations your AI tooling reads, via symlinks:
+
+| Link (what the tool reads) | Target (in this repo) | Purpose |
+|---|---|---|
+| `~/.claude/agents` | `~/agents/agents` | Claude Code agent definitions |
+| `~/.claude/skills` | `~/agents/skills` | Claude Code skills |
+| `~/.claude/CLAUDE.md` | `~/agents/AGENTS.md` | Global memory (all projects) |
+
+`AGENTS.md` is the single global instructions file. It carries the provider-neutral
+standard name; each provider gets a symlink at whatever location/name it expects.
+
+**Windows** (elevated PowerShell, or any shell with Developer Mode enabled):
+```powershell
+New-Item -ItemType SymbolicLink -Path "$HOME\.claude\agents" -Target "$HOME\agents\agents"
+New-Item -ItemType SymbolicLink -Path "$HOME\.claude\skills" -Target "$HOME\agents\skills"
+New-Item -ItemType SymbolicLink -Path "$HOME\.claude\CLAUDE.md" -Target "$HOME\agents\AGENTS.md"
+```
+> No admin rights? For `CLAUDE.md` only, a plain file at `~/.claude/CLAUDE.md`
+> containing the single line `@C:\Users\<you>\agents\AGENTS.md` works identically
+> (Claude Code resolves `@` imports natively).
+
+**macOS / Linux:**
+```bash
+ln -s ~/agents/agents ~/.claude/agents
+ln -s ~/agents/skills ~/.claude/skills
+ln -s ~/agents/AGENTS.md ~/.claude/CLAUDE.md
+```
+
+When adopting another AI provider, add one more symlink pointing at `AGENTS.md` from
+that provider's global config location (e.g., `~/.codex/AGENTS.md` for Codex).
+
+---
+
 ## Quick Start
 
 1. Clone this repository into your global agents directory:
@@ -70,7 +106,7 @@ Skills are knowledge files that define standards, protocols, and domain expertis
    git clone https://github.com/jgbattung/agents.git ~/agents/
    ```
 
-2. Navigate to your target project repository.
+2. Create the symlinks described in **Machine Setup** above, then navigate to your target project repository.
 
 3. **(Optional)** Invoke the PM to break down a PRD or idea into backlog items:
    ```
