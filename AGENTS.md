@@ -74,3 +74,19 @@ already generate (`~/agents/agents/architect.md`).
 
 **Never** report that you can't resume because `SendMessage` is missing. Re-spawn with
 the `.gsd` resume prompt instead.
+
+## 6. Delegation: The gsd Agent Workflow
+
+**Planning and build work is routed to the specialized agents, not hand-rolled inline.**
+
+- When a request is about **planning a feature, researching an approach, or producing a
+  spec/plan**, the orchestrator MUST delegate to the **Architect** subagent via the
+  `Agent` tool rather than planning inline. Do not hand-roll a plan when the Architect exists.
+- Same routing for the rest of the lifecycle: **Builder** (implement an approved plan),
+  **QAEngineer** (test/heal), **Integrator** (review + PR), **PM** (backlog/PRD),
+  **Guide** (walkthrough).
+- Every one of these agents drives its work through the `.gsd/` state machine. If a
+  planning/build request is handled *without* producing or updating the relevant `.gsd/`
+  artifacts, the workflow was not followed - correct it.
+- `@AgentName` in a message is intent to invoke that agent; it is **not** a native
+  Claude Code trigger. Treat it as an explicit instruction to spawn that subagent.

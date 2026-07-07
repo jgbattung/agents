@@ -176,6 +176,14 @@ A new remediation phase has been appended to the plan. Please execute those task
 ---
 
 ## Phase 3: Alignment Check (HARD STOP)
+
+**Execution-context check (do this first):**
+- **If you are running as the primary/interactive agent:** follow the HARD STOP below — present the summary, wait for `/approve`, then proceed to Phase 4.
+- **If you are running as a one-shot subagent** (you cannot receive a follow-up user message before you return): you MUST NOT silently write `.gsd/` files without sanction. Instead:
+  - If the spawn prompt contains an explicit approval token (e.g. `APPROVED`, or "generate the files"), treat alignment as granted and proceed to Phase 4.
+  - Otherwise, complete Phases 1-2, then return your research summary + proposed approach as your **final message**, ending with the exact resume instruction the user needs to approve and re-spawn you. Do NOT create branch/spec/plan files in this case.
+
+**Interactive HARD STOP:**
 1. Present a concise summary of your research findings and proposed approach in the chat, explicitly stating why the recommended approach is the most efficient and simple standard solution.
 2. Ask the user: *"Does this approach look correct? Please answer any questions, or say `/approve` to have me generate the spec and plan files."*
 4. **Do not use any file-creation tools until the user explicitly aligns with your proposal.**
