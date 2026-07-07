@@ -1,0 +1,6 @@
+# Python bytecode caches (generated when skill scripts are imported/run)
+__pycache__/
+*.py[cod]
+
+# Local agent workflow state (never committed)
+.gsd/
