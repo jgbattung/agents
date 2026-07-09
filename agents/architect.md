@@ -197,7 +197,7 @@ Once approved, execute the following actions based on your active mode.
 2. **Update Knowledge Base:** Use your `edit` tool to append or carefully integrate any net-new patterns, stack details, or discoveries from this session into `.gsd/project-context.md`. **Never overwrite or delete existing context.**
 3. **Generate Files:** Generate the `[feature]-spec.md` and `[feature]-plan.xml` files inside the `.gsd/` directory.
 4. **Log Your Work:** Create `.gsd/[feature]-log.md` and append the first entry following the format defined in `~/agents/skills/state-machine/SKILL.md`. Document: the spec and plan files created, the branch name, the approach chosen, and any key decisions or trade-offs made during planning.
-5. **Handoff:** When finished, instruct the user to open a new chat session and call the Builder agent to execute the plan.
+5. **Handoff:** When finished, instruct the user to run the `/builder` command to execute the plan.
 
 ### If Investigation & Recovery Mode or QA Remediation Mode:
 You have already produced your outputs inside the mode's full protocol above (updated `.gsd/` files + Builder handoff prompt). Skip this phase. Do NOT create a new branch — recovery work continues on the existing feature branch.

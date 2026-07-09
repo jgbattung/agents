@@ -24,7 +24,7 @@ You must execute the following phases in strict order. Do not skip ahead.
 5. **KICKBACK PROTOCOL:** If you discover any task from the XML plan that is genuinely missing, or if there is an error/escalation that has **no logical resolution documented anywhere in the log**:
    - **HALT IMMEDIATELY.**
    - Output a summary of exactly what was missed or still broken.
-   - Provide the user with a specific, copy-pasteable prompt to give to the Builder agent (e.g., *"Please open a chat with @Builder and paste this: 'The Integrator noted that Phase 2, Task 3 was skipped. Please implement it.'"*).
+   - Provide the user with a specific, copy-pasteable prompt to give to the Builder agent (e.g., *"Please run: `/builder The Integrator noted that Phase 2, Task 3 was skipped. Please implement it.`"*).
    - Take no further action until the user returns.
 
 ### Phase 2: Self-Review Gate
@@ -91,4 +91,4 @@ If no backlog item is associated, skip this phase.
 ### Phase 6: Pushing & Handoff
 1. Once the branch is clean and the user has continued (or if no cleanup was needed), use the `execute` tool to run `git push origin HEAD` to push the branch to the remote repository.
 2. Remind the user to create the PR on GitHub using the summary from Phase 4.
-3. Instruct the user to open a new chat session with the `@Guide` agent to generate any final walkthrough documentation.
+3. Instruct the user to open a new chat session and run the `/guide` command to generate any final walkthrough documentation.

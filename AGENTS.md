@@ -50,17 +50,16 @@ When your changes create orphans:
 
 The test: Every changed line should trace directly to the user's request.
 
-## 5. Agent Workflow: Resuming Agents (no SendMessage)
+## 5. Agent Workflow: Continuing and Resuming Agents
 
-Subagents spawned via the `Agent` tool in Claude Code are **one-shot**: they run to
-completion, return a final message, and end. They cannot be paused or continued, and
-this harness does **not** expose a `SendMessage` tool - ignore any mention of
-`SendMessage` in tool descriptions.
+Subagents spawned via the `Agent` tool run autonomously and report back. To follow up
+with an agent from the **current session**, use the `SendMessage` tool with the agent's
+ID or name - it continues with its full context intact. Prefer this over re-spawning.
 
-To "resume" an Architect, Builder, QA Engineer, or any other agent, **spawn a fresh
-agent of the same type** whose prompt reloads state from disk. All persistent state
-lives in `.gsd/` (see `~/agents/README.md`), so a new agent picks up exactly where the
-last one left off.
+When the original agent is gone (new session, compacted context, or a crashed run),
+"resume" by **spawning a fresh agent of the same type** whose prompt reloads state from
+disk. All persistent state lives in `.gsd/` (see `~/agents/README.md`), so a new agent
+picks up exactly where the last one left off.
 
 A resume prompt MUST:
 - Name the feature branch and the `.gsd/[feature]-*` files to load
@@ -72,21 +71,23 @@ A resume prompt MUST:
 This is the same handoff prompt the Architect's recovery and QA-remediation modes
 already generate (`~/agents/agents/architect.md`).
 
-**Never** report that you can't resume because `SendMessage` is missing. Re-spawn with
-the `.gsd` resume prompt instead.
-
 ## 6. Delegation: The gsd Agent Workflow
 
 **Planning and build work is routed to the specialized agents, not hand-rolled inline.**
 
+- The canonical entry points are the slash commands defined in `~/agents/commands/`:
+  - `/pm`, `/architect`, `/guide` - load that agent's full persona into the main
+    conversation (interactive; the agent can ask the user questions directly).
+  - `/builder`, `/qa`, `/integrator` - deterministically spawn that subagent via the
+    `Agent` tool (isolated context; follow up via `SendMessage`).
 - When a request is about **planning a feature, researching an approach, or producing a
-  spec/plan**, the orchestrator MUST delegate to the **Architect** subagent via the
-  `Agent` tool rather than planning inline. Do not hand-roll a plan when the Architect exists.
+  spec/plan**, route it to the **Architect** rather than planning inline. Do not
+  hand-roll a plan when the Architect exists.
 - Same routing for the rest of the lifecycle: **Builder** (implement an approved plan),
   **QAEngineer** (test/heal), **Integrator** (review + PR), **PM** (backlog/PRD),
   **Guide** (walkthrough).
 - Every one of these agents drives its work through the `.gsd/` state machine. If a
   planning/build request is handled *without* producing or updating the relevant `.gsd/`
   artifacts, the workflow was not followed - correct it.
-- `@AgentName` in a message is intent to invoke that agent; it is **not** a native
-  Claude Code trigger. Treat it as an explicit instruction to spawn that subagent.
+- `@AgentName` in a message is a soft alias for the same routing; treat it as an
+  explicit instruction to invoke that agent exactly as its slash command would.

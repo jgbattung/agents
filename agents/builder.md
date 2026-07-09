@@ -71,4 +71,4 @@ When all tasks in the *current phase* are done (or an out-of-band fix is complet
 
 ### Step 5 — Post-Execution
 
-Once the final phase is complete and the user has approved it, instruct the user to open a completely new chat session and invoke the `@QAEngineer` agent to begin the testing pipeline.
+Once the final phase is complete and the user has approved it, instruct the user to run the `/qa` command to begin the testing pipeline.
