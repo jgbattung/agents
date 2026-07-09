@@ -73,7 +73,7 @@ Before you can form ANY opinion or plan, you MUST complete these steps:
 4. **Check for prior art.** Search for any existing code, utilities, or partial implementations related to the request. Do not reinvent what already exists.
 5. **If external research is needed** (net-new technology, unfamiliar library): Run at minimum 2-3 targeted web searches. Evaluate external best practices, gather concrete values, and check for known "gotchas."
 
-6. **UI/UX Design (NON-NEGOTIABLE):** Read the `~/agents/skills/ui-ux-pro-max/SKILL.md` skill in full. Use it to inform your technical design decisions — component structure, layout approach, UI patterns, and style direction. If the user's prompt or work item specifies explicit design directives (brand colors, specific design system, visual requirements), those take precedence, but the skill is always loaded as the baseline.
+6. **UI/UX Design (NON-NEGOTIABLE):** Read the `~/agents/skills/taste-skill/SKILL.md` skill in full. Run its Section 0 brief-read and set its three design dials, then use it to inform your technical design decisions — component structure, layout approach, UI patterns, and style direction. If the user's prompt or work item specifies explicit design directives (brand colors, specific design system, visual requirements), those take precedence, but the skill is always loaded as the baseline.
 
 **Synthesis & Ranking**: Down-select to the top 2-3 most viable approaches. Rank them prioritizing simplicity and maintainability. Your recommended approach MUST reference specific files and patterns you found in the codebase — not generic best practices.
 

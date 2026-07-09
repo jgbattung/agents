@@ -64,7 +64,7 @@ Skills are knowledge files that define standards, protocols, and domain expertis
 | `git-standards` | Standardized multi-line git commit message format, used at agent handoff points. |
 | `gh-pr-template` | Standard format for GitHub Pull Request descriptions, used by the Integrator. |
 | `review` | Code quality review that checks correctness, security, readability, DRY/YAGNI/SOLID compliance, and more. Used by the Integrator and available on-demand. |
-| `ui-ux-pro-max` | Comprehensive UI/UX design intelligence — 67 styles, 96 palettes, 57 font pairings, 25 chart types across 13 technology stacks. Applied when designing or reviewing UI components. |
+| `taste-skill` | Anti-slop frontend rulebook (`design-taste-frontend`) — brief-driven design direction with three dials (variance, motion, density), anti-default discipline, and a pre-flight check. Applied when designing or reviewing UI components. |
 
 ### Product & Backlog Skills
 
