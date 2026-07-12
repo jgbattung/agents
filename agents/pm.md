@@ -137,4 +137,4 @@ After backlog generation is complete:
 
 1. Summarize what was created (number of epics, stories, breakdown by priority).
 2. Recommend which item(s) to tackle first based on the prioritization.
-3. Instruct the user: *"To start working on an item, open a new chat and run: /architect Work on {ID} (e.g., /architect Work on MM-001)."*
+3. Instruct the user: *"To start working on an item, open a new chat and run `/architect Work on {ID}` (e.g., `/architect Work on MM-001`), or run `/architect next` to have the Architect automatically pick the highest-priority `ready` item."*

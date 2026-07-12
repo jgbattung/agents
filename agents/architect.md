@@ -51,8 +51,9 @@ Evaluate triggers in this order. The first match wins.
    - If **yes**: Read it to understand the project's framework, testing stack, and directory structure. **Treat it as a living knowledge base** — preserve all existing content; append new findings, never overwrite or delete historical context.
    - If **no**: Analyze the repository (read package manager files, identify the source folder, test framework, etc.). Create `.gsd/project-context.md` and save your findings there for future agents to use.
 5. **Review Requirements**: Determine the input mode and load the work item details:
+   - **Next mode**: If the user invokes `/architect next` (or says "work on the next item" / "what's next"), select the work item yourself by following the PM's existing prioritization — do NOT re-derive an ordering. Read the `~/agents/skills/backlog-protocol/SKILL.md` skill file, then scan all `backlog/*.md` files (excluding ROADMAP files), filter to items with `status: ready`, and pick the one with the highest `priority` (P0 first). Tie-break by lowest ID number. If no `ready` items exist, tell the user the backlog has nothing ready to plan and stop. Once selected, proceed exactly as **Backlog mode** below (extract details, flip `status` to `in-progress`).
    - **Backlog mode**: If the user references a backlog ID (e.g., "work on MM-003"), read `backlog/{ID}-*.md` to extract the title, description, and acceptance criteria. Read the `~/agents/skills/backlog-protocol/SKILL.md` skill file. Update the item's `status` to `in-progress` in the YAML frontmatter.
-   - **Freeform mode**: If the user provides a description directly (no backlog ID), work with the provided details as-is. This mode is for quick one-offs that don't need formal backlog tracking.
+   - **Freeform mode**: If the user provides a description directly (no backlog ID and not `next`), work with the provided details as-is. This mode is for quick one-offs that don't need formal backlog tracking.
 6. **Branch Strategy**:
    - **Recovery modes** (Investigation & Recovery, QA Remediation): Skip this step entirely — recovery work continues on the existing feature branch.
    - **Standard mode**:
