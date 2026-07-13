@@ -45,7 +45,7 @@ Evaluate triggers in this order. The first match wins.
 ## Phase 1: Context Gathering & Workspace Prep
 **State Management:** Refer to the `~/agents/skills/state-machine/SKILL.md` skill for all `.gsd/` folder protocols.
 1. **Determine Mode:** Apply the `### Mode Detection Rules` defined under `## Operational Modes` to determine your active mode (Standard, Investigation & Recovery, or QA Remediation). If multiple triggers match, stop and ask the user to disambiguate before proceeding.
-2. **Workspace Cleanup**: Check if the `.gsd/` folder contains old feature files. If it does, use the `execute` tool to run `mkdir -p .gsd/archive` and move all old feature files (e.g., plans, specs, logs, drafts) into `.gsd/archive/`. Do not move or delete `.gsd/project-context.md`.
+2. **Workspace Cleanup (Standard Mode ONLY)**: In Investigation & Recovery or QA Remediation mode, SKIP this step entirely - the feature files in the `.gsd/` root are your active workspace and must NOT be archived. In Standard Mode: archive leftover feature files from prior work by following the **Archiving Procedure** in `~/agents/skills/state-machine/SKILL.md` (Section 2). Then VERIFY by listing the `.gsd/` root: it must contain no `*-spec.md`, `*-plan.xml`, `*-log.md`, `*-review.md`, or `*-pr.md` files - only living documents (e.g., `project-context.md`, `design-system.md`) and the `archive/` folder. Do not proceed to the next step until this verification passes.
 3. **Check for `.gsd/`**: Check if a `.gsd/` folder exists in the current repository root. If not, create it.
 4. **Context Cache**: Check if `.gsd/project-context.md` exists. 
    - If **yes**: Read it to understand the project's framework, testing stack, and directory structure. **Treat it as a living knowledge base** — preserve all existing content; append new findings, never overwrite or delete historical context.
@@ -196,7 +196,9 @@ Once approved, execute the following actions based on your active mode.
 1. **Create Branch**: If you confirmed in Phase 1 Step 6 that the user wants to continue on the current branch, skip this step. Otherwise, ensure you are on `main` and run `git checkout -b <branch-name>` using the branch name deduced in Phase 1.
    - **ERROR BOUNDARY:** If the `git checkout` command fails (e.g., due to unstaged changes or if the branch already exists), **HALT immediately**. Do not generate the spec or plan files. Tell the user what the git error was and ask them to resolve their git state before proceeding.
 2. **Update Knowledge Base:** Use your `edit` tool to append or carefully integrate any net-new patterns, stack details, or discoveries from this session into `.gsd/project-context.md`. **Never overwrite or delete existing context.**
-3. **Generate Files:** Generate the `[feature]-spec.md` and `[feature]-plan.xml` files inside the `.gsd/` directory.
+3. **Generate Files:**
+   - **ARCHIVE GATE (PRECONDITION):** Before writing anything, list the `.gsd/` root. If any feature files (`*-spec.md`, `*-plan.xml`, `*-log.md`, `*-review.md`, `*-pr.md`) belonging to a *different* slug than the current feature exist there, STOP - the Phase 1 Step 2 cleanup was missed. Run the **Archiving Procedure** from `~/agents/skills/state-machine/SKILL.md` (Section 2) now, then continue. Do NOT generate new feature files while another slug's files remain in the root.
+   - Generate the `[feature]-spec.md` and `[feature]-plan.xml` files inside the `.gsd/` directory.
 4. **Log Your Work:** Create `.gsd/[feature]-log.md` and append the first entry following the format defined in `~/agents/skills/state-machine/SKILL.md`. Document: the spec and plan files created, the branch name, the approach chosen, and any key decisions or trade-offs made during planning.
 5. **Handoff:** When finished, instruct the user to run the `/builder` command to execute the plan.
 

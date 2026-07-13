@@ -19,6 +19,7 @@ All agents must adhere to these rules to prevent context drift and ensure a reli
 ## 2. The Archive Rule (Scope Isolation)
 * **Active Workspace:** ONLY read and write files located in the root of the `.gsd/` directory.
 * **Isolation:** You must completely ignore any files inside `.gsd/archive/`. These are historical records and should not influence current implementation decisions.
+* **Archiving Procedure (canonical):** When a workflow calls for archiving old feature files, run `mkdir -p .gsd/archive` and move ONLY the files in the `.gsd/` root that match these patterns into `.gsd/archive/`: `*-spec.md`, `*-plan.xml`, `*-log.md`, `*-review.md`, `*-pr.md`. Move nothing else. Living documents (e.g., `project-context.md`, `design-system.md`) are preserved by construction because they do not match the patterns - never add them to the move set manually.
 
 ## 3. The Slug Naming Rule
 The `[feature]` placeholder in filenames like `[feature]-spec.md`, `[feature]-plan.xml`, and `[feature]-log.md` must use the same kebab-case slug derived from the branch name's short description. For example, branch `feature/add-net-worth-component` produces files named `add-net-worth-component-spec.md`, `add-net-worth-component-plan.xml`, and `add-net-worth-component-log.md`. All agents must use the same slug for a given feature to prevent naming mismatches.
