@@ -12,6 +12,10 @@ Rules:
   via `SendMessage` instead of spawning a fresh one.
 - The spawn prompt must name the feature branch and the `.gsd/[feature]-spec.md`,
   `.gsd/[feature]-plan.xml`, and `.gsd/[feature]-log.md` files to load.
+- **No editorializing:** the spawn prompt must contain ONLY the branch name, the
+  `.gsd/` file names, and the user's request verbatim. Do NOT add your own summary,
+  assessment, or characterization of the implementation - the QA Engineer must form
+  its judgment from the `.gsd/` files and the code alone.
 - When the QA Engineer reports back, relay its summary to the user faithfully. If it
   halted with a kickback for the Architect, surface that copy-pasteable prompt verbatim.
 
