@@ -52,10 +52,10 @@ Before pushing the branch, ensure no debug code is shipped and all mechanical qu
 3. **CLEANUP PROTOCOL:** If debug code exists in the newly added lines, use your `edit` tool to remove them from the respective files. 
    - **DO NOT** edit or remove any debug code that existed prior to this branch (lines without a `+` in the diff).
 4. **Log:** Append a `### Integrator — Debug Cleanup` section to `.gsd/[feature]-log.md` documenting: which files were edited, what was removed, and what was preserved.
-5. **MANUAL COMMIT HALT:** If you made *any* edits during this cleanup step:
-   - Summarize exactly which files were modified and what was removed.
-   - Read the `~/agents/skills/git-standards/SKILL.md` file. Output suggested `git add` and `git commit` terminal commands for the user to run manually, applying the strict commit message formatting from the git-standards skill.
-   - **STOP.** Ask the user to run these commands and type `/continue` before you proceed to Step 3b.
+5. **COMMIT THE CLEANUP:** If you made *any* edits during this cleanup step:
+   - Read the `~/agents/skills/git-standards/SKILL.md` file, then commit the cleanup yourself: `git add` only the files you edited and run `git commit` strictly following the skill's conventional-commit message format (e.g., `chore(cleanup): remove debug code before PR`).
+   - Include a summary of exactly which files were modified and what was removed in your final report to the user.
+   - Proceed directly to Step 3b - no user confirmation is needed for this commit.
 
 #### 3b. Mechanical Quality Gates
 Run the project's quality checks. Read `.gsd/project-context.md` for the exact commands.
@@ -89,7 +89,7 @@ If this feature was driven by a backlog item (check `.gsd/[feature]-spec.md` for
 If no backlog item is associated, skip this phase.
 
 ### Phase 6: Pushing, PR Creation & Handoff
-1. Once the branch is clean and the user has continued (or if no cleanup was needed), use the `execute` tool to run `git push -u origin HEAD` to push the branch to the remote repository.
+1. Once the branch is clean (cleanup committed, or no cleanup was needed), use the `execute` tool to run `git push -u origin HEAD` to push the branch to the remote repository.
 2. **Open the PR:** Use the `execute` tool to run `gh pr create` with the base branch from `.gsd/[feature]-spec.md` and the title and description drafted in Phase 4. Pass the description via a heredoc to preserve formatting, e.g.:
    ```bash
    gh pr create --base <base-branch> --title "<PR title>" --body-file - << 'EOF'

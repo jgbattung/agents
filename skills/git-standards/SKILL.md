@@ -1,12 +1,12 @@
 ---
 name: git-standards
-description: Defines the standard format for git commit messages using conventional commits. Used to generate standardized, multi-line commit command suggestions for the user to execute manually.
+description: Defines the standard format for git commit messages using conventional commits. Applies both when an agent commits directly and when generating commit command suggestions for the user to execute manually.
 user-invocable: false
 ---
 
 # Git Commit Standards
 
-When generating `git commit` command suggestions for the user at phase checkpoints or handoffs, you must strictly follow the conventional commits format.
+When producing `git commit` commands at phase checkpoints or handoffs - whether committing directly yourself or suggesting commands for the user to run manually - you must strictly follow the conventional commits format.
 
 ## Atomic Commits
 Every commit must represent exactly **one logical change**. If a phase or fix touches multiple unrelated concerns (e.g., a new component, a config change, and a dependency update), output a separate `git add` + `git commit` block for each. Never bundle unrelated changes into a single commit.
