@@ -75,6 +75,7 @@ Before you can form ANY opinion or plan, you MUST complete these steps:
 5. **If external research is needed** (net-new technology, unfamiliar library): Run at minimum 2-3 targeted web searches. Evaluate external best practices, gather concrete values, and check for known "gotchas."
 
 6. **UI/UX Design (NON-NEGOTIABLE):** Read the `~/agents/skills/taste-skill/SKILL.md` skill in full. Run its Section 0 brief-read and set its three design dials, then use it to inform your technical design decisions — component structure, layout approach, UI patterns, and style direction. If the user's prompt or work item specifies explicit design directives (brand colors, specific design system, visual requirements), those take precedence, but the skill is always loaded as the baseline.
+   - While doing this, determine whether the work item involves UI design (new components or pages, layout changes, visual styling, UX flows). If it does, flag this run as **visual alignment required** - Phase 3 will present the proposal as a Lavish review artifact instead of a plain chat summary.
 
 **Synthesis & Ranking**: Down-select to the top 2-3 most viable approaches. Rank them prioritizing simplicity and maintainability. Your recommended approach MUST reference specific files and patterns you found in the codebase — not generic best practices.
 
@@ -179,10 +180,25 @@ A new remediation phase has been appended to the plan. Please execute those task
 ## Phase 3: Alignment Check (HARD STOP)
 
 **Execution-context check (do this first):**
-- **If you are running as the primary/interactive agent:** follow the HARD STOP below — present the summary, wait for `/approve`, then proceed to Phase 4.
+- **If you are running as the primary/interactive agent:** follow the alignment flow below - the Lavish visual path if this run is flagged **visual alignment required**, otherwise the plain-text HARD STOP - and only proceed to Phase 4 once alignment is granted.
 - **If you are running as a one-shot subagent** (you cannot receive a follow-up user message before you return): you MUST NOT silently write `.gsd/` files without sanction. Instead:
   - If the spawn prompt contains an explicit approval token (e.g. `APPROVED`, or "generate the files"), treat alignment as granted and proceed to Phase 4.
   - Otherwise, complete Phases 1-2, then return your research summary + proposed approach as your **final message**, ending with the exact resume instruction the user needs to approve and re-spawn you. Do NOT create branch/spec/plan files in this case.
+
+**Visual Alignment via Lavish (interactive mode + visual alignment required only):**
+If you are running as the primary/interactive agent AND Phase 2 Step 6 flagged this run as **visual alignment required**, present your proposal as a Lavish review artifact instead of a chat wall of text:
+1. Read the `~/agents/skills/lavish/SKILL.md` skill in full and follow its workflow, opening each matching playbook before writing HTML - at minimum `plan`, `comparison`, and `input`.
+2. Build the artifact at `.lavish/[feature]-alignment.html` containing: the research summary and proposed approach (`plan` playbook), the ranked 2-3 approaches side by side (`comparison` playbook), a mockup of the proposed UI direction rendered in the target project's own design system, and structured approve / request-changes controls (`input` playbook).
+3. Immediately after creating the `.lavish/` directory, exclude it from git without modifying `.gitignore`:
+   ```bash
+   grep -qxF '.lavish/' .git/info/exclude 2>/dev/null || echo '.lavish/' >> .git/info/exclude
+   ```
+   `.lavish/` is local review state, same as `.gsd/` - never stage or commit it.
+4. Open the session and run the foreground poll per the skill. The artifact MUST open in the user's system default browser, never an editor-integrated/simple browser: `lavish-axi` auto-opens the default browser itself, so do not pass `--no-open` and do not set `LAVISH_AXI_NO_OPEN`. If the session URL comes back with status `ready` (auto-open failed), launch the default browser explicitly with the returned URL - `start "" <url>` on Windows, `open <url>` on macOS, `xdg-open <url>` on Linux - and never open it via any IDE preview facility. Treat artifact feedback exactly like alignment conversation in chat: apply requested changes, update the artifact, reply with `--agent-reply`, and poll again.
+5. Alignment is granted when the user approves via the artifact's input controls OR says `/approve` in chat. End the session (`npx -y lavish-axi end <html-file>`) before proceeding to Phase 4.
+6. **Fallback:** If `lavish-axi` fails to launch (restricted sandbox, npx failure), fall back to the plain-text Interactive HARD STOP below - never block the run on Lavish.
+
+One-shot subagent runs and runs without the visual-alignment flag keep the plain-text behavior below; do not start a Lavish session as a subagent.
 
 **Interactive HARD STOP:**
 1. Present a concise summary of your research findings and proposed approach in the chat, explicitly stating why the recommended approach is the most efficient and simple standard solution.
