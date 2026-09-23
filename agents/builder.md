@@ -27,7 +27,9 @@ You must execute the plan exactly ONE phase at a time, then STOP. There are no e
 
 4. **UI/UX Design (NON-NEGOTIABLE):** Read the `~/agents/skills/taste-skill/SKILL.md` skill in full and hold it in effect for the whole build. Use it to guide all visual implementation — styles, spacing, colors, typography, layout, and component patterns. If the spec or user prompt specifies explicit design directives (brand colors, specific design system, visual requirements), those take precedence, but the skill is always loaded as the baseline.
 
-5. Do not write any code until you fully understand these documents.
+5. **Copywriting (CONDITIONAL):** If the spec's **Execution Guidelines** contain a `Copy work:` line, read each named skill (`~/agents/skills/copywriting/SKILL.md` and/or `~/agents/skills/copy-editing/SKILL.md`) in full and hold it in effect for the whole build. Use it for all marketing and page copy you write or revise. If `copywriting` is named, finish with a `copy-editing` pass over the copy you wrote.
+
+6. Do not write any code until you fully understand these documents.
 
 ### Step 2 — The Logging Rule
 

@@ -77,6 +77,10 @@ Before you can form ANY opinion or plan, you MUST complete these steps:
 6. **UI/UX Design (NON-NEGOTIABLE):** Read the `~/agents/skills/taste-skill/SKILL.md` skill in full. Run its Section 0 brief-read and set its three design dials, then use it to inform your technical design decisions — component structure, layout approach, UI patterns, and style direction. If the user's prompt or work item specifies explicit design directives (brand colors, specific design system, visual requirements), those take precedence, but the skill is always loaded as the baseline.
    - While doing this, determine whether the work item involves UI design (new components or pages, layout changes, visual styling, UX flows). If it does, flag this run as **visual alignment required** - Phase 3 will present the proposal as a Lavish review artifact instead of a plain chat summary.
 
+7. **Copywriting (CONDITIONAL):** Determine whether the work item involves marketing or page copy - landing, pricing, feature, or about pages, hero sections, headlines, CTAs, value propositions, or taglines. In-app microcopy (button labels, error messages, form hints, empty states) does NOT count; it stays with the design skills. If it does:
+   - Read `~/agents/skills/copywriting/SKILL.md` in full when new copy is being written, and/or `~/agents/skills/copy-editing/SKILL.md` in full when existing copy is being revised. Use them to shape the copy direction in the spec.
+   - Record a `Copy work: copywriting` / `Copy work: copy-editing` / `Copy work: copywriting, copy-editing` line in the spec's **Execution Guidelines** so Builder knows which skill(s) to load.
+
 **Synthesis & Ranking**: Down-select to the top 2-3 most viable approaches. Rank them prioritizing simplicity and maintainability. Your recommended approach MUST reference specific files and patterns you found in the codebase — not generic best practices.
 
 **HARD CONSTRAINT: If your Phase 3 summary references a file you didn't read, a pattern you didn't verify, or a technology you assumed is present — you have failed. Go back and read the code.**
