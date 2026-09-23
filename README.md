@@ -65,6 +65,16 @@ Skills are knowledge files that define standards, protocols, and domain expertis
 | `gh-pr-template` | Standard format for GitHub Pull Request descriptions, used by the Integrator. |
 | `review` | Code quality review that checks correctness, security, readability, DRY/YAGNI/SOLID compliance, and more. Used by the Integrator and available on-demand. |
 | `taste-skill` | Anti-slop frontend rulebook (`design-taste-frontend`) — brief-driven design direction with three dials (variance, motion, density), anti-default discipline, and a pre-flight check. Applied when designing or reviewing UI components. |
+| `lavish` | Turns plans, comparisons, and reports into reviewable HTML artifacts via the `lavish-axi` CLI. Used by the Architect for visual alignment on UI work. |
+| `back-prop` | Back-propagates reusable components from a deployed prototype into the canonical component library, with an audit-trail notes file. User-invocable. |
+
+### Design & Copy Skills
+
+| Skill | Description |
+|---|---|
+| `impeccable` | Hands-on frontend design toolkit (`/impeccable <command>`) - shape, critique, audit, polish, typeset, animate, clarify UX copy, live browser iteration, and more. User-invocable; not wired into the agents. |
+| `copywriting` | Writes marketing and page copy - headlines, CTAs, value propositions, hero sections. Loaded by the Architect and Builder when a work item involves marketing or page copy. |
+| `copy-editing` | Edits and refreshes existing marketing copy through structured sweeps. Loaded by the Architect and Builder when existing copy is revised, and by Builder as a final pass after `copywriting`. |
 
 ### Product & Backlog Skills
 
