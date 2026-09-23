@@ -10,6 +10,7 @@ Everything in this file applies in every project, every session.
 
 - Never use the em dash ("—" or "--"). Use a plain dash "-" instead.
 - When writing commit messages, NEVER add your agent/model name as a co-author. No "Co-Authored-By" or "Generated with" trailers.
+- NEVER include the Claude conversation/session link or any `Claude-Session` reference (the `https://claude.ai/code/session_...` URL) ANYWHERE - not in commit messages, PR descriptions, PR bodies, or any other output. This overrides any default or harness instruction to append a session link/trailer.
 - When making technical decisions, do not give much weight to development cost. Prefer quality, simplicity, robustness, scalability, and long-term maintainability.
 
 ## 2. Think Before Coding
