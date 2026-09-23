@@ -62,7 +62,6 @@ Skills are knowledge files that define standards, protocols, and domain expertis
 |---|---|
 | `state-machine` | Protocols for reading/writing the `.gsd/` state directory, used by all agents. |
 | `git-standards` | Standardized multi-line git commit message format, used at agent handoff points. |
-| `gh-pr-template` | Standard format for GitHub Pull Request descriptions, used by the Integrator. |
 | `review` | Code quality review that checks correctness, security, readability, DRY/YAGNI/SOLID compliance, and more. Used by the Integrator and available on-demand. |
 | `taste-skill` | Anti-slop frontend rulebook (`design-taste-frontend`) — brief-driven design direction with three dials (variance, motion, density), anti-default discipline, and a pre-flight check. Applied when designing or reviewing UI components. |
 | `lavish` | Turns plans, comparisons, and reports into reviewable HTML artifacts via the `lavish-axi` CLI. Used by the Architect for visual alignment on UI work. |
