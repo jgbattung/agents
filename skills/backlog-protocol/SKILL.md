@@ -111,3 +111,18 @@ draft → ready → in-progress → done
 1. Update the item's `status` field to `done` in the frontmatter.
 2. Move the file: `backlog/{ID}-{slug}.md` → `backlog/archive/{ID}-{slug}.md`.
 3. Trigger the roadmap-generator skill to update ROADMAP.md.
+
+## 7. Notion Mirror
+
+The Notion `Tasks` database is a one-way mirror of `backlog/`. The files stay the source of truth.
+
+After any operation in sections 4-6 (creating an item, changing a status, or archiving), run once from the project root:
+
+```
+node "$HOME/agents/scripts/notion-sync/sync.ts" .
+```
+
+- Run it once at the end of a batch, not once per item. It syncs the whole project in one pass.
+- It only mirrors allowlisted projects. For any other project it prints a skip message and exits 0.
+- **Failure is non-fatal.** If the command exits non-zero, report the error line to the user as a warning and carry on. Never retry in a loop, and never let it block a status transition, a build, or a PR. The next successful run catches up.
+- Never edit the Notion database directly. Notion edits are overwritten.

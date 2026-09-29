@@ -85,6 +85,7 @@ If this feature was driven by a backlog item (check `.gsd/[feature]-spec.md` for
 2. Update the backlog item's `status` to `done` in its YAML frontmatter.
 3. Move the file from `backlog/{ID}-{slug}.md` to `backlog/archive/{ID}-{slug}.md`.
 4. Read the `~/agents/skills/roadmap-generator/SKILL.md` skill file and follow its instructions to regenerate `backlog/ROADMAP.md` and `backlog/ROADMAP.html`.
+5. Run the Notion sync from the project root per section 7 of the backlog-protocol skill: `node "$HOME/agents/scripts/notion-sync/sync.ts" .` A failure is a warning, never a blocker.
 
 If no backlog item is associated, skip this phase.
 
