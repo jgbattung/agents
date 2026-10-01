@@ -36,6 +36,7 @@ type: {feature|fix|chore|refactor}
 priority: {P0|P1|P2|P3}
 status: {draft|ready|in-progress|done}
 epic: {epic-slug}
+size: {S|M|L}
 created: {YYYY-MM-DD}
 ---
 
@@ -61,6 +62,7 @@ created: {YYYY-MM-DD}
 | `priority` | No | One of: `P0` (critical), `P1` (high), `P2` (medium), `P3` (low). Omit if not yet prioritized. |
 | `status` | Yes | One of: `draft`, `ready`, `in-progress`, `done` |
 | `epic` | Yes | Kebab-case epic slug. E.g., `transaction-management`, `user-auth` |
+| `size` | No | Effort estimate: `S` (single session), `M` (one to a few sessions), `L` (multi-phase). Omit if not yet sized. |
 | `created` | Yes | ISO date (YYYY-MM-DD) |
 
 ### File Naming Convention

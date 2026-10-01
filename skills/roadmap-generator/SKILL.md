@@ -54,10 +54,10 @@ Use this exact structure:
 ## {Epic Name (title-cased from slug)}
 [████░░░░░░] {done}/{total} stories
 
-| ID | Title | Priority | Status |
-|---|---|---|---|
-| {ID} | {Title} | {Priority or —} | {Status} |
-| ... | ... | ... | ... |
+| ID | Title | Size | Priority | Status |
+|---|---|---|---|---|
+| {ID} | {Title} | {Size or —} | {Priority or —} | {Status} |
+| ... | ... | ... | ... | ... |
 
 ## {Next Epic}
 ...
@@ -79,7 +79,7 @@ Use this exact structure:
 
 - Epic names: Convert kebab-case slug to Title Case (e.g., `transaction-management` → `Transaction Management`)
 - Items with `status: done` should show in the table but are visually distinguished — no special formatting needed since the status column makes it clear
-- Priority column: Show `—` if priority is not set
+- Priority and Size columns: Show `—` if the field is not set. Omit the Size column entirely if no item in the project has a `size`
 - Order within epic table: done items first, then in-progress, then ready, then draft
 
 ## ROADMAP.html Generation
