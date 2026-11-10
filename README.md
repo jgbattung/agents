@@ -6,7 +6,7 @@ These agents live in a centralized directory (e.g., `~/agents/`) but execute loc
 
 ---
 
-## The 6-Agent Lifecycle
+## The 7-Agent Lifecycle
 
 This workflow mimics a real-world engineering team, compartmentalizing tasks to preserve context windows and maintain strict quality control.
 
@@ -18,6 +18,7 @@ This workflow mimics a real-world engineering team, compartmentalizing tasks to 
 | **QAEngineer** | `/qa` | The Tester | Reads the Builder's logs, pattern-matches existing repository test styles, writes comprehensive tests, and self-heals minor implementation bugs until the suite is green. |
 | **Integrator** | `/integrator` | The Tech Lead | Verifies the plan was completed, runs a self-review quality gate, scrubs the branch of debug artifacts, and drafts a standardized Pull Request. |
 | **Guide** | `/guide` | The Senior Mentor | Analyzes the finished code and artifacts to generate an educational walkthrough, highlighting architectural "Aha!" moments and explaining complex snippets to the user. |
+| **Reviewer** | `/reviewer` | The Peer Reviewer | Standalone and off-cycle. Reviews another developer's Pull Request against the ticket's Acceptance Criteria and the relevant skills, runs the PR's executable "How to test" steps, and writes a review file only when it finds issues. |
 
 ### Invoking Agents (Claude Code)
 
@@ -27,7 +28,7 @@ tab-completable picker. The commands come in two flavors:
 - **Main-chat persona** (`/pm`, `/architect`, `/guide`): the command inlines the agent's
   full definition into the conversation, so the agent *becomes* the session and can ask
   clarifying questions interactively. Use one session per phase.
-- **Subagent spawn** (`/builder`, `/qa`, `/integrator`): the command deterministically
+- **Subagent spawn** (`/builder`, `/qa`, `/integrator`, `/reviewer`): the command deterministically
   spawns the agent in an isolated context window via the `Agent` tool. Follow-ups
   continue the same agent via `SendMessage`.
 
@@ -47,6 +48,7 @@ To allow agents to pause, hand off tasks, and recover from failures, all state i
 | `.gsd/[feature]-plan.xml` | The atomic, phase-by-phase task list. |
 | `.gsd/[feature]-log.md` | The Builder & QA's running ledger of changes. |
 | `.gsd/[feature]-review.md` | Code quality review findings. |
+| `.gsd/[ticket]-peer-review.md` | The Reviewer's findings on another developer's PR (only written when issues are found). |
 | `.gsd/[feature]-pr-draft.md` | The Integrator's final GitHub PR copy. |
 | `.gsd/[feature]-walkthrough.md` | The Guide's code explanation. |
 

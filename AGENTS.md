@@ -79,14 +79,14 @@ already generate (`~/agents/agents/architect.md`).
 - The canonical entry points are the slash commands defined in `~/agents/commands/`:
   - `/pm`, `/architect`, `/guide` - load that agent's full persona into the main
     conversation (interactive; the agent can ask the user questions directly).
-  - `/builder`, `/qa`, `/integrator` - deterministically spawn that subagent via the
+  - `/builder`, `/qa`, `/integrator`, `/reviewer` - deterministically spawn that subagent via the
     `Agent` tool (isolated context; follow up via `SendMessage`).
 - When a request is about **planning a feature, researching an approach, or producing a
   spec/plan**, route it to the **Architect** rather than planning inline. Do not
   hand-roll a plan when the Architect exists.
 - Same routing for the rest of the lifecycle: **Builder** (implement an approved plan),
   **QAEngineer** (test/heal), **Integrator** (review + PR), **PM** (backlog/PRD),
-  **Guide** (walkthrough).
+  **Guide** (walkthrough), **Reviewer** (peer-review someone else's PR).
 - Every one of these agents drives its work through the `.gsd/` state machine. If a
   planning/build request is handled *without* producing or updating the relevant `.gsd/`
   artifacts, the workflow was not followed - correct it.
