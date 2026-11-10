@@ -6,18 +6,17 @@ These agents live in a centralized directory (e.g., `~/agents/`) but execute loc
 
 ---
 
-## The 7-Agent Lifecycle
+## The 6-Agent Lifecycle
 
 This workflow mimics a real-world engineering team, compartmentalizing tasks to preserve context windows and maintain strict quality control.
 
 | Agent | Invoke | Role | Responsibility |
 |---|---|---|---|
 | **PM** | `/pm` | The Product Manager | Parses external PRDs or generates stories from rough ideas, breaks them into backlog items with acceptance criteria, and prioritizes work. |
-| **Architect** | `/architect` | The Planner | Analyzes feature requirements, deduces branch strategies, researches approaches, and outputs a strict XML execution plan and feature spec. |
-| **Builder** | `/builder` | The Executor | Implements the Architect's XML plan phase-by-phase. Enforces manual git commits at every checkpoint and strictly logs all code changes and deviations. |
-| **QAEngineer** | `/qa` | The Tester | Reads the Builder's logs, pattern-matches existing repository test styles, writes comprehensive tests, and self-heals its own test code. Never edits source code: every implementation bug it finds is logged and routed to the Architect for a remediation phase. |
-| **Integrator** | `/integrator` | The Tech Lead | Verifies the plan was completed, runs a self-review quality gate, scrubs the branch of debug artifacts, and drafts a standardized Pull Request. |
-| **Guide** | `/guide` | The Senior Mentor | Analyzes the finished code and artifacts to generate an educational walkthrough, highlighting architectural "Aha!" moments and explaining complex snippets to the user. |
+| **Architect** | `/architect` | The Planner | Analyzes feature requirements, records the team's conventions, researches approaches, and outputs a strict XML execution plan and feature spec. Also plans every remediation: QA findings, Integrator findings, and PR review feedback all come back here. |
+| **Builder** | `/builder` | The Executor | Implements the Architect's XML plan phase-by-phase, with one atomic commit per task and a checkpoint stop per phase. Strictly logs all code changes and deviations. Only ever builds tasks that are in the plan. |
+| **QAEngineer** | `/qa` | The Tester | Reads the Builder's logs, pattern-matches existing repository test styles, writes comprehensive tests, and self-heals its own test code. Never edits source code: every implementation bug it finds is logged and routed to the Architect for a remediation phase. Re-verifies instead of starting over when run again after remediation. |
+| **Integrator** | `/integrator` | The Tech Lead | Verifies the plan was completed, runs a self-review quality gate, scrubs the branch of debug artifacts, runs the mechanical gates, and opens the Pull Request using the repo's PR template and conventions. Findings that need a code change go to the Architect, never straight to the Builder. |
 | **Reviewer** | `/reviewer` | The Peer Reviewer | Standalone and off-cycle. Reviews another developer's Pull Request against the ticket's Acceptance Criteria and the relevant skills, runs the PR's executable "How to test" steps, and writes a review file only when it finds issues. |
 
 ### Invoking Agents (Claude Code)
@@ -25,7 +24,7 @@ This workflow mimics a real-world engineering team, compartmentalizing tasks to 
 Each agent has a slash command (defined in `commands/`) - type `/` in the CLI to get a
 tab-completable picker. The commands come in two flavors:
 
-- **Main-chat persona** (`/pm`, `/architect`, `/guide`): the command inlines the agent's
+- **Main-chat persona** (`/pm`, `/architect`): the command inlines the agent's
   full definition into the conversation, so the agent *becomes* the session and can ask
   clarifying questions interactively. Use one session per phase.
 - **Subagent spawn** (`/builder`, `/qa`, `/integrator`, `/reviewer`): the command deterministically
@@ -49,8 +48,6 @@ To allow agents to pause, hand off tasks, and recover from failures, all state i
 | `.gsd/[feature]-log.md` | The Builder & QA's running ledger of changes. |
 | `.gsd/[feature]-review.md` | Code quality review findings. |
 | `.gsd/[ticket]-peer-review.md` | The Reviewer's findings on another developer's PR (only written when issues are found). |
-| `.gsd/[feature]-pr-draft.md` | The Integrator's final GitHub PR copy. |
-| `.gsd/[feature]-walkthrough.md` | The Guide's code explanation. |
 
 ---
 

@@ -77,7 +77,7 @@ already generate (`~/agents/agents/architect.md`).
 **Planning and build work is routed to the specialized agents, not hand-rolled inline.**
 
 - The canonical entry points are the slash commands defined in `~/agents/commands/`:
-  - `/pm`, `/architect`, `/guide` - load that agent's full persona into the main
+  - `/pm`, `/architect` - load that agent's full persona into the main
     conversation (interactive; the agent can ask the user questions directly).
   - `/builder`, `/qa`, `/integrator`, `/reviewer` - deterministically spawn that subagent via the
     `Agent` tool (isolated context; follow up via `SendMessage`).
@@ -86,7 +86,7 @@ already generate (`~/agents/agents/architect.md`).
   hand-roll a plan when the Architect exists.
 - Same routing for the rest of the lifecycle: **Builder** (implement an approved plan),
   **QAEngineer** (test/heal), **Integrator** (review + PR), **PM** (backlog/PRD),
-  **Guide** (walkthrough), **Reviewer** (peer-review someone else's PR).
+  **Reviewer** (peer-review someone else's PR).
 - Every one of these agents drives its work through the `.gsd/` state machine. If a
   planning/build request is handled *without* producing or updating the relevant `.gsd/`
   artifacts, the workflow was not followed - correct it.
