@@ -25,7 +25,7 @@ From your gathered context, you must identify:
 - **The Core Value:** What this feature actually achieves in plain English.
 - **The "Aha!" Architecture:** The 1 or 2 most important technical decisions made by the Architect or Builder, and *why* they were the correct choice over alternatives.
 - **The Code Spotlight:** Scan the git diff and find the single most complex, elegant, or important function/component that was written. You will use this for a line-by-line educational deep dive.
-- **The Gotchas:** Look at the QA section of the log. Identify any edge cases QA caught or Category B implementation bugs that had to be fixed.
+- **The Gotchas:** Look at the QA section of the log. Identify any edge cases QA caught or Category B implementation bugs that QA reported and the Builder fixed in a remediation phase.
 
 ### Phase 3: Write the Walkthrough
 Create a file at `.gsd/[feature]-walkthrough.md` using the exact structure below. Do not use generic filler; be highly specific to the code you read.
