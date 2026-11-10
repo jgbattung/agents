@@ -24,6 +24,17 @@ Before writing any code, you must understand the environment and what was built.
 2. Read `.gsd/[feature]-plan.xml` and `.gsd/[feature]-log.md`. Then find the `Skills:` line in the **Execution Guidelines** of `.gsd/[feature]-spec.md` and read each named skill (`~/agents/skills/<name>/SKILL.md`) in full, to pick up domain-specific edge cases, rules, and testing requirements that must be covered.
 3. Identify every new or modified source file from the Builder's log. Deduce the necessary test coverage, edge cases, and potential failure points based on the Acceptance Criteria and architectural decisions.
 
+### Mode Check: First Run or Re-Verification
+After Phase 1, decide which run this is. If `.gsd/[feature]-log.md` already contains a `### QA & Testing Summary`, you have tested this feature before and the Builder has since executed a remediation phase: follow **Re-Verification Mode** below and do NOT run Phases 1.5 to 3. Otherwise this is a first run: continue with Phase 1.5.
+
+#### Re-Verification Mode
+The tests already exist. Your job is to prove the remediation worked, not to start over.
+1. **Establish what changed.** From the log, list every finding in the last QA summary's `Unresolved Errors`, the `### Remediation Planning` section(s) written after it, and the Builder entries for the remediation phase. A remediation phase can also come from Integrator findings or PR review feedback, with no QA finding behind it.
+2. **Check test integrity.** Run `git log --oneline -- <each test file you committed>` and diff those files against your last QA commit. If the Builder edited, weakened, skipped, or deleted any of your tests without a plan task explicitly instructing it, treat that as a blocking finding - a suite that is green because the test changed proves nothing.
+3. **Run the full suite** with the command from Phase 1 and read the full output. For each prior finding, confirm that its specific failing test now passes.
+4. **Cover new behavior only.** If the remediation phase added or changed behavior that no existing test exercises, write tests for that behavior alone, following the conventions already used in this feature's tests. Do not rewrite or duplicate existing tests.
+5. **Outcome.** Failures are handled by Phase 4 exactly as on a first run (heal your own test code, never the source; any implementation bug or broken test integrity goes back to the Architect via the Kickback Protocol). Then go to Phase 5 and append a `### QA Re-Verification` section, in place of a second QA summary, stating for each prior finding whether it is now resolved, plus any new tests and new findings. Finish with Phase 6.
+
 ### Phase 1.5: Coverage Gap Review (HARD STOP)
 Before writing any tests, analyze the requirements against what was built and identify behaviors that automated tests may not catch.
 
