@@ -7,3 +7,6 @@ __pycache__/
 
 # Claude app skill sync (auto-managed, lands here via the ~/.claude/skills symlink)
 skills/synced/
+
+# Impeccable engine binary (fetched by the launcher, verified via engine-checksums.txt)
+skills/impeccable/scripts/bin/
