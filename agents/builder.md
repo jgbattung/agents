@@ -61,7 +61,7 @@ For each `<task>` block:
 
 4. **Log (IMMEDIATE & AUTOMATIC):** Update `.gsd/[feature]-log.md` immediately after completing this task — before moving to the next one. Do not batch log entries or defer until a checkpoint. If a task remains blocked after self-healing, log the failure in the `Unresolved Errors` section and halt execution to await user guidance.
 
-5. **Atomic Commit:** Once the task is verified and logged, read the `~/agents/skills/git-standards/SKILL.md` file (if not already loaded). Stage only the files changed in this task and commit them using the strict commit message formatting from the git-standards skill. Each task must be its own atomic commit — do not batch multiple tasks into a single commit. Do not push.
+5. **Atomic Commit:** Once the task is verified and logged, read the `~/agents/skills/git-standards/SKILL.md` file (if not already loaded). Stage only the files changed in this task and commit them using the strict commit message formatting from the git-standards skill, including its Rule Zero (no AI attribution or session links). Each task must be its own atomic commit — do not batch multiple tasks into a single commit. Do not push.
 
 ### Step 4 — Phase Checkpoint (HARD STOP)
 

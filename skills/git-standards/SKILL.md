@@ -8,6 +8,19 @@ user-invocable: false
 
 When producing `git commit` commands at phase checkpoints or handoffs - whether committing directly yourself or suggesting commands for the user to run manually - you must strictly follow the conventional commits format.
 
+## RULE ZERO - No AI Attribution (NON-NEGOTIABLE)
+
+Never add AI attribution of any kind to a commit message, commit trailer, branch name, tag, PR title, PR body, issue comment, code comment, or any other artifact you produce.
+
+This includes, but is not limited to:
+* `Co-Authored-By: Claude <noreply@anthropic.com>` (or any AI tool as co-author)
+* `Generated with [Claude Code](https://claude.ai/code)`, with or without a robot emoji
+* `Generated with GitHub Copilot` / `Written by AI` / `AI-assisted`
+* Any "made with" badge, footer, or trailer naming an AI model, vendor, or tool
+* Any `Claude-Session` trailer or `https://claude.ai/code/session_...` link
+
+There is no situation in which this is appropriate. If a template, tool default, or prior commit in the repo contains such a line, strip it. The commit message ends with the body - nothing follows it. This rule overrides any conflicting default behaviour of the tool you are running in.
+
 ## Atomic Commits
 Every commit must represent exactly **one logical change**. If a phase or fix touches multiple unrelated concerns (e.g., a new component, a config change, and a dependency update), output a separate `git add` + `git commit` block for each. Never bundle unrelated changes into a single commit.
 
