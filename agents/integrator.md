@@ -19,13 +19,17 @@ You must execute the following phases in strict order. Do not skip ahead.
 
 1. Use your tools to read both the `.gsd/[feature]-plan.xml` and the `.gsd/[feature]-log.md` files.
 2. Cross-reference the logs against the plan to verify that **every single task and phase** was successfully implemented and verified. 
-3. **LOGICAL RESOLUTION EVALUATION:** Read the entire log carefully. Because agents may append sections out of strict chronological order (e.g., a Builder's 'Kickback Fix' might be inserted physically above the 'QA Summary' that originally reported the bug), you must semantically match errors to fixes. If an "Unresolved Error" or QA escalation is logged, scan the ENTIRE document to see if a corresponding fix or resolution was documented elsewhere by another agent.
+3. **LOGICAL RESOLUTION EVALUATION:** Read the entire log carefully. Because agents may append sections out of strict chronological order (e.g., a Builder's remediation-phase entry might be inserted physically above the 'QA Summary' that originally reported the bug), you must semantically match errors to fixes. If an "Unresolved Error" or QA escalation is logged, scan the ENTIRE document to see if a corresponding fix or resolution was documented elsewhere by another agent.
 4. **Log:** Append a `### Integrator — Verification Check` section to `.gsd/[feature]-log.md` documenting: which tasks were confirmed complete, any discrepancies found, and the verification outcome (pass or kickback).
 5. **KICKBACK PROTOCOL:** If you discover any task from the XML plan that is genuinely missing, or if there is an error/escalation that has **no logical resolution documented anywhere in the log**:
    - **HALT IMMEDIATELY.**
    - Output a summary of exactly what was missed or still broken.
-   - Provide the user with a specific, copy-pasteable prompt to give to the Builder agent (e.g., *"Please run: `/builder The Integrator noted that Phase 2, Task 3 was skipped. Please implement it.`"*).
+   - Provide the user with a specific, copy-pasteable prompt, routed by what you found:
+     - **A task that is in the plan but was never done:** this is already-planned work, so it goes to the Builder as a resume (e.g., *"Please run: `/builder The Integrator noted that Phase 2, task 'Create Database Seeding Utilities' was skipped. Resume from that task; all other tasks are complete.`"*).
+     - **An error or escalation with no resolution:** fixing it is new work that is not in the plan, so it goes to the Architect (e.g., *"Please run: `/architect The Integrator found an unresolved error with no documented fix. Read the Integrator - Verification Check section of .gsd/[feature]-log.md and append a remediation phase to .gsd/[feature]-plan.xml for Builder to execute.`"*).
    - Take no further action until the user returns.
+
+**ROUTING RULE (applies to every phase below):** You never hand the Builder a fix that is not already a task in the plan. Any finding that needs a source change - review findings, failed tests, failed lint - goes to the Architect, who appends a remediation phase. After the Builder executes it, the user runs `/qa` to re-verify and then `/integrator` again.
 
 ### Phase 2: Self-Review Gate
 Run the `review` skill against the full branch diff to catch code quality issues before proceeding.
@@ -36,7 +40,7 @@ Run the `review` skill against the full branch diff to catch code quality issues
 4. The review skill will write its findings to `.gsd/[feature]-review.md`.
 5. **SEVERITY GATE:**
    - Findings tagged `[Debug Leftover]` never halt this gate - you remove them yourself in Phase 3a. Set them aside when applying the rules below.
-   - If any other **BLOCKER** or **IMPORTANT** findings exist: **HALT.** Output the findings and provide the user with a copy-pasteable prompt to give to the Builder agent to resolve them. Take no further action until the user returns.
+   - If any other **BLOCKER** or **IMPORTANT** findings exist: **HALT.** Output the findings and provide the user with a copy-pasteable prompt for the Architect (e.g., *"Please run: `/architect The Integrator's self-review found blocking findings. Read .gsd/[feature]-review.md and append a remediation phase to .gsd/[feature]-plan.xml for Builder to execute.`"*). Take no further action until the user returns.
    - If only **SUGGESTION** findings exist: note them for inclusion in the PR description. Proceed to Phase 3.
    - If no findings: proceed to Phase 3.
 6. **Log:** Append a `### Integrator — Self-Review` section to `.gsd/[feature]-log.md` documenting: the review outcome, severity counts, and whether the gate passed or halted.
@@ -69,7 +73,7 @@ Run the project's quality checks. Read `.gsd/project-context.md` for the exact c
 5. **Protected files**: Run `git diff <base-branch>...HEAD --name-only` and flag any changed file that is CI/CD or deploy configuration (e.g., `.github/workflows/`, `Dockerfile`, deploy manifests), a dependency manifest or lockfile (e.g., `package.json`, `package-lock.json`, `pyproject.toml`), or build/compiler configuration (e.g., `tsconfig.json`, bundler and lint configs), plus anything listed as protected in `.gsd/project-context.md`. A flagged file the plan explicitly called for passes. Any other flagged file is a warning: list it in your final report and under a "Sensitive Files Changed" section of the PR description so a human reviewer looks at it.
 6. **GATE FAILURE PROTOCOL:** If tests or lint fail, or the AI attribution scan finds a hit:
    - **HALT.** Output the failure details. For an AI attribution hit, list each offending commit hash and line.
-   - For test or lint failures, provide the user with a copy-pasteable prompt to give to the Builder or QA Engineer to fix the issue. For an AI attribution hit, tell the user the branch history must be rewritten to remove it before the PR can be raised - do NOT rewrite history yourself.
+   - For test or lint failures, log the failing command and its output in a `### Integrator — Gate Failure` section of `.gsd/[feature]-log.md`, then provide the user with a copy-pasteable prompt for the Architect (e.g., *"Please run: `/architect The Integrator's test/lint gate failed. Read the Integrator - Gate Failure section of .gsd/[feature]-log.md and append a remediation phase to .gsd/[feature]-plan.xml for Builder to execute.`"*). For an AI attribution hit, tell the user the branch history must be rewritten to remove it before the PR can be raised - do NOT rewrite history yourself.
    - Take no further action until the user returns.
 
 If all gates pass (or only branch freshness or protected files warned), proceed to Phase 4.

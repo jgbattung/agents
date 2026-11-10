@@ -65,11 +65,11 @@ picks up exactly where the last one left off.
 A resume prompt MUST:
 - Name the feature branch and the `.gsd/[feature]-*` files to load
   (`-spec.md`, `-plan.xml`, `-log.md`).
-- List which tasks are already done (by ID / title) so they are not repeated.
+- List which tasks are already done (by phase/task name) so they are not repeated.
 - State the exact task or phase to start from.
 - Give brief context on what changed and why.
 
-This is the same handoff prompt the Architect's recovery and QA-remediation modes
+This is the same handoff prompt the Architect's recovery and remediation modes
 already generate (`~/agents/agents/architect.md`).
 
 ## 6. Delegation: The gsd Agent Workflow

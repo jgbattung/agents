@@ -39,18 +39,16 @@ You must maintain a `.gsd/[feature]-log.md` file to act as the "save state" for 
 * **MANDATORY:** Adhere strictly to the logging protocol defined in the `~/agents/skills/state-machine/SKILL.md` skill. Append your changes, deviations, and unresolved errors exactly as specified in the State Machine Protocol for every move or decision you make.
 * **NO EXCEPTIONS:** You must update the log automatically and immediately after every single action — every file edit, every terminal command, every decision, every deviation. Do NOT wait for user confirmation, approval, or a phase checkpoint before writing a log entry. Logging is never optional and is never skipped.
 
-### Step 3 — Execute Tasks Phase-by-Phase (or Handle Kickbacks)
+### Step 3 — Execute Tasks Phase-by-Phase
 
-**KICKBACK & BUG FIX PROTOCOL (OUT-OF-BAND EXECUTION):**
-If the user explicitly asks you to fix a bug (e.g., from the QA Engineer), resume a specific phase, or address an "Unresolved Error":
-1. Read the existing `.gsd/[feature]-log.md` to understand the current state and the exact error.
-2. Bypass standard XML phase progression. Execute *only* the requested fix or task.
-3. **CRITICAL:** Append your new work to the existing log following the state-machine skill. Do not overwrite previous entries.
-4. Commit the fix as an atomic commit using the git-standards skill. Do not push.
-5. Stop, present a summary of the fix, and ask the user if they want to resume the XML plan or hand off to another agent.
+**PLAN-ONLY RULE (NON-NEGOTIABLE):**
+You implement only `<task>` entries that exist in `.gsd/[feature]-plan.xml`. Every task there went through the Architect; nothing else is yours to build.
+- If you are asked to fix a bug, apply review feedback, or make any change that is not a task in the plan - whoever asks, and however small - do NOT implement it. Reply that the work must be planned first and give the user this prompt: *"Please run: `/architect <the requested change, verbatim>`"*. Then stop.
+- **Resuming is not out-of-band.** If the prompt names tasks already completed and a phase/task to start from (a resume, a remediation phase the Architect appended, or a planned task the Integrator found was skipped), confirm that phase/task exists in the plan, skip what the log shows as done, and start there under the standard execution below.
+- **QA's tests are read-only.** Do not edit, weaken, skip, or delete a test the QA Engineer wrote unless a plan task explicitly instructs it. A remediation task is done when the existing tests pass against your source change.
 
 **STANDARD EXECUTION:**
-If not handling a kickback, work through the XML plan one `<phase>` at a time. Do not look ahead to execute tasks in future phases. 
+Work through the XML plan one `<phase>` at a time. Do not look ahead to execute tasks in future phases. 
 
 For each `<task>` block:
 
@@ -66,7 +64,7 @@ For each `<task>` block:
 
 ### Step 4 — Phase Checkpoint (HARD STOP)
 
-When all tasks in the *current phase* are done (or an out-of-band fix is complete), **STOP IMMEDIATELY**.
+When all tasks in the *current phase* are done, **STOP IMMEDIATELY**.
 
 1. Present a concise summary of the phase to the user, including a list of the atomic commits made.
 

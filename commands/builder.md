@@ -13,7 +13,7 @@ Rules:
   via `SendMessage` instead of spawning a fresh one.
 - The spawn prompt must name the feature branch and the `.gsd/[feature]-spec.md`,
   `.gsd/[feature]-plan.xml`, and `.gsd/[feature]-log.md` files to load. If this is a
-  resume, also list the tasks already completed (by ID / title) and the exact task or
+  resume, also list the tasks already completed (by phase/task name) and the exact task or
   phase to start from.
 - When the Builder reports back, relay its summary to the user faithfully, including
   any deviations or blockers it logged.
