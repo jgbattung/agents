@@ -25,11 +25,12 @@ You must execute the plan exactly ONE phase at a time, then STOP. There are no e
 
 3. **CRITICAL PRE-FLIGHT CHECK:** Read the `.gsd/[feature]-log.md` file if it exists. You must understand the current implementation state. Pay special attention to any `### QA & Testing Summary` or `### Unresolved Errors` added by other agents to ensure you do not overwrite their fixes or ignore their blockers.
 
-4. **UI/UX Design (NON-NEGOTIABLE):** Read the `~/agents/skills/taste-skill/SKILL.md` skill in full and hold it in effect for the whole build. Use it to guide all visual implementation — styles, spacing, colors, typography, layout, and component patterns. If the spec or user prompt specifies explicit design directives (brand colors, specific design system, visual requirements), those take precedence, but the skill is always loaded as the baseline.
+4. **Skills (NON-NEGOTIABLE):** Find the `Skills:` line in the spec's **Execution Guidelines**. Read each named skill (`~/agents/skills/<name>/SKILL.md`) in full before writing any code and hold it in effect for the whole build. Do not load skills that are not on the line.
+   - **Per-task check:** Before implementing each `<task>`, ask whether the task involves what each loaded skill's `description` covers. Apply a skill's conventions only to the tasks where it does.
+   - Explicit design directives in the spec or user prompt (brand colors, specific design system, visual requirements) take precedence over any skill.
+   - If `copywriting` is named, use it for all marketing and page copy you write, then finish with a `copy-editing` pass over that copy.
 
-5. **Copywriting (CONDITIONAL):** If the spec's **Execution Guidelines** contain a `Copy work:` line, read each named skill (`~/agents/skills/copywriting/SKILL.md` and/or `~/agents/skills/copy-editing/SKILL.md`) in full and hold it in effect for the whole build. Use it for all marketing and page copy you write or revise. If `copywriting` is named, finish with a `copy-editing` pass over the copy you wrote.
-
-6. Do not write any code until you fully understand these documents.
+5. Do not write any code until you fully understand these documents.
 
 ### Step 2 — The Logging Rule
 

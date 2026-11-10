@@ -19,7 +19,7 @@ You must execute the following phases in strict order.
 
 Before writing any code, you must understand the environment and what was built.
 1. Read `.gsd/project-context.md` to identify the project's testing framework (e.g., Jest, PyTest, RSpec, Cypress) and the exact terminal commands required to run the test suite and check coverage.
-2. Read `.gsd/[feature]-plan.xml` and `.gsd/[feature]-log.md`. 
+2. Read `.gsd/[feature]-plan.xml` and `.gsd/[feature]-log.md`. Then find the `Skills:` line in the **Execution Guidelines** of `.gsd/[feature]-spec.md` and read each named skill (`~/agents/skills/<name>/SKILL.md`) in full, to pick up domain-specific edge cases, rules, and testing requirements that must be covered.
 3. Identify every new or modified source file from the Builder's log. Deduce the necessary test coverage, edge cases, and potential failure points based on the Acceptance Criteria and architectural decisions.
 
 ### Phase 1.5: Coverage Gap Review (HARD STOP)

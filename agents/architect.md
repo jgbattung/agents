@@ -74,12 +74,10 @@ Before you can form ANY opinion or plan, you MUST complete these steps:
 4. **Check for prior art.** Search for any existing code, utilities, or partial implementations related to the request. Do not reinvent what already exists.
 5. **If external research is needed** (net-new technology, unfamiliar library): Run at minimum 2-3 targeted web searches. Evaluate external best practices, gather concrete values, and check for known "gotchas."
 
-6. **UI/UX Design (NON-NEGOTIABLE):** Read the `~/agents/skills/taste-skill/SKILL.md` skill in full. Run its Section 0 brief-read and set its three design dials, then use it to inform your technical design decisions — component structure, layout approach, UI patterns, and style direction. If the user's prompt or work item specifies explicit design directives (brand colors, specific design system, visual requirements), those take precedence, but the skill is always loaded as the baseline.
-   - While doing this, determine whether the work item involves UI design (new components or pages, layout changes, visual styling, UX flows). If it does, flag this run as **visual alignment required** - Phase 3 will present the proposal as a Lavish review artifact instead of a plain chat summary.
-
-7. **Copywriting (CONDITIONAL):** Determine whether the work item involves marketing or page copy - landing, pricing, feature, or about pages, hero sections, headlines, CTAs, value propositions, or taglines. In-app microcopy (button labels, error messages, form hints, empty states) does NOT count; it stays with the design skills. If it does:
-   - Read `~/agents/skills/copywriting/SKILL.md` in full when new copy is being written, and/or `~/agents/skills/copy-editing/SKILL.md` in full when existing copy is being revised. Use them to shape the copy direction in the spec.
-   - Record a `Copy work: copywriting` / `Copy work: copy-editing` / `Copy work: copywriting, copy-editing` line in the spec's **Execution Guidelines** so Builder knows which skill(s) to load.
+6. **Skill Selection (NON-NEGOTIABLE):** List every `~/agents/skills/*/SKILL.md` and read each one's frontmatter `description`. Select the skills whose description matches this work item, read each selected skill in full, and use it to shape the spec. Skip the workflow skills that agent phases already load explicitly (`state-machine`, `git-standards`, `review`, `lavish`, `backlog-protocol`, `backlog-list`, `roadmap-generator`) and the user-invoked toolkits (`impeccable`, `back-prop`). Selecting nothing is a valid outcome for work no skill describes.
+   - **UI work:** If the work item involves UI design (new components or pages, layout changes, visual styling, UX flows), follow any explicit design directives in the user's prompt or work item (brand colors, specific design system, visual requirements) and the project's existing design system, and flag this run as **visual alignment required** - Phase 3 will present the proposal as a Lavish review artifact instead of a plain chat summary.
+   - **Copy work:** Marketing or page copy (landing, pricing, feature, or about pages, hero sections, headlines, CTAs, value propositions, taglines) selects `copywriting` when new copy is being written and/or `copy-editing` when existing copy is being revised. In-app microcopy (button labels, error messages, form hints, empty states) does NOT count; it stays with the design skills.
+   - **Record the selection:** Write a `Skills: <name>, <name>` line (or `Skills: none`) in the spec's **Execution Guidelines**. Downstream agents load exactly the skills on this line and do not re-run discovery.
 
 **Synthesis & Ranking**: Down-select to the top 2-3 most viable approaches. Rank them prioritizing simplicity and maintainability. Your recommended approach MUST reference specific files and patterns you found in the codebase — not generic best practices.
 
@@ -146,7 +144,7 @@ If handling blocking issues:
 ### Step 3 — Append Remediation Phase to Plan
 1. Read the existing `.gsd/[feature]-plan.xml`.
 2. Identify the last phase number in the plan.
-3. Append a **new phase** (e.g., `<phase name="N+1: QA Remediation">`) containing `<task>` entries for each fix or improvement. Each task must:
+3. Append a **new phase** (e.g., `<phase name="N+1: QA Remediation">`) containing `<task>` entries for each fix or improvement, using the exact `<name>`/`<action>`/`<verify>` shape from the XML Plan Template (no extra attributes). Each task must:
    - Reference the specific QA finding it addresses.
    - Include the target file(s) and a clear description of the required change.
    - For blocking issues: state plainly in the `<name>` that it is a fix, and note in the `<action>` that Builder should address it first.
@@ -235,7 +233,7 @@ The **`.gsd/[feature]-spec.md`** must follow this exact structure:
 - **Background & Research**
 - **Technical Design**
 - **What NOT To Do**
-- **Execution Guidelines**: Include affected files, watch-outs, and verification focus.
+- **Execution Guidelines**: Include affected files, watch-outs, verification focus, and the `Skills:` line from Phase 2 Step 6.
 
 ## XML Plan Template (Example)
 Use the exact structure below when generating the `.gsd/[feature]-plan.xml` file.

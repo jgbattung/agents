@@ -65,7 +65,6 @@ Skills are knowledge files that define standards, protocols, and domain expertis
 | `state-machine` | Protocols for reading/writing the `.gsd/` state directory, used by all agents. |
 | `git-standards` | Standardized multi-line git commit message format, used at agent handoff points. |
 | `review` | Code quality review that checks correctness, security, readability, DRY/YAGNI/SOLID compliance, and more. Used by the Integrator and available on-demand. |
-| `taste-skill` | Anti-slop frontend rulebook (`design-taste-frontend`) — brief-driven design direction with three dials (variance, motion, density), anti-default discipline, and a pre-flight check. Applied when designing or reviewing UI components. |
 | `lavish` | Turns plans, comparisons, and reports into reviewable HTML artifacts via the `lavish-axi` CLI. Used by the Architect for visual alignment on UI work. |
 | `back-prop` | Back-propagates reusable components from a deployed prototype into the canonical component library, with an audit-trail notes file. User-invocable. |
 
@@ -85,7 +84,7 @@ Skills are knowledge files that define standards, protocols, and domain expertis
 | `backlog-list` | Reads the `backlog/` folder and displays items grouped or filtered by status, priority, or epic. User-invocable. |
 | `roadmap-generator` | Generates `ROADMAP.md` and an optional `ROADMAP.html` visual board from backlog items, grouped by epic with progress bars. Used by the PM. |
 
-> To add a new skill, create a `SKILL.md` inside a new subfolder under `skills/`. The YAML frontmatter must include a `name` and a `description` — the Architect uses this description to decide relevance.
+> To add a new skill, create a `SKILL.md` inside a new subfolder under `skills/`. The YAML frontmatter must include a `name` and a `description` — the Architect uses this description to decide relevance, and records the skills it selects on a `Skills:` line in the spec so the Builder and QA Engineer load exactly those.
 
 ---
 
