@@ -238,6 +238,7 @@ The **`.gsd/[feature]-spec.md`** must follow this exact structure:
 - **Executive Summary**
 - **Background & Research**
 - **Technical Design**
+- **Backlog ID**: The backlog item this feature implements (e.g., `MM-003`), or `none` for freeform work. The Integrator uses this to close the item.
 - **What NOT To Do**
 - **Execution Guidelines**: Include affected files, watch-outs, verification focus, and the `Skills:` line from Phase 2 Step 6.
 

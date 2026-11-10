@@ -82,23 +82,32 @@ If all gates pass (or only branch freshness or protected files warned), proceed 
    - **PR template:** If the section names a template file, or the repository has one (`.github/pull_request_template.md` or `.github/PULL_REQUEST_TEMPLATE/`), read it and fill in every section of it - do not replace it with your own structure. With no template, write a concise summary covering what changed, why, and how to test.
    - **Title and ticket reference:** Follow the section's commit/ticket conventions for the title (e.g., a required ticket ID prefix).
 
-1. Read the `~/agents/skills/backlog-protocol/SKILL.md` skill file.
-2. Update the backlog item's `status` to `done` in its YAML frontmatter.
-3. Move the file from `backlog/{ID}-{slug}.md` to `backlog/archive/{ID}-{slug}.md`.
-4. Read the `~/agents/skills/roadmap-generator/SKILL.md` skill file and follow its instructions to regenerate `backlog/ROADMAP.md` and `backlog/ROADMAP.html`.
-5. Run the Notion sync from the project root per section 7 of the backlog-protocol skill: `node "$HOME/agents/scripts/notion-sync/sync.ts" .` A failure is a warning, never a blocker.
+   The title and description must contain no AI attribution and no session link (Rule Zero of the git-standards skill).
+5. Print the PR summary directly in chat (title + description) so the user can see what will be submitted. This draft will be used to open the PR in Phase 5.
+6. **Log:** Append a `### Integrator — PR Draft` section to `.gsd/[feature]-log.md` documenting: the PR title and that the draft was presented to the user.
 
-If no backlog item is associated, skip this phase.
-
-### Phase 6: Pushing, PR Creation & Handoff
+### Phase 5: Pushing & PR Creation
 1. Once the branch is clean (cleanup committed, or no cleanup was needed), use the `execute` tool to run `git push -u origin HEAD` to push the branch to the remote repository.
-2. **Open the PR:** Use the `execute` tool to run `gh pr create` with the base branch from `.gsd/[feature]-spec.md` and the title and description drafted in Phase 4. Pass the description via a heredoc to preserve formatting, e.g.:
+2. **Check for an existing PR:** Run `gh pr view --json url,state`. If an open PR already exists for this branch (this is a re-run after a remediation phase, e.g., PR review feedback), the push in step 1 has already updated it: do NOT create a second PR. Output the existing PR URL, skip step 3, and skip Phase 6.
+3. **Open the PR:** Use the `execute` tool to run `gh pr create` with the base branch from `.gsd/[feature]-spec.md` and the title and description drafted in Phase 4. Pass the description via a heredoc to preserve formatting, e.g.:
    ```bash
    gh pr create --base <base-branch> --title "<PR title>" --body-file - << 'EOF'
    <PR description from Phase 4>
    EOF
    ```
-   - **FALLBACK:** If `gh pr create` fails (e.g., not authenticated, no remote configured, or PR already exists), do NOT retry blindly. Output the error, print the Phase 4 summary again, and ask the user to create the PR manually on GitHub.
-3. Output the PR URL returned by `gh pr create` so the user can open it directly.
-4. **Log:** Append a `### Integrator — PR Opened` section to `.gsd/[feature]-log.md` documenting: the PR URL and base branch (or the fallback outcome if `gh` failed).
-5. Instruct the user to open a new chat session and run the `/guide` command to generate any final walkthrough documentation.
+   - **FALLBACK:** If `gh pr create` fails (e.g., not authenticated or no remote configured), do NOT retry blindly. Output the error, print the Phase 4 summary again, and ask the user to create the PR manually on GitHub.
+4. Output the PR URL returned by `gh pr create` so the user can open it directly.
+5. **Log:** Append a `### Integrator — PR Opened` section to `.gsd/[feature]-log.md` documenting: the PR URL and base branch (or that an existing PR was updated, or the fallback outcome if `gh` failed).
+
+### Phase 6: Backlog Completion
+Run this phase ONLY if a PR was successfully opened in Phase 5 during this run. If the push or `gh pr create` failed, or an existing PR was updated, skip it - the backlog must never say work shipped when it did not.
+
+Read the **Backlog ID** field in `.gsd/[feature]-spec.md`. If it is `none` or absent, skip this phase - do not guess an item from the `backlog/` folder. Otherwise:
+
+1. Read the `~/agents/skills/backlog-protocol/SKILL.md` skill file.
+2. Update that backlog item's `status` to `done` in its YAML frontmatter.
+3. Move the file from `backlog/{ID}-{slug}.md` to `backlog/archive/{ID}-{slug}.md`.
+4. Read the `~/agents/skills/roadmap-generator/SKILL.md` skill file and follow its instructions to regenerate `backlog/ROADMAP.md` and `backlog/ROADMAP.html`.
+5. Run the Notion sync from the project root per section 7 of the backlog-protocol skill: `node "$HOME/agents/scripts/notion-sync/sync.ts" .` A failure is a warning, never a blocker.
+
+Finish by presenting your final report to the user: the PR URL, the gates that passed or warned, and any backlog item closed.
