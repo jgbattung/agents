@@ -26,8 +26,9 @@ git diff HEAD
 # Staged only (if reviewing a commit candidate)
 git diff --staged
 
-# Full branch diff (if reviewing before a PR)
-git diff origin/<base-branch>..HEAD
+# Full branch diff (if reviewing before a PR) - three dots, so only this
+# branch's own changes show even when the base branch has moved ahead
+git diff origin/<base-branch>...HEAD
 ```
 
 If files are attached directly (`#file:` references), use those without running git commands.
@@ -97,6 +98,10 @@ Analyse the diff against each dimension below. Collect every finding before writ
 
 ### Debug Leftovers
 - Are there `console.log`, `debugger`, commented-out code blocks, or unresolved `TODO`/`FIXME` markers introduced by this change?
+- Are there `.skip` or `.only` markers left in test files?
+- Is there AI attribution in comments or strings (`Generated with Claude Code`, `Co-Authored-By: Claude`, "AI-assisted", or any mention of an AI model, vendor, or tool as an author)?
+
+Report each of these as a **BLOCKER**, prefix the finding with `[Debug Leftover]`, and record the exact file path and line number. The Integrator removes `[Debug Leftover]` findings automatically from those coordinates instead of kicking them back, so they must be locatable without re-scanning.
 
 ### Documentation Drift
 Check whether the changes contradict or invalidate anything documented in existing project docs (e.g., README, ARCHITECTURE.md, CONTRIBUTING.md, inline doc pages).
@@ -134,6 +139,7 @@ If no `.gsd/` directory or feature context exists (e.g., standalone review outsi
 
 ### BLOCKER
 - **[file:line]** <what the problem is> — <recommended fix>
+- **[file:line]** [Debug Leftover] <what was left behind>
 
 ### IMPORTANT
 - **[file:line]** <what the problem is> — <recommended fix>

@@ -32,10 +32,11 @@ Run the `review` skill against the full branch diff to catch code quality issues
 
 1. Read the `.gsd/[feature]-spec.md` file to determine the **Base Branch**.
 2. Read the `~/agents/skills/review/SKILL.md` skill file and follow its instructions.
-3. Use `git diff <base-branch>..HEAD` as the diff source.
+3. Use `git diff <base-branch>...HEAD` (three dots) as the diff source, so only this branch's own changes are reviewed even when the base branch has moved ahead.
 4. The review skill will write its findings to `.gsd/[feature]-review.md`.
 5. **SEVERITY GATE:**
-   - If any **BLOCKER** or **IMPORTANT** findings exist: **HALT.** Output the findings and provide the user with a copy-pasteable prompt to give to the Builder agent to resolve them. Take no further action until the user returns.
+   - Findings tagged `[Debug Leftover]` never halt this gate - you remove them yourself in Phase 3a. Set them aside when applying the rules below.
+   - If any other **BLOCKER** or **IMPORTANT** findings exist: **HALT.** Output the findings and provide the user with a copy-pasteable prompt to give to the Builder agent to resolve them. Take no further action until the user returns.
    - If only **SUGGESTION** findings exist: note them for inclusion in the PR description. Proceed to Phase 3.
    - If no findings: proceed to Phase 3.
 6. **Log:** Append a `### Integrator — Self-Review` section to `.gsd/[feature]-log.md` documenting: the review outcome, severity counts, and whether the gate passed or halted.
@@ -49,11 +50,12 @@ Before pushing the branch, ensure no debug code is shipped and all mechanical qu
    - `console.log()` or similar debug print statements.
    - `.skip` or `.only` in test files.
    - `// TODO:` comments or commented-out blocks of code.
+   - Every `[Debug Leftover]` finding recorded in `.gsd/[feature]-review.md` - use its exact file path and line number.
 3. **CLEANUP PROTOCOL:** If debug code exists in the newly added lines, use your `edit` tool to remove them from the respective files. 
    - **DO NOT** edit or remove any debug code that existed prior to this branch (lines without a `+` in the diff).
 4. **Log:** Append a `### Integrator — Debug Cleanup` section to `.gsd/[feature]-log.md` documenting: which files were edited, what was removed, and what was preserved.
 5. **COMMIT THE CLEANUP:** If you made *any* edits during this cleanup step:
-   - Read the `~/agents/skills/git-standards/SKILL.md` file, then commit the cleanup yourself: `git add` only the files you edited and run `git commit` strictly following the skill's conventional-commit message format (e.g., `chore(cleanup): remove debug code before PR`).
+   - Read the `~/agents/skills/git-standards/SKILL.md` file, then commit the cleanup yourself: `git add` only the files you edited and run `git commit` strictly following the skill's conventional-commit message format (e.g., `chore(cleanup): remove debug code before PR`) and its Rule Zero (no AI attribution or session links).
    - Include a summary of exactly which files were modified and what was removed in your final report to the user.
    - Proceed directly to Step 3b - no user confirmation is needed for this commit.
 
@@ -63,18 +65,20 @@ Run the project's quality checks. Read `.gsd/project-context.md` for the exact c
 1. **Test suite**: Run the project's test command (e.g., `npm run test`, `pytest`). Verify exit code `0`.
 2. **Linter**: Run the project's lint command (e.g., `npm run lint`, `ruff check`). Verify exit code `0`.
 3. **Branch freshness**: Run `git fetch origin && git log HEAD..origin/<base-branch> --oneline` to check if the base branch has moved ahead. If commits exist, warn the user that a rebase may be needed.
-4. **GATE FAILURE PROTOCOL:** If tests or lint fail:
-   - **HALT.** Output the failure details.
-   - Provide the user with a copy-pasteable prompt to give to the Builder or QA Engineer to fix the issue.
+4. **AI attribution**: Run `git log <base-branch>..HEAD --format='%H%n%B'` and scan every commit message on the branch for AI attribution as defined by Rule Zero of the `~/agents/skills/git-standards/SKILL.md` skill - `Co-Authored-By` naming an AI tool, `Generated with ...` footers, any trailer naming an AI model, vendor, or tool, and any `Claude-Session` trailer or `claude.ai/code/session_` link.
+5. **Protected files**: Run `git diff <base-branch>...HEAD --name-only` and flag any changed file that is CI/CD or deploy configuration (e.g., `.github/workflows/`, `Dockerfile`, deploy manifests), a dependency manifest or lockfile (e.g., `package.json`, `package-lock.json`, `pyproject.toml`), or build/compiler configuration (e.g., `tsconfig.json`, bundler and lint configs), plus anything listed as protected in `.gsd/project-context.md`. A flagged file the plan explicitly called for passes. Any other flagged file is a warning: list it in your final report and under a "Sensitive Files Changed" section of the PR description so a human reviewer looks at it.
+6. **GATE FAILURE PROTOCOL:** If tests or lint fail, or the AI attribution scan finds a hit:
+   - **HALT.** Output the failure details. For an AI attribution hit, list each offending commit hash and line.
+   - For test or lint failures, provide the user with a copy-pasteable prompt to give to the Builder or QA Engineer to fix the issue. For an AI attribution hit, tell the user the branch history must be rewritten to remove it before the PR can be raised - do NOT rewrite history yourself.
    - Take no further action until the user returns.
 
-If all gates pass (or only branch freshness warned), proceed to Phase 4.
+If all gates pass (or only branch freshness or protected files warned), proceed to Phase 4.
 
 ### Phase 4: PR Summary
 1. Read the `.gsd/[feature]-spec.md` file to extract the feature title and key requirements.
 2. Read the `.gsd/[feature]-log.md` to get the technical details of the actual implementation.
 3. If SUGGESTION findings exist from Phase 2, include them in a "Known Improvements" section of the PR description.
-4. Draft a concise PR summary (title + description) from the spec requirements and implementation log. Include what changed, why, and how to test.
+4. Draft a concise PR summary (title + description) from the spec requirements and implementation log. Include what changed, why, and how to test. The title and description must contain no AI attribution and no session link (Rule Zero of the git-standards skill).
 5. Print the PR summary directly in chat (title + description) so the user can see what will be submitted. This draft will be used to open the PR in Phase 6.
 6. **Log:** Append a `### Integrator — PR Draft` section to `.gsd/[feature]-log.md` documenting: the PR title and that the draft was presented to the user.
 
