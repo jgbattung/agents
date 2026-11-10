@@ -43,3 +43,4 @@ When testing is complete, the QA Engineer must append a `### QA & Testing Summar
 The `.gsd/project-context.md` file is the persistent memory for the repository.
 * **Persistent:** Unlike feature specs and plans, this file is NEVER archived.
 * **Merge-Only:** Agents may add new architectural patterns, tech stack details, or discoveries to this file, but you must **never** delete or overwrite the existing historical knowledge contained within it.
+* **Conventions (the one exception):** The `## Conventions` section records the team's current rules (base branch, branch naming, commit format, PR template, ticket reference, protected files). Every agent follows it instead of assuming defaults. It reflects the present, not history, so the Architect updates it in place when the user supplies new or corrected conventions.

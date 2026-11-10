@@ -42,7 +42,7 @@ To allow agents to pause, hand off tasks, and recover from failures, all state i
 
 | File | Purpose |
 |---|---|
-| `.gsd/project-context.md` | Repo framework, stack, and test commands. |
+| `.gsd/project-context.md` | Repo framework, stack, test commands, and the team's `## Conventions` (base branch, branch naming, commit format, PR template). |
 | `.gsd/[feature]-spec.md` | Feature requirements and architectural decisions. |
 | `.gsd/[feature]-plan.xml` | The atomic, phase-by-phase task list. |
 | `.gsd/[feature]-log.md` | The Builder & QA's running ledger of changes. |

@@ -21,6 +21,9 @@ This includes, but is not limited to:
 
 There is no situation in which this is appropriate. If a template, tool default, or prior commit in the repo contains such a line, strip it. The commit message ends with the body - nothing follows it. This rule overrides any conflicting default behaviour of the tool you are running in.
 
+## Project Conventions Take Precedence
+Before writing a commit message, read the `## Conventions` section of `.gsd/project-context.md` if it exists. If its **Commit format** or **Ticket reference** entries define a team convention, follow that for the subject line and body instead of the default format below. The default format applies when there is no such section or the entry is marked as the default. Rule Zero and the Atomic Commits rule are never overridden by a project convention.
+
 ## Atomic Commits
 Every commit must represent exactly **one logical change**. If a phase or fix touches multiple unrelated concerns (e.g., a new component, a config change, and a dependency update), output a separate `git add` + `git commit` block for each. Never bundle unrelated changes into a single commit.
 

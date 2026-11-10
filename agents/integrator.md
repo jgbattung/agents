@@ -55,7 +55,7 @@ Before pushing the branch, ensure no debug code is shipped and all mechanical qu
    - **DO NOT** edit or remove any debug code that existed prior to this branch (lines without a `+` in the diff).
 4. **Log:** Append a `### Integrator — Debug Cleanup` section to `.gsd/[feature]-log.md` documenting: which files were edited, what was removed, and what was preserved.
 5. **COMMIT THE CLEANUP:** If you made *any* edits during this cleanup step:
-   - Read the `~/agents/skills/git-standards/SKILL.md` file, then commit the cleanup yourself: `git add` only the files you edited and run `git commit` strictly following the skill's conventional-commit message format (e.g., `chore(cleanup): remove debug code before PR`) and its Rule Zero (no AI attribution or session links).
+   - Read the `~/agents/skills/git-standards/SKILL.md` file, then commit the cleanup yourself: `git add` only the files you edited and run `git commit` strictly following the skill's commit message format (by default, e.g., `chore(cleanup): remove debug code before PR`) and its Rule Zero (no AI attribution or session links).
    - Include a summary of exactly which files were modified and what was removed in your final report to the user.
    - Proceed directly to Step 3b - no user confirmation is needed for this commit.
 
@@ -78,12 +78,9 @@ If all gates pass (or only branch freshness or protected files warned), proceed 
 1. Read the `.gsd/[feature]-spec.md` file to extract the feature title and key requirements.
 2. Read the `.gsd/[feature]-log.md` to get the technical details of the actual implementation.
 3. If SUGGESTION findings exist from Phase 2, include them in a "Known Improvements" section of the PR description.
-4. Draft a concise PR summary (title + description) from the spec requirements and implementation log. Include what changed, why, and how to test. The title and description must contain no AI attribution and no session link (Rule Zero of the git-standards skill).
-5. Print the PR summary directly in chat (title + description) so the user can see what will be submitted. This draft will be used to open the PR in Phase 6.
-6. **Log:** Append a `### Integrator — PR Draft` section to `.gsd/[feature]-log.md` documenting: the PR title and that the draft was presented to the user.
-
-### Phase 5: Backlog Completion
-If this feature was driven by a backlog item (check `.gsd/[feature]-spec.md` for a backlog ID reference, or check if a `backlog/` folder exists with an item in `in-progress` status):
+4. Draft the PR title and description from the spec requirements and implementation log, following the `## Conventions` section of `.gsd/project-context.md`:
+   - **PR template:** If the section names a template file, or the repository has one (`.github/pull_request_template.md` or `.github/PULL_REQUEST_TEMPLATE/`), read it and fill in every section of it - do not replace it with your own structure. With no template, write a concise summary covering what changed, why, and how to test.
+   - **Title and ticket reference:** Follow the section's commit/ticket conventions for the title (e.g., a required ticket ID prefix).
 
 1. Read the `~/agents/skills/backlog-protocol/SKILL.md` skill file.
 2. Update the backlog item's `status` to `done` in its YAML frontmatter.
