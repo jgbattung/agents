@@ -2,7 +2,7 @@
 
 A globally accessible, highly adaptable AI agent toolset designed to automate the software development lifecycle (SDLC).
 
-These agents live in a centralized directory (e.g., `~/agents/`) but execute locally within any project. They maintain strict interconnectivity and prevent LLM hallucination by passing context through a local, git-ignored state machine folder (`.gsd/`).
+These agents live in one centralized directory, `~/agents/` (the path is hardcoded in the agent files), but execute locally within any project. They maintain strict interconnectivity and prevent LLM hallucination by passing context through a local, git-ignored state machine folder (`.gsd/`).
 
 ---
 
@@ -88,27 +88,54 @@ Skills are knowledge files that define standards, protocols, and domain expertis
 ## Machine Setup
 
 This repo is the **source of truth** for the entire AI workflow. Nothing works until
-it is projected into the locations your AI tooling reads, via symlinks:
+it is projected into the locations Claude Code reads, via symlinks. Follow these steps
+in order on a new machine.
+
+### 1. Prerequisites
+
+| Tool | Needed for |
+|---|---|
+| Claude Code | Everything |
+| `git` | Everything |
+| GitHub CLI (`gh`), authenticated with `gh auth login` | The Integrator (opening PRs) and the Reviewer (reading PRs) |
+| Node.js 22+ | Optional: the Lavish visual alignment step (`npx`) and the Notion backlog mirror |
+
+### 2. Clone to exactly `~/agents`
+
+```bash
+git clone https://github.com/jgbattung/agents.git ~/agents
+```
+
+The path is not configurable: the agent files reference `~/agents/skills/...` and
+`~/agents/agents/...` directly. If the repo must live elsewhere, symlink `~/agents` to it.
+
+### 3. Create the symlinks
 
 | Link (what the tool reads) | Target (in this repo) | Purpose |
 |---|---|---|
 | `~/.claude/agents` | `~/agents/agents` | Claude Code agent definitions |
 | `~/.claude/skills` | `~/agents/skills` | Claude Code skills |
 | `~/.claude/commands` | `~/agents/commands` | Claude Code slash commands (agent invocation) |
-| `~/.claude/CLAUDE.md` | `~/agents/AGENTS.md` | Global memory (all projects) |
+| `~/.claude/CLAUDE.md` | `~/agents/AGENTS.md` | Global instructions (all projects) |
 
-`AGENTS.md` is the single global instructions file. It carries the provider-neutral
-standard name; each provider gets a symlink at whatever location/name it expects.
+**Before linking:** if any of those four link paths already exists as a real file or
+folder, a symlink cannot be created over it. Move its contents somewhere safe (or into
+this repo, if you want to keep them) and remove the original first. Never delete an
+existing `~/.claude/CLAUDE.md` or skills folder without checking what is in it.
+
+On macOS / Linux this fails silently: `ln -s` onto an existing folder succeeds but puts
+the link *inside* it (e.g., `~/.claude/agents/agents`), so nothing loads and no error is
+shown. On Windows the command errors with "item already exists" and creates nothing.
 
 **Windows** (elevated PowerShell, or any shell with Developer Mode enabled):
 ```powershell
-New-Item -ItemType SymbolicLink -Path "$HOME\.claude\agents" -Target "$HOME\agents\agents"
-New-Item -ItemType SymbolicLink -Path "$HOME\.claude\skills" -Target "$HOME\agents\skills"
-New-Item -ItemType SymbolicLink -Path "$HOME\.claude\commands" -Target "$HOME\agents\commands"
-New-Item -ItemType SymbolicLink -Path "$HOME\.claude\CLAUDE.md" -Target "$HOME\agents\AGENTS.md"
+New-Item -ItemType SymbolicLink -Path "$HOME.claudeagents" -Target "$HOMEagentsagents"
+New-Item -ItemType SymbolicLink -Path "$HOME.claudeskills" -Target "$HOMEagentsskills"
+New-Item -ItemType SymbolicLink -Path "$HOME.claudecommands" -Target "$HOMEagentscommands"
+New-Item -ItemType SymbolicLink -Path "$HOME.claudeCLAUDE.md" -Target "$HOMEagentsAGENTS.md"
 ```
 > No admin rights? For `CLAUDE.md` only, a plain file at `~/.claude/CLAUDE.md`
-> containing the single line `@C:\Users\<you>\agents\AGENTS.md` works identically
+> containing the single line `@C:Users<you>agentsAGENTS.md` works identically
 > (Claude Code resolves `@` imports natively).
 
 **macOS / Linux:**
@@ -119,19 +146,44 @@ ln -s ~/agents/commands ~/.claude/commands
 ln -s ~/agents/AGENTS.md ~/.claude/CLAUDE.md
 ```
 
-When adopting another AI provider, add one more symlink pointing at `AGENTS.md` from
-that provider's global config location (e.g., `~/.codex/AGENTS.md` for Codex).
+`AGENTS.md` is the single global instructions file. It carries the provider-neutral
+standard name; each provider gets a symlink at whatever location/name it expects. When
+adopting another AI provider, add one more symlink pointing at `AGENTS.md` from that
+provider's global config location (e.g., `~/.codex/AGENTS.md` for Codex).
+
+### 4. Turn off Claude Code's own attribution
+
+The agents never add AI attribution to commits or PRs (Rule Zero in the `git-standards`
+skill). Also switch off the harness default so nothing appends it behind their back. Add
+this to `~/.claude/settings.json` (this file is per machine and is not part of this repo):
+
+```json
+{
+  "attribution": { "commit": "", "pr": "" }
+}
+```
+
+### 5. Verify
+
+Start a new Claude Code session in any project and type `/`. You should see `/pm`,
+`/architect`, `/builder`, `/qa`, `/integrator`, and `/reviewer`. If they are missing,
+the symlinks are wrong: list `~/.claude` and check that all four links point into `~/agents`.
+
+### 6. Optional pieces
+
+- **Notion backlog mirror:** only for allowlisted personal projects. Skip it on a machine
+  that does not need it; every other project is skipped automatically and a failed sync
+  never blocks anything. Setup is in `scripts/notion-sync/README.md`.
+- **Per-project setup:** none. The first `/architect` run in a repository creates
+  `.gsd/`, excludes it from git, and asks you for the team's conventions.
 
 ---
 
 ## Quick Start
 
-1. Clone this repository into your global agents directory:
-   ```bash
-   git clone https://github.com/jgbattung/agents.git ~/agents/
-   ```
+1. Complete **Machine Setup** above (clone to `~/agents`, create the symlinks, verify).
 
-2. Create the symlinks described in **Machine Setup** above, then navigate to your target project repository.
+2. Navigate to your target project repository.
 
 3. **(Optional)** Invoke the PM to break down a PRD or idea into backlog items:
    ```
