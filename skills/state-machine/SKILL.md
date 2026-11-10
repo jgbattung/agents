@@ -28,6 +28,7 @@ The `[feature]` placeholder in filenames like `[feature]-spec.md`, `[feature]-pl
 The `.gsd/[feature]-log.md` file is the "save state" for the feature.
 * **Append-Only:** NEVER overwrite or delete existing content in the log. Always append new entries to the bottom of the file.
 * **Immediate Updates:** Log every move, code change, or decision immediately after it occurs.
+* **Source of Truth for Progress:** The log alone records what is done. Never write completion status (e.g., `status="done"`) into `[feature]-plan.xml`; to know which tasks are complete, read the log.
 * **Mandatory Sections:** Every log entry must use this AI-optimized format:
 
 ### [Timestamp / Phase Name]

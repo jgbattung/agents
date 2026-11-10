@@ -103,13 +103,13 @@ Using only `read` and `search` tools, trace the root cause of the failure. Look 
 ### Step 4 — Update `.gsd/` Files
 Once you have a clear picture:
 1. **Update `.gsd/[feature]-log.md`:** Append a clearly dated `### Investigation & Recovery` section documenting what went wrong, what you found, and what the corrective action is.
-2. **Update `.gsd/[feature]-plan.xml`:** Add or revise `<task>` entries to represent the corrective work. Mark previously completed tasks with `status="done"` so Builder does not repeat them. Any new or revised tasks must come *after* the last completed task in sequence.
+2. **Update `.gsd/[feature]-plan.xml`:** Add or revise `<task>` entries to represent the corrective work. Leave already-completed phases/tasks untouched and never write completion status into the XML - the log, not the plan, is the source of truth for what is done. Any new or revised tasks must come *after* the last completed task in sequence.
 
 ### Step 5 — Generate Builder Handoff Prompt
 Produce a ready-to-paste prompt for the user to open a new Builder session with. The prompt MUST:
 - State the feature branch name and the `.gsd/` files to load.
-- Explicitly list which tasks are already done (by task ID or title) so Builder skips them.
-- Identify the **exact task ID / title in the plan to start from**.
+- Explicitly list which tasks are already done (by phase/task name) so Builder skips them.
+- Identify the **exact phase/task name in the plan to start from**.
 - Describe the failure and corrective intent in plain language so Builder has full context.
 
 Example structure:
@@ -117,8 +117,8 @@ Example structure:
 Builder, resume work on feature/[branch].
 Load: .gsd/[feature]-spec.md, .gsd/[feature]-plan.xml, .gsd/[feature]-log.md
 
-Already completed (DO NOT repeat): [task IDs / titles]
-Start from: [task ID / title]
+Already completed (DO NOT repeat): [phase/task names]
+Start from: [phase/task name]
 
 Context: [brief description of what went wrong and what the corrective tasks in the plan address]
 ```
@@ -149,14 +149,14 @@ If handling blocking issues:
 3. Append a **new phase** (e.g., `<phase name="N+1: QA Remediation">`) containing `<task>` entries for each fix or improvement. Each task must:
    - Reference the specific QA finding it addresses.
    - Include the target file(s) and a clear description of the required change.
-   - For blocking issues: be marked with priority context so Builder addresses them first.
-   - For non-blocking suggestions: be clearly labeled as improvements (e.g., `<task type="improvement">`).
+   - For blocking issues: state plainly in the `<name>` that it is a fix, and note in the `<action>` that Builder should address it first.
+   - For non-blocking suggestions: prefix the `<name>` with `Improvement:` so it is clearly labeled.
 4. Use your `edit` tool to write the new phase into `.gsd/[feature]-plan.xml`.
 
 ### Step 4 — Update the Log
 Append a dated `### QA Remediation Planning` section to `.gsd/[feature]-log.md` documenting:
 - Which QA findings are being addressed.
-- The new phase/task IDs added to the plan.
+- The new phase/task names added to the plan.
 - Any findings you chose NOT to plan (with justification, presented to the user).
 
 ### Step 5 — Generate Builder Handoff Prompt
@@ -164,7 +164,7 @@ Produce a ready-to-paste prompt for the user to open a new Builder session with.
 - Explicitly state this is a **QA remediation** task.
 - Reference the feature branch and `.gsd/` files.
 - List all previously completed tasks so Builder skips them.
-- Identify the exact new phase/task ID to start from.
+- Identify the exact new phase/task name to start from.
 - Briefly describe what QA found and what the new tasks address.
 
 Example structure:
@@ -172,7 +172,7 @@ Example structure:
 Builder, resume work on feature/[branch].
 Load: .gsd/[feature]-spec.md, .gsd/[feature]-plan.xml, .gsd/[feature]-log.md
 
-Already completed (DO NOT repeat): [all prior task IDs / titles]
+Already completed (DO NOT repeat): [all prior phase/task names]
 Start from: Phase [N+1] — QA Remediation
 
 Context: The QA Engineer identified [blocking issues / non-blocking suggestions] during testing. 
