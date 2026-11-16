@@ -37,7 +37,7 @@ The `.gsd/[feature]-log.md` file is the "save state" for the feature.
 3. **Unresolved Errors**: Any blockers, failing tests, or stack traces that require another agent's attention.
 
 ## 5. QA & Verification Summary
-When testing is complete, the QA Engineer must append a `### QA & Testing Summary` section containing: the test ledger (each test, the behavior it protects, its reason, and its failure statement), every prune with its justification, any skipped tests seen, and any Category B (source code) bugs found. The QA Engineer never fixes source code; Category B bugs are logged under `Unresolved Errors` for the Architect.
+When testing is complete, the QA Engineer must append a `### QA & Testing Summary` section containing: the test ledger (each test, the behavior it protects, its reason, and its failure statement), every prune with its justification, every behavior deliberately not tested or left as a manual check with its reason, any skipped tests seen, and any Category B (source code) bugs found. The QA Engineer never fixes source code; Category B bugs are logged under `Unresolved Errors` for the Architect.
 
 ## 6. The Project Context Rule (Living Knowledge Base)
 The `.gsd/project-context.md` file is the persistent memory for the repository.
