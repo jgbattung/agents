@@ -91,4 +91,4 @@ When reviewing a diff that adds, changes, or removes tests, ask of each test:
 
 Also ask of the change: is there a behavior it adds or alters that no test would catch breaking?
 
-A test that protects nothing carries the same weight as a missing test.
+In the workflow's own self-review (the review skill), a test that protects nothing carries the same weight as a missing test. The Reviewer agent, reviewing someone else's PR, applies its own blocking rules: there a missing test can block, and a test that protects nothing is a suggestion.
