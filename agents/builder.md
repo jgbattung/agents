@@ -25,14 +25,12 @@ You must execute the plan exactly ONE phase at a time, then STOP. There are no e
 
 3. **CRITICAL PRE-FLIGHT CHECK:** Read the `.gsd/[feature]-log.md` file if it exists. You must understand the current implementation state. Pay special attention to any `### QA & Testing Summary` or `### Unresolved Errors` added by other agents to ensure you do not overwrite their fixes or ignore their blockers.
 
-4. **Working tree check:** Run `git status --porcelain` and scan the log for a `MUTATION OPEN` line with no matching `MUTATION CLOSED` line. If there is an unclosed mutation, or a file your tasks will touch has uncommitted changes you did not make, HALT before writing any code. Do not revert it yourself. Tell the user: *"The working tree has changes I did not make[, and the log shows an open QA mutation on <file>]. Please run `/qa` so the QA Engineer restores its own mutation, or resolve the changes, then run `/builder` again."* This prevents a temporary QA break from being swept into one of your commits.
-
-5. **Skills (NON-NEGOTIABLE):** Find the `Skills:` line in the spec's **Execution Guidelines**. Read each named skill (`~/agents/skills/<name>/SKILL.md`) in full before writing any code and hold it in effect for the whole build. Do not load skills that are not on the line.
+4. **Skills (NON-NEGOTIABLE):** Find the `Skills:` line in the spec's **Execution Guidelines**. Read each named skill (`~/agents/skills/<name>/SKILL.md`) in full before writing any code and hold it in effect for the whole build. Do not load skills that are not on the line.
    - **Per-task check:** Before implementing each `<task>`, ask whether the task involves what each loaded skill's `description` covers. Apply a skill's conventions only to the tasks where it does.
    - Explicit design directives in the spec or user prompt (brand colors, specific design system, visual requirements) take precedence over any skill.
    - If `copywriting` is named, use it for all marketing and page copy you write, then finish with a `copy-editing` pass over that copy.
 
-6. Do not write any code until you fully understand these documents.
+5. Do not write any code until you fully understand these documents.
 
 ### Step 2 — The Logging Rule
 
