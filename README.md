@@ -15,7 +15,7 @@ This workflow mimics a real-world engineering team, compartmentalizing tasks to 
 | **PM** | `/pm` | The Product Manager | Parses external PRDs or generates stories from rough ideas, breaks them into backlog items with acceptance criteria, and prioritizes work. |
 | **Architect** | `/architect` | The Planner | Analyzes feature requirements, records the team's conventions, researches approaches, and outputs a strict XML execution plan and feature spec. Also plans every remediation: QA findings, Integrator findings, and PR review feedback all come back here. |
 | **Builder** | `/builder` | The Executor | Implements the Architect's XML plan phase-by-phase, with one atomic commit per task and a checkpoint stop per phase. Strictly logs all code changes and deviations. Only ever builds tasks that are in the plan. |
-| **QAEngineer** | `/qa` | The Tester | Reads the Builder's logs, pattern-matches existing repository test styles, writes comprehensive tests, and self-heals its own test code. Never edits source code: every implementation bug it finds is logged and routed to the Architect for a remediation phase. Re-verifies instead of starting over when run again after remediation. |
+| **QAEngineer** | `/qa` | The Tester | Reads the Builder's logs, pattern-matches existing repository test styles, writes the smallest set of tests that protects what the feature changed, proves each one can fail with a mutation check, and self-heals its own test code. Never edits source code: every implementation bug it finds is logged and routed to the Architect for a remediation phase. Re-verifies instead of starting over when run again after remediation. |
 | **Integrator** | `/integrator` | The Tech Lead | Verifies the plan was completed, runs a self-review quality gate, scrubs the branch of debug artifacts, runs the mechanical gates, and opens the Pull Request using the repo's PR template and conventions. Findings that need a code change go to the Architect, never straight to the Builder. |
 | **Reviewer** | `/reviewer` | The Peer Reviewer | Standalone and off-cycle. Reviews another developer's Pull Request against the ticket's Acceptance Criteria and the relevant skills, runs the PR's executable "How to test" steps, and writes a review file only when it finds issues. |
 
@@ -61,6 +61,7 @@ Skills are knowledge files that define standards, protocols, and domain expertis
 |---|---|
 | `state-machine` | Protocols for reading/writing the `.gsd/` state directory, used by all agents. |
 | `git-standards` | Standardized multi-line git commit message format, used at agent handoff points. |
+| `testing-standards` | What earns a test, what never does, and how tests are proven, pruned, and judged. Loaded by the QA Engineer, Architect, Reviewer, and the `review` skill. |
 | `review` | Code quality review that checks correctness, security, readability, DRY/YAGNI/SOLID compliance, and more. Used by the Integrator and available on-demand. |
 | `lavish` | Turns plans, comparisons, and reports into reviewable HTML artifacts via the `lavish-axi` CLI. Used by the Architect for visual alignment on UI work. |
 | `back-prop` | Back-propagates reusable components from a deployed prototype into the canonical component library, with an audit-trail notes file. User-invocable. |
