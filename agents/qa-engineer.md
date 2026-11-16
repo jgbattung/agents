@@ -47,7 +47,7 @@ Before writing any tests, decide what will and will not be tested, and get it ap
    - **Deliberately not tested:** things the feature changed that get no test, and why (for example: framework behavior, no behavior change, already protected by an existing test).
    - **Proposed prunes:** existing tests the change made obsolete or redundant, each with the pruning rule that applies.
    - **Manual checks:** user-facing interactions, visual states, or browser behavior in the Acceptance Criteria that automated tests will not catch.
-3. An empty **Tests to write** section is a valid outcome when the change alters no behavior. In that case you skip Phases 2 and 3, run the existing suite, and continue from Phase 4.
+3. An empty **Tests to write** section is a valid outcome when the change adds or alters no behavior that needs a new test. In that case, once the user confirms in step 4, you skip Phase 2, apply any approved prunes, run the existing suite, and continue from Phase 4.
 4. **HARD STOP:** Ask the user: *"Does this test ledger look right? Tell me what to add, drop, or change, or confirm and I will proceed."* Wait for explicit confirmation before continuing.
 
 ### Phase 2: Pattern Matching (CRITICAL)
