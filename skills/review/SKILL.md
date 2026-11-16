@@ -1,6 +1,6 @@
 ---
 name: review
-description: 'Conduct a code quality review of changes at any point in development — mid-feature, before a commit, or before raising a PR. Analyses code for correctness, security, readability, maintainability, test coverage, DRY/YAGNI/SOLID compliance, accessibility, debug leftovers, and documentation drift. Writes findings to .gsd/[feature]-review.md. Use when asked to review changes, do a self-review, check code quality, audit recent edits, or verify implementation before committing.'
+description: 'Conduct a code quality review of changes at any point in development — mid-feature, before a commit, or before raising a PR. Analyses code for correctness, security, readability, maintainability, test value, DRY/YAGNI/SOLID compliance, accessibility, debug leftovers, and documentation drift. Writes findings to .gsd/[feature]-review.md. Use when asked to review changes, do a self-review, check code quality, audit recent edits, or verify implementation before committing.'
 ---
 
 # Code Review
@@ -73,10 +73,17 @@ Analyse the diff against each dimension below. Collect every finding before writ
 - Will future developers understand this code without the author present?
 
 ### Testing
-- Are new or changed code paths covered by tests?
-- Are happy-path, edge-case, and error-state scenarios tested?
-- Are tests asserting meaningful behaviour (not just render-without-crash)?
-- Are mocks and spies scoped correctly (not leaking between tests)?
+Read `~/agents/skills/testing-standards/SKILL.md` and judge the tests in the diff by its Section 8. Do not count tests or ask whether lines are covered.
+
+- Is there a behavior this change adds or alters that no test would catch breaking? Use the spec's **Protected Behaviors** list when a spec exists. Report as IMPORTANT.
+- Does each added or changed test protect a named behavior, and would it fail if that behavior broke? A test of the framework, a constant, an argument's mere existence, or a mock's own return value does not.
+- Does a test duplicate what another test already protects?
+- Does a test skip, or guard against a missing tool or data set, instead of failing?
+- Are the tests in proportion to the behavior changed?
+- For each removed test: is the removal justified by the pruning rules?
+- Are mocks limited to system boundaries and scoped so they do not leak between tests?
+
+Report every problem with an existing test (not a missing one) as **IMPORTANT**, prefix the finding with `[Test Quality]`, and record the exact file path and line number. The Integrator routes `[Test Quality]` findings to the QA Engineer instead of the Architect, so they must be locatable without re-scanning.
 
 ### Accessibility
 - Are interactive elements reachable by keyboard?
@@ -124,7 +131,7 @@ If no `.gsd/` directory or feature context exists (e.g., standalone review outsi
 | Severity | Meaning |
 |----------|---------|
 | **BLOCKER** | Must be resolved before committing or raising a PR. Examples: security vulnerability, broken functionality, acceptance criteria not met. |
-| **IMPORTANT** | Should be resolved before raising a PR. Examples: missing test coverage for a new code path, significant DRY violation, accessibility gap. |
+| **IMPORTANT** | Should be resolved before raising a PR. Examples: a changed behavior no test would catch breaking, a test that cannot fail, significant DRY violation, accessibility gap. |
 | **SUGGESTION** | Nice to have. Can be deferred or noted in the PR description. Examples: naming improvements, minor readability, optional documentation. |
 
 ### Report Structure
@@ -143,6 +150,7 @@ If no `.gsd/` directory or feature context exists (e.g., standalone review outsi
 
 ### IMPORTANT
 - **[file:line]** <what the problem is> — <recommended fix>
+- **[file:line]** [Test Quality] <why the test protects nothing> - <strengthen, merge, or remove>
 
 ### SUGGESTION
 - **[file:line]** <what the problem is> — <recommended fix>
