@@ -77,7 +77,7 @@ If `.gsd/project-context.md` names a mutation tool the project already uses (for
 
 **Survivors.** Strengthen the test so the mutation is killed, repeat steps 2 to 6 for it, and commit the strengthened test separately. A test that cannot be made to fail is deleted and logged; if that leaves its behavior unprotected, report it under `Unresolved Errors`.
 
-**Recovery.** Any agent that finds a `MUTATION OPEN` line with no matching `MUTATION CLOSED` line in the log must not build, commit, or push. The QA Engineer recovers it by running `git checkout -- <file>` for the named file and logging `MUTATION CLOSED: <file> - recovered`. Other agents halt and send the user to `/qa`.
+**Recovery.** Only one mutation is ever open, so a mutation is unclosed exactly when the last `MUTATION` line in the log is an `OPEN` line. Any agent that finds a `MUTATION OPEN` line with no matching `MUTATION CLOSED` line in the log must not build, commit, or push. The QA Engineer recovers it by running `git checkout -- <file>` for the named file and logging `MUTATION CLOSED: <file> - recovered`. Other agents halt and send the user to `/qa`.
 
 ## 8. Judging Tests (review skill and Reviewer)
 When reviewing a diff that adds, changes, or removes tests, ask of each test:
