@@ -13,7 +13,7 @@ Every test protects exactly one named behavior and has one of these reasons:
 
 - **AC** - an Acceptance Criterion of the work item.
 - **Contract** - something a consumer or other code relies on: an API response, a function's result, an emitted event, a persisted format.
-- **Regression** - a bug that actually occurred. The test reproduces it and must fail on the code as it was before the fix.
+- **Regression** - a bug that actually occurred. The test reproduces it: its failure statement is the bug as it was before the fix.
 - **Setup** - a failure caught during setup or integration (wrong wiring, missing migration, bad configuration) that would otherwise come back silently.
 
 No reason, no test. "This file changed" and "this branch exists" are not reasons.
