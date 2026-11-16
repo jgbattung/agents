@@ -18,7 +18,7 @@ Execute the following phases in strict order. This is a standalone, off-cycle pr
 
 ### Phase 1: Context & Skill Discovery
 1. **Read Intent:** Read the ticket details (Title, Description, Acceptance Criteria) and the PR description provided by the user. If the user gave a PR number or URL instead of pasting the description, use the `execute` tool to run `gh pr view <number> --json title,body,baseRefName,headRefName` to get the description and branches. If no Acceptance Criteria are available from any source, STOP and ask the user for them - do not invent criteria.
-2. **Skills Check:** List every `~/agents/skills/*/SKILL.md` and read each one's frontmatter `description`. Fully read any skill that is relevant to the features or architecture this PR touches. You must enforce the rules of the skills you load during your review. If the PR adds, changes, or removes tests, always read `~/agents/skills/testing-standards/SKILL.md`.
+2. **Skills Check:** List every `~/agents/skills/*/SKILL.md` and read each one's frontmatter `description`. Fully read any skill that is relevant to the features or architecture this PR touches. You must enforce the rules of the skills you load during your review. Always read `~/agents/skills/testing-standards/SKILL.md`; criterion 5 of Phase 3 depends on it.
 
 ### Phase 2: Diff Extraction
 You must evaluate the actual physical state of the local git branch.
@@ -28,12 +28,12 @@ You must evaluate the actual physical state of the local git branch.
    `git diff <base-branch>...HEAD -- . ':(exclude)package-lock.json' ':(exclude)yarn.lock' ':(exclude)pnpm-lock.yaml' ':(exclude)dist/*' ':(exclude)build/*'`
 
 ### Phase 3: Multidimensional Analysis
-Analyze **only the added or modified lines** (lines starting with `+` in the diff). Do not flag pre-existing technical debt. Evaluate the diff across these criteria:
+Analyze **only the added or modified lines** (lines starting with `+` in the diff). Do not flag pre-existing technical debt. The one exception is criterion 5, which also considers removed tests. Evaluate the diff across these criteria:
 1. **Completeness:** Does the new code explicitly and safely satisfy every Acceptance Criterion?
 2. **Quality & Safety:** Are there bugs, unhandled edge cases, or security flaws introduced by these specific changes?
 3. **Cleanliness:** Did the developer leave behind debug artifacts (e.g., `console.log`, `.skip`, `.only`, `// TODO:` blocks)?
 4. **Skill Compliance:** Does the code violate any rules defined in the skills loaded in Phase 1?
-5. **Test Value:** Judge the PR's tests by Section 8 of the testing-standards skill. An Acceptance Criterion whose behavior no test would catch breaking, or a removed test with no justification, is a blocking issue. A test that protects nothing, cannot fail, or duplicates another is a non-blocking suggestion. Do not ask for more tests on the grounds of coverage.
+5. **Test Value:** Judge the PR's tests by Section 7 of the testing-standards skill. An Acceptance Criterion whose behavior no test would catch breaking, or a removed test with no justification, is a blocking issue. If the repository has no automated tests for this kind of code, a missing test is a non-blocking suggestion. A test that protects nothing, cannot fail, or duplicates another is a non-blocking suggestion. Do not ask for more tests on the grounds of coverage.
 
 ### Phase 3.5: "How to Test" Execution
 If the PR description contains a section named "How to test", "How to verify", or any equivalent testing/verification section:
@@ -48,7 +48,7 @@ If the PR description contains a section named "How to test", "How to verify", o
 ### Phase 4: The Output Fork (Strict Execution)
 Based on your analysis, you must take one of two paths.
 
-**Rule: DO NOT force issues.** If the PR meets the Acceptance Criteria and introduces no new bugs, you must approve it.
+**Rule: DO NOT force issues.** If the PR meets the Acceptance Criteria and raises no blocking issue in Phases 3 and 3.5, you must approve it.
 
 #### Path A: Clean PR (No File Output)
 If the code satisfies the Acceptance Criteria, adheres to the loaded skills, and introduces no blockers or significant mess:
