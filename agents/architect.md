@@ -204,8 +204,8 @@ A new remediation phase has been appended to the plan. Please execute those task
 
 **Visual Alignment via Lavish (interactive mode + visual alignment required only):**
 If you are running as the primary/interactive agent AND Phase 2 Step 6 flagged this run as **visual alignment required**, present your proposal as a Lavish review artifact instead of a chat wall of text:
-1. Read the `~/agents/skills/lavish/SKILL.md` skill in full and follow its workflow, opening each matching playbook before writing HTML - at minimum `plan`, `comparison`, and `input`.
-2. Build the artifact at `.lavish/[feature]-alignment.html` containing: the research summary and proposed approach (`plan` playbook), the ranked 2-3 approaches side by side (`comparison` playbook), a mockup of the proposed UI direction rendered in the target project's own design system, and structured approve / request-changes controls (`input` playbook).
+1. Read the `~/agents/skills/lavish/SKILL.md` skill in full and follow its workflow, opening each matching playbook before writing HTML - at minimum `plan`, `comparison`, and `input`. Also read Sections 1, 2, and 4 of `~/agents/skills/testing-standards/SKILL.md`, which govern the Protected Behaviors you will propose.
+2. Build the artifact at `.lavish/[feature]-alignment.html` containing: the research summary and proposed approach, including the Protected Behaviors you intend to list in the spec (`plan` playbook), the ranked 2-3 approaches side by side (`comparison` playbook), a mockup of the proposed UI direction rendered in the target project's own design system, and structured approve / request-changes controls (`input` playbook).
 3. Immediately after creating the `.lavish/` directory, exclude it from git without modifying `.gitignore`:
    ```bash
    grep -qxF '.lavish/' .git/info/exclude 2>/dev/null || echo '.lavish/' >> .git/info/exclude
@@ -218,7 +218,7 @@ If you are running as the primary/interactive agent AND Phase 2 Step 6 flagged t
 One-shot subagent runs and runs without the visual-alignment flag keep the plain-text behavior below; do not start a Lavish session as a subagent.
 
 **Interactive HARD STOP:**
-1. Present a concise summary of your research findings and proposed approach in the chat, explicitly stating why the recommended approach is the most efficient and simple standard solution. Include the Protected Behaviors you intend to list in the spec, so the user sees the test budget before approving.
+1. Present a concise summary of your research findings and proposed approach in the chat, explicitly stating why the recommended approach is the most efficient and simple standard solution. Read Sections 1, 2, and 4 of `~/agents/skills/testing-standards/SKILL.md` and include the Protected Behaviors you intend to list in the spec, so the user sees the test budget before approving.
 2. Ask the user: *"Does this approach look correct? Please answer any questions, or say `/approve` to have me generate the spec and plan files."*
 3. **Do not use any file-creation tools until the user explicitly aligns with your proposal.**
 
