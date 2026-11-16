@@ -138,7 +138,7 @@ Context: [brief description of what went wrong and what the corrective tasks in 
 
 ### Hard Constraints (Mode-Specific)
 See **Recovery Modes — Shared Hard Constraints** above. In addition:
-- **You MUST append a new phase to the existing plan — never overwrite or regenerate it from scratch.**
+- **You MUST append a new phase to the existing plan — never overwrite or regenerate it from scratch.** The one case with no new phase is the test-only case in Step 1.
 
 ### Step 1 — Read the Findings
 Read `.gsd/[feature]-log.md` in full, then read the findings from their source:
