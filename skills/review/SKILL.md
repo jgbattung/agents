@@ -73,12 +73,13 @@ Analyse the diff against each dimension below. Collect every finding before writ
 - Will future developers understand this code without the author present?
 
 ### Testing
-Read `~/agents/skills/testing-standards/SKILL.md` and judge the tests in the diff by its Section 8. Do not count tests or ask whether lines are covered.
+Read `~/agents/skills/testing-standards/SKILL.md` and judge the tests in the diff by its Section 7. Do not count tests or ask whether lines are covered.
 
-- Is there a behavior this change adds or alters that no test would catch breaking? Use the spec's **Protected Behaviors** list when a spec exists. Report as IMPORTANT.
+- Is there a behavior this change adds or alters that no test would catch breaking? Use the spec's **Protected Behaviors** list when a spec exists. Report as IMPORTANT, or as a SUGGESTION if the project has no automated tests for this kind of code.
 - Does each added or changed test protect a named behavior, and would it fail if that behavior broke? A test of the framework, a constant, an argument's mere existence, or a mock's own return value does not.
+- When `.gsd/[feature]-log.md` has a `### QA & Testing Summary` or `### QA Re-Verification` section, check each test's latest failure statement against the code: would the stated change really make the named assertion fail? A statement that does not hold is a finding.
 - Does a test duplicate what another test already protects?
-- Does a test skip, or guard against a missing tool or data set, instead of failing?
+- Does this change introduce a skipped test, or a guard against a missing tool or data set, instead of letting the test fail? A bare `.skip` or `.only` marker is a `[Debug Leftover]`, not a `[Test Quality]` finding. A test that was already skipped before this change is pre-existing: mention it as a SUGGESTION at most.
 - Are the tests in proportion to the behavior changed?
 - For each removed test: is the removal justified by the pruning rules?
 - Are mocks limited to system boundaries and scoped so they do not leak between tests?
