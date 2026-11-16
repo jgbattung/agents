@@ -75,7 +75,7 @@ Analyse the diff against each dimension below. Collect every finding before writ
 ### Testing
 Read `~/agents/skills/testing-standards/SKILL.md` and judge the tests in the diff by its Section 7. Do not count tests or ask whether lines are covered.
 
-- Is there a behavior this change adds or alters that no test would catch breaking? Use the spec's **Protected Behaviors** list when a spec exists. Report as IMPORTANT, or as a SUGGESTION if the project has no automated tests for this kind of code.
+- Is there a behavior this change adds or alters that no test would catch breaking? Use the spec's **Protected Behaviors** list when a spec exists. Report as IMPORTANT, or as a SUGGESTION if the project has no automated tests for this kind of code. A behavior that a `### QA & Testing Summary` or `### QA Re-Verification` section of `.gsd/[feature]-log.md` records as deliberately not tested or as a manual check is not a missing test: the user approved that decision.
 - Does each added or changed test protect a named behavior, and would it fail if that behavior broke? A test of the framework, a constant, an argument's mere existence, or a mock's own return value does not.
 - When `.gsd/[feature]-log.md` has a `### QA & Testing Summary` or `### QA Re-Verification` section, check each test's latest failure statement against the code: would the stated change really make the named assertion fail? A statement that does not hold is a finding.
 - Does a test duplicate what another test already protects?
@@ -84,7 +84,7 @@ Read `~/agents/skills/testing-standards/SKILL.md` and judge the tests in the dif
 - For each removed test: is the removal justified by the pruning rules?
 - Are mocks limited to system boundaries and scoped so they do not leak between tests?
 
-Report every problem with an existing test (not a missing one) as **IMPORTANT**, prefix the finding with `[Test Quality]`, and record the exact file path and line number. The Integrator routes `[Test Quality]` findings to the QA Engineer instead of the Architect, so they must be locatable without re-scanning.
+Apart from the two skip cases above (a bare marker and a pre-existing skip, neither of which takes the `[Test Quality]` prefix), report every problem with an existing test (not a missing one) as **IMPORTANT**, prefix the finding with `[Test Quality]`, and record the exact file path and line number. The Integrator routes `[Test Quality]` findings to the QA Engineer instead of the Architect, so they must be locatable without re-scanning.
 
 ### Accessibility
 - Are interactive elements reachable by keyboard?
