@@ -83,7 +83,7 @@ Before you can form ANY opinion or plan, you MUST complete these steps:
 4. **Check for prior art.** Search for any existing code, utilities, or partial implementations related to the request. Do not reinvent what already exists.
 5. **If external research is needed** (net-new technology, unfamiliar library): Run at minimum 2-3 targeted web searches. Evaluate external best practices, gather concrete values, and check for known "gotchas."
 
-6. **Skill Selection (NON-NEGOTIABLE):** List every `~/agents/skills/*/SKILL.md` and read each one's frontmatter `description`. Select the skills whose description matches this work item, read each selected skill in full, and use it to shape the spec. Skip the workflow skills that agent phases already load explicitly (`state-machine`, `git-standards`, `review`, `lavish`, `backlog-protocol`, `backlog-list`, `roadmap-generator`) and the user-invoked toolkits (`impeccable`, `back-prop`). Selecting nothing is a valid outcome for work no skill describes.
+6. **Skill Selection (NON-NEGOTIABLE):** List every `~/agents/skills/*/SKILL.md` and read each one's frontmatter `description`. Select the skills whose description matches this work item, read each selected skill in full, and use it to shape the spec. Skip the workflow skills that agent phases already load explicitly (`state-machine`, `git-standards`, `review`, `testing-standards`, `lavish`, `backlog-protocol`, `backlog-list`, `roadmap-generator`) and the user-invoked toolkits (`impeccable`, `back-prop`). Selecting nothing is a valid outcome for work no skill describes.
    - **UI work:** If the work item involves UI design (new components or pages, layout changes, visual styling, UX flows), follow any explicit design directives in the user's prompt or work item (brand colors, specific design system, visual requirements) and the project's existing design system, and flag this run as **visual alignment required** - Phase 3 will present the proposal as a Lavish review artifact instead of a plain chat summary.
    - **Copy work:** Marketing or page copy (landing, pricing, feature, or about pages, hero sections, headlines, CTAs, value propositions, taglines) selects `copywriting` when new copy is being written and/or `copy-editing` when existing copy is being revised. In-app microcopy (button labels, error messages, form hints, empty states) does NOT count; it stays with the design skills.
    - **Record the selection:** Write a `Skills: <name>, <name>` line (or `Skills: none`) in the spec's **Execution Guidelines**. Downstream agents load exactly the skills on this line and do not re-run discovery.
@@ -146,6 +146,8 @@ Read `.gsd/[feature]-log.md` in full, then read the findings from their source:
 - **Integrator:** Read `.gsd/[feature]-review.md` for self-review findings (BLOCKER and IMPORTANT are blocking; SUGGESTION is non-blocking), and the Integrator's sections of the log for failed gates (test or lint output) and unresolved errors.
 - **PR review feedback:** Work from the comments the user pasted. If the user gave a PR number or URL, fetch them with `gh pr view <number> --comments` and `gh api repos/{owner}/{repo}/pulls/<number>/comments`. Treat each change request as blocking and each optional remark or nit as non-blocking. If a comment is a question or is unclear about what change is wanted, ask the user instead of guessing; if you disagree with a comment, say so and let the user decide before planning it.
 
+**Test-only findings are not Builder work.** A finding that concerns only test code (a `[Test Quality]` finding, or a reviewer comment about a test) is never planned as a Builder task, because the QA Engineer is the only agent that writes tests. Record it in the `### Remediation Planning` log section and, at the end, give the user this prompt alongside or instead of the Builder handoff: *"Please run: `/qa` Test-quality findings were raised on this feature. Read the Remediation Planning section of `.gsd/[feature]-log.md` and resolve them in re-verification mode."*
+
 ### Step 2 — Investigate Root Cause (Blocking Issues Only)
 If handling blocking issues:
 1. Use `read` and `search` tools to trace the root cause in the source code. Understand why the test is failing, or exactly what the finding or reviewer is pointing at, and what implementation change is needed.
@@ -160,6 +162,7 @@ If handling blocking issues:
    - For blocking issues: state plainly in the `<name>` that it is a fix, and note in the `<action>` that Builder should address it first.
    - For non-blocking suggestions: prefix the `<name>` with `Improvement:` so it is clearly labeled.
 4. Use your `edit` tool to write the new phase into `.gsd/[feature]-plan.xml`.
+5. If a fix adds or changes behavior that is not already on the spec's **Protected Behaviors** list, append an entry for it to that section of `.gsd/[feature]-spec.md`. A bug fix adds a **Regression** entry unless a failing QA test already reproduces the bug.
 
 ### Step 4 — Update the Log
 Append a dated `### Remediation Planning` section to `.gsd/[feature]-log.md` documenting:
@@ -215,7 +218,7 @@ If you are running as the primary/interactive agent AND Phase 2 Step 6 flagged t
 One-shot subagent runs and runs without the visual-alignment flag keep the plain-text behavior below; do not start a Lavish session as a subagent.
 
 **Interactive HARD STOP:**
-1. Present a concise summary of your research findings and proposed approach in the chat, explicitly stating why the recommended approach is the most efficient and simple standard solution.
+1. Present a concise summary of your research findings and proposed approach in the chat, explicitly stating why the recommended approach is the most efficient and simple standard solution. Include the Protected Behaviors you intend to list in the spec, so the user sees the test budget before approving.
 2. Ask the user: *"Does this approach look correct? Please answer any questions, or say `/approve` to have me generate the spec and plan files."*
 3. **Do not use any file-creation tools until the user explicitly aligns with your proposal.**
 
@@ -245,6 +248,7 @@ The **`.gsd/[feature]-spec.md`** must follow this exact structure:
 - **Executive Summary**
 - **Background & Research**
 - **Technical Design**
+- **Protected Behaviors**: The test budget. Read `~/agents/skills/testing-standards/SKILL.md` (Sections 1, 2, and 4) before writing it. List each behavior this work adds or changes that must not silently break: the behavior in one sentence from the caller's perspective, its reason (AC number, Contract, Regression, or Setup), and the level to test it at. Then list any existing behavior the work removes or alters, as prune candidates. Write `None - this work changes no behavior` for a refactor, documentation, or configuration change. The QA Engineer writes tests from this list, so keep it proportional: do not list a behavior per file or per branch.
 - **What NOT To Do**
 - **Execution Guidelines**: Include affected files, watch-outs, verification focus, and the `Skills:` line from Phase 2 Step 6.
 
