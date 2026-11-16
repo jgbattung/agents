@@ -1,6 +1,6 @@
 ---
 name: testing-standards
-description: Defines what earns a test, what never does, how strong a test must be, and how tests are proven, pruned, and judged. Loaded explicitly by the QA Engineer (who writes tests), the Architect (who lists protected behaviors), and the review skill and Reviewer (who judge tests).
+description: Defines what earns a test, what never does, how strong a test must be, and how tests are pruned and judged. Loaded explicitly by the QA Engineer (who writes tests), the Architect (who lists protected behaviors), and the review skill and Reviewer (who judge tests).
 user-invocable: false
 ---
 
@@ -33,10 +33,13 @@ No reason, no test. "This file changed" and "this branch exists" are not reasons
 
 ## 3. Strength
 - **It must be able to fail.** Breaking the protected behavior in a small way must turn the test red. A test that stays green proves nothing.
+- **State how it fails.** Every test has a **failure statement**: the specific change to the product's behavior that would make it fail, and the assertion that would catch it. A test with no credible failure statement is not written.
 - **Assert outcomes, not activity.** Assert exact expected values and observable effects. "Is defined", "is truthy", "does not throw", "rendered without crashing", and "was called" on their own are not assertions of behavior.
 - **Mock only at system boundaries.** Network, clock, randomness, filesystem, and third-party services may be replaced. The product's own modules may not: a test that mocks the code it is meant to exercise tests the mock.
 - **No snapshot dumps by default.** A snapshot of a whole tree or payload fails on irrelevant changes and gets re-approved without reading. Assert the specific values that matter.
 - **Deterministic.** No real time, real network, sleeps, or dependence on test order.
+
+When `.gsd/project-context.md` names a mutation testing tool the project already uses, the QA Engineer runs it scoped to the files the feature changed once the suite is green, and strengthens the test behind each surviving mutant.
 
 ## 4. Proportion
 - A change adds tests in proportion to the behavior it changes. One changed behavior usually means one test, plus one per distinct failure the caller can hit.
@@ -48,7 +51,7 @@ No reason, no test. "This file changed" and "this branch exists" are not reasons
 - A missing tool, service, binary, fixture, or data set **fails** the run. It is never skipped and never mocked away. Guards such as "skip if not installed" or "return early if the fixture is absent" are forbidden.
 - Provide the real dependency through setup. If that is impossible, leave the test failing and report it as a blocker.
 - A test that only applies to some platforms is excluded through the test runner's configuration, not skipped at runtime.
-- No `.skip`, `.only`, `xit`, `todo`, `pytest.skip`, or equivalent in any test file a change touches. Pre-existing skips in untouched files are reported, not fixed.
+- A change introduces no skipped test: no `.skip`, `.only`, `xit`, `todo`, `pytest.skip`, or equivalent on a test it adds, and none added to a test that already existed. A test that was already skipped before the change is pre-existing, even in a file the change touches: it is reported, not fixed, and never blocks.
 
 ## 6. Pruning
 Deleting a test is allowed only when one of these holds:
@@ -61,31 +64,14 @@ Rules:
 - Never prune outside the reach of the current change. Unrelated bloat is reported as a suggestion.
 - Every prune is logged with the test name, file, and which rule above applies.
 
-## 7. Mutation Check (QA Engineer only)
-This is how "it must be able to fail" is proven. It is the only time the QA Engineer edits a source file, and git, not memory, guarantees the edit is undone.
-
-If `.gsd/project-context.md` names a mutation tool the project already uses (for example Stryker or mutmut), run it scoped to the files this feature changed instead of steps 2 to 6, and keep steps 1, 7, and 8.
-
-1. **Commit first, then fingerprint.** The tests under check must already be committed. Record the tree state: the output of `git status --porcelain` and of `git diff HEAD | git hash-object --stdin`.
-2. **Pick the target.** For one test, identify the source file and line that implement the behavior it protects. Run `git status --porcelain -- <file>`. If the file has uncommitted changes, HALT and ask the user to commit or stash them. Never mutate a dirty file.
-3. **Log before breaking.** Append `MUTATION OPEN: <file> - <test name>` to `.gsd/[feature]-log.md` before editing anything.
-4. **Break one thing.** Make the smallest change that breaks the behavior and still compiles: invert a condition, change an operator or a returned value, remove the effect. A syntax error is not a mutation.
-5. **Run that one test.** It must fail on its own assertion about the behavior. That is a **killed** mutation. If it passes, the mutation **survived** and the test is too weak.
-6. **Restore with git.** Run `git checkout -- <file>`. Never edit the code back by hand. Confirm `git status --porcelain -- <file>` prints nothing, then append `MUTATION CLOSED: <file> - killed` or `- survived` to the log.
-7. **One at a time.** Only one mutation is ever open. Never stage or commit while one is open.
-8. **Prove the tree is restored.** After the last mutation, record the fingerprint again. It must be identical to step 1. If it differs, run `git checkout -- <file>` for every file mutated in this pass and compare again. If it still differs, HALT, report the exact difference to the user, and do not hand off. Then run the full suite once to confirm it is in the same state as before the pass.
-
-**Survivors.** Strengthen the test so the mutation is killed, repeat steps 2 to 6 for it, and commit the strengthened test separately. A test that cannot be made to fail is deleted and logged; if that leaves its behavior unprotected, report it under `Unresolved Errors`.
-
-**Recovery.** Only one mutation is ever open, so a mutation is unclosed exactly when the last `MUTATION` line in the log is an `OPEN` line. Any agent that finds a `MUTATION OPEN` line with no matching `MUTATION CLOSED` line in the log must not build, commit, or push. The QA Engineer recovers it by running `git checkout -- <file>` for the named file and logging `MUTATION CLOSED: <file> - recovered`. Other agents halt and send the user to `/qa`.
-
-## 8. Judging Tests (review skill and Reviewer)
+## 7. Judging Tests (review skill and Reviewer)
 When reviewing a diff that adds, changes, or removes tests, ask of each test:
 - Which behavior does it protect, and for which reason from Section 1? If there is no answer, it is a finding.
 - Would it still pass if that behavior were broken? If yes, it is a finding.
+- When the feature's log gives a failure statement for it (the workflow's own self-review only): does the statement hold? Read the named assertion and the code it exercises. If the stated change would not make that assertion fail, it is a finding.
 - Does it fall under Section 2?
 - Does another test already protect the same behavior at the same or a lower level?
-- Does it skip, or guard against a missing tool or data, in violation of Section 5?
+- Does it introduce a skip, or a guard against a missing tool or data, in violation of Section 5?
 - Is the number of tests in proportion to the behavior the diff changes?
 - For each removed test: does a pruning rule in Section 6 justify it?
 
