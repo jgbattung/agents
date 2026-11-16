@@ -18,7 +18,7 @@ Execute the following phases in strict order. This is a standalone, off-cycle pr
 
 ### Phase 1: Context & Skill Discovery
 1. **Read Intent:** Read the ticket details (Title, Description, Acceptance Criteria) and the PR description provided by the user. If the user gave a PR number or URL instead of pasting the description, use the `execute` tool to run `gh pr view <number> --json title,body,baseRefName,headRefName` to get the description and branches. If no Acceptance Criteria are available from any source, STOP and ask the user for them - do not invent criteria.
-2. **Skills Check:** List every `~/agents/skills/*/SKILL.md` and read each one's frontmatter `description`. Fully read any skill that is relevant to the features or architecture this PR touches. You must enforce the rules of the skills you load during your review.
+2. **Skills Check:** List every `~/agents/skills/*/SKILL.md` and read each one's frontmatter `description`. Fully read any skill that is relevant to the features or architecture this PR touches. You must enforce the rules of the skills you load during your review. If the PR adds, changes, or removes tests, always read `~/agents/skills/testing-standards/SKILL.md`.
 
 ### Phase 2: Diff Extraction
 You must evaluate the actual physical state of the local git branch.
@@ -33,6 +33,7 @@ Analyze **only the added or modified lines** (lines starting with `+` in the dif
 2. **Quality & Safety:** Are there bugs, unhandled edge cases, or security flaws introduced by these specific changes?
 3. **Cleanliness:** Did the developer leave behind debug artifacts (e.g., `console.log`, `.skip`, `.only`, `// TODO:` blocks)?
 4. **Skill Compliance:** Does the code violate any rules defined in the skills loaded in Phase 1?
+5. **Test Value:** Judge the PR's tests by Section 8 of the testing-standards skill. An Acceptance Criterion whose behavior no test would catch breaking, or a removed test with no justification, is a blocking issue. A test that protects nothing, cannot fail, or duplicates another is a non-blocking suggestion. Do not ask for more tests on the grounds of coverage.
 
 ### Phase 3.5: "How to Test" Execution
 If the PR description contains a section named "How to test", "How to verify", or any equivalent testing/verification section:
