@@ -34,6 +34,27 @@ tab-completable picker. The commands come in two flavors:
 `@AgentName` mentions still work as a soft alias, but the slash commands are the
 canonical, deterministic entry points.
 
+### Sessions and Checkpoints
+
+Use two Claude Code sessions per feature:
+
+1. **Planning session:** run `/architect` until the spec and plan are written to `.gsd/`,
+   then close it. Its research and spec work is not needed for the build.
+2. **Build session:** run `/builder`, `/qa`, and `/integrator` in one new session. Stay in
+   it, because the main session can only continue the Builder and QA it started itself.
+
+Subagents never talk to you directly, so the main session holds their checkpoints:
+
+- The Builder runs one phase (or the phases you asked for), reports, and ends. Reply in
+  plain words ("continue", "run the rest") and the main session sends the same Builder its
+  next phase.
+- The QA Engineer ends its run at the test ledger. Reply in plain words and the main
+  session relays your answer verbatim.
+
+A remediation prompt (`/architect ...`) from QA or the Integrator can run in the build
+session or a fresh one, since the Architect reloads from `.gsd/`. Then run `/builder` in
+the build session for the remediation phase.
+
 ---
 
 ## The State Machine (`.gsd/`)
