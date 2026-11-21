@@ -15,7 +15,15 @@ Rules:
   `.gsd/[feature]-plan.xml`, and `.gsd/[feature]-log.md` files to load. If this is a
   resume, also list the tasks already completed (by phase/task name) and the exact task or
   phase to start from.
-- When the Builder reports back, relay its summary to the user faithfully, including
-  any deviations or blockers it logged.
+- Every spawn or continue message must assign the phase scope: the next unfinished phase
+  only, unless the user asked to run several phases straight through.
+- **You hold the phase checkpoint.** The Builder ends its run after its assigned phases
+  and does not ask for approval. When it reports back, relay its summary to the user
+  faithfully, including any deviations or blockers it logged, then ask the user whether
+  to continue with the next phase, run all remaining phases, or change something.
+  - On continue, send the same Builder its next phase scope via `SendMessage`. Spawn a
+    fresh Builder with a resume prompt only if the original is gone.
+  - A requested change is unplanned work: give the user the
+    `/architect <the requested change, verbatim>` prompt instead of relaying it.
 
 The user's request: $ARGUMENTS

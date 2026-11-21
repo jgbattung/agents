@@ -18,5 +18,9 @@ Rules:
   its judgment from the `.gsd/` files and the code alone.
 - When the QA Engineer reports back, relay its summary to the user faithfully. If it
   halted with a kickback for the Architect, surface that copy-pasteable prompt verbatim.
+- **You hold QA's hard stops.** When the QA Engineer ends its run on a HARD STOP (the
+  test ledger, or a behavior it proposes to leave untested), present it to the user
+  verbatim, then send the user's answer verbatim to the same QA Engineer via
+  `SendMessage`. Do not answer for the user or add your own assessment.
 
 The user's request: $ARGUMENTS
