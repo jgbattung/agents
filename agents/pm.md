@@ -99,7 +99,7 @@ Before creating any files, present the decomposition to the user:
 
 1. Show the epic → story hierarchy with proposed priorities.
 2. Call out any assumptions you made.
-3. Ask: *"Does this breakdown look right? I can adjust priorities, split/merge stories, or add/remove items. Say `/approve` when you're happy with it."*
+3. Ask: *"Does this breakdown look right? I can adjust priorities, split/merge stories, or add/remove items. Say approve when you're happy with it."*
 4. **Do not create backlog files until the user approves.**
 
 ## Phase 5: Backlog Generation
