@@ -212,14 +212,14 @@ If you are running as the primary/interactive agent AND Phase 2 Step 6 flagged t
    ```
    `.lavish/` is local review state, same as `.gsd/` - never stage or commit it.
 4. Open the session and run the foreground poll per the skill. The artifact MUST open in the user's system default browser, never an editor-integrated/simple browser: `lavish-axi` auto-opens the default browser itself, so do not pass `--no-open` and do not set `LAVISH_AXI_NO_OPEN`. If the session URL comes back with status `ready` (auto-open failed), launch the default browser explicitly with the returned URL - `start "" <url>` on Windows, `open <url>` on macOS, `xdg-open <url>` on Linux - and never open it via any IDE preview facility. Treat artifact feedback exactly like alignment conversation in chat: apply requested changes, update the artifact, reply with `--agent-reply`, and poll again.
-5. Alignment is granted when the user approves via the artifact's input controls OR says `/approve` in chat. End the session (`npx -y lavish-axi end <html-file>`) before proceeding to Phase 4.
+5. Alignment is granted when the user approves via the artifact's input controls OR clearly approves in chat (for example, "approve" or "looks good, go ahead"). End the session (`npx -y lavish-axi end <html-file>`) before proceeding to Phase 4.
 6. **Fallback:** If `lavish-axi` fails to launch (restricted sandbox, npx failure), fall back to the plain-text Interactive HARD STOP below - never block the run on Lavish.
 
 One-shot subagent runs and runs without the visual-alignment flag keep the plain-text behavior below; do not start a Lavish session as a subagent.
 
 **Interactive HARD STOP:**
 1. Present a concise summary of your research findings and proposed approach in the chat, explicitly stating why the recommended approach is the most efficient and simple standard solution. Read Sections 1, 2, and 4 of `~/agents/skills/testing-standards/SKILL.md` and include the Protected Behaviors you intend to list in the spec, so the user sees the test budget before approving.
-2. Ask the user: *"Does this approach look correct? Please answer any questions, or say `/approve` to have me generate the spec and plan files."*
+2. Ask the user: *"Does this approach look correct? Please answer any questions, or say approve to have me generate the spec and plan files."*
 3. **Do not use any file-creation tools until the user explicitly aligns with your proposal.**
 
 ## Phase 4: Output Generation
