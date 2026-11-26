@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plan>
+  <phase name="1: Foundations">
+    <task id="1.1">
+      <name>Rewrite the state-machine skill for the v2 state layout</name>
+      <action>Rewrite `skills/state-machine/SKILL.md` to define exactly what Technical Design section 1 and 2 of `docs/v2/spec.md` describe: the `.gsd/&lt;slug&gt;/` folder layout, the slug rule, how the active feature is found from the current branch, the git exclusion rule (keep the existing idempotent command), the `project-context.md` rules including the new `## Commands` and `## Workflow options` sections, the `status.md` format and update rules, the `notes.md` sections with their owners, the finding format, the four routes with their ordering, and the stop protocol (a role sets `stop` and `stop_detail`, ends its run with the stop text as its final message, and resumes when given the user's answer). Remove the archive rule, the append-only log rule, and the QA summary section.</action>
+      <verify>The file contains no reference to `-log.md`, `archive`, or `~/agents`. Every item listed in the action has its own heading. `grep -c '—' skills/state-machine/SKILL.md` prints 0.</verify>
+    </task>
+    <task id="1.2">
+      <name>Create the install script with tests</name>
+      <action>Create `scripts/install.mjs` per Technical Design section 6 of the spec: Node 22+, no dependencies, flags `--provider claude` (default and only provider for now), `--scope global` (default) or `--project &lt;path&gt;`, and `--dry-run`. It links each file in `agents/`, each folder in `skills/`, and each file in `commands/` individually into `&lt;target&gt;/.claude/agents`, `skills`, and `commands`, creating those folders when missing. In global scope it also links `AGENTS.md` to `~/.claude/CLAUDE.md` when that path does not exist. An existing path is never overwritten: it is reported as skipped. The script prints one line per link created or skipped and exits 0. Create `scripts/install.test.mjs` using `node --test` against temporary directories, covering the three install behaviors in the spec's Protected Behaviors table.</action>
+      <verify>`node --test scripts/install.test.mjs` passes. `node scripts/install.mjs --project "$(mktemp -d)" --dry-run` prints the planned links and creates nothing.</verify>
+    </task>
+    <task id="1.3">
+      <name>Decide how persona commands import agent definitions without a hardcoded path</name>
+      <action>`commands/architect.md` and `commands/pm.md` import the agent file with `@~/agents/agents/&lt;name&gt;.md`. Check the current Claude Code documentation for how `@` file references in a slash command file resolve (relative to the command file, the project, or the home directory, and whether they follow symlinks). Choose the simplest mechanism that works for both a global and a project-scope install, in this order of preference: a reference that resolves through the installed link, then having `install.mjs` write the command files instead of linking them. Record the finding and the choice in `docs/v2/log.md`. Do not edit the command files in this task.</action>
+      <verify>`docs/v2/log.md` records the documented behavior with its source URL and the chosen mechanism. If the documentation does not answer it, the log records the experiment that did.</verify>
+    </task>
+  </phase>
+
+  <phase name="2: Gates script">
+    <task id="2.1">
+      <name>Create the gates script with tests</name>
+      <action>Create `skills/gates/scripts/gates.mjs` per Technical Design section 4 of the spec, including every check in its table, the `--notes` behavior, the `--json` output, and the exit codes. Read the added lines from `git diff &lt;base&gt;...HEAD` and commit messages from `git log &lt;base&gt;..HEAD`. Use the AI attribution patterns from Rule Zero of `skills/git-standards/SKILL.md`. Create `skills/gates/scripts/gates.test.mjs` using `node --test`, each test building a temporary git repository, covering the five gates behaviors in the spec's Protected Behaviors table.</action>
+      <verify>`node --test skills/gates/scripts/gates.test.mjs` passes. Running the script on this branch with `--base main` exits 0 or reports only real hits.</verify>
+    </task>
+    <task id="2.2">
+      <name>Write the gates skill file</name>
+      <action>Create `skills/gates/SKILL.md` with `name: gates`, a `description`, and `user-invocable: false`. Document when to run the script, how to find it (relative to this skill's folder), how to read the test and lint commands from the `## Commands` section of `.gsd/project-context.md`, how to pass `--notes .gsd/&lt;slug&gt;/notes.md`, and what each check and exit code means.</action>
+      <verify>Following only the skill file, the script can be invoked correctly on this repository.</verify>
+    </task>
+  </phase>
+
+  <phase name="3: Roles">
+    <task id="3.1">
+      <name>Rewrite the Builder</name>
+      <action>Rewrite `agents/builder.md` per the Builder row and "Builder changes" in Technical Design section 3. Keep the plan-only rule, the QA-tests-are-read-only rule, verify and two-attempt self-heal, atomic commit per task, and no push. Remove the worktree banner, the per-phase hard stop, and the per-action logging rule. Add: run all remaining phases unless told otherwise, tick tasks in `status.md`, write `## Deviations` only on departure from the plan, accept `route: direct` findings after re-checking the three conditions, and the stop protocol for `deviation` and `blocker`. Refer to skills by name.</action>
+      <verify>No reference to `~/agents`, `-log.md`, "phase checkpoint", or worktree isolation remains. Every stop the file describes is one of the two in the spec's role table.</verify>
+    </task>
+    <task id="3.2">
+      <name>Rewrite the QA Engineer</name>
+      <action>Rewrite `agents/qa-engineer.md` per "QA Engineer changes". Keep source-is-read-only, pattern matching, the failure statement requirement, self-healing categories A, B, and C, the commit rules including committing failing tests as proof, and re-verification mode. Replace Phase 1.5's unconditional hard stop with: build the ledger, proceed when it stays inside the approved Protected Behaviors, stop with `stop: budget` only for the three departures. Replace the kickback protocol and the log sections with findings in `notes.md` and the `## Test Ledger` and `## Not Tested` sections. Remove the copy-paste prompts for the Architect and Integrator.</action>
+      <verify>No reference to `~/agents`, `-log.md`, or copy-paste prompts remains. The only user stop described is `budget`.</verify>
+    </task>
+    <task id="3.3">
+      <name>Update the review, testing-standards, and git-standards skills</name>
+      <action>In `skills/review/SKILL.md`: write the report to `.gsd/&lt;slug&gt;/review.md` (keep the `tmp/self-review.md` fallback), replace references to log sections with the `notes.md` sections, replace "the Integrator routes" wording with the routes from the state-machine skill, keep the `[Debug Leftover]` and `[Test Quality]` tags, and refer to testing-standards by name. In `skills/testing-standards/SKILL.md`: replace "the feature's log" with the `## Test Ledger` section of `notes.md`. In `skills/git-standards/SKILL.md`: replace the reference to `.gsd/[feature]-log.md` in the body rules with the plan task and `notes.md`. Change nothing else in these files.</action>
+      <verify>`grep -n 'log.md\|~/agents\|Integrator' skills/review/SKILL.md skills/testing-standards/SKILL.md skills/git-standards/SKILL.md` shows no stale reference.</verify>
+    </task>
+    <task id="3.4">
+      <name>Rewrite the Reviewer with self and peer modes</name>
+      <action>Rewrite `agents/reviewer.md` per "Reviewer changes". Peer mode keeps every v1 phase and rule, with the output path changed to `.gsd/peer-reviews/&lt;slug&gt;.md`. Self mode is new: load the `review` and `testing-standards` skills, read the spec, `notes.md`, and the three-dot diff against the spec's base branch, write `review.md`, record each blocker and important finding in `notes.md` with a route, and set `status.md`. State the mode detection rule (a slug with a `.gsd/&lt;slug&gt;/` folder means self, a PR number or URL means peer). Remove the worktree banner.</action>
+      <verify>Both modes are complete on their own. The read-only rule for source code applies to both.</verify>
+    </task>
+    <task id="3.5">
+      <name>Rewrite the Integrator as the shipping role</name>
+      <action>Rewrite `agents/integrator.md` per "Integrator changes": run 1 (gates via the `gates` skill, refuse to continue while any blocker or important finding is open, draft `pr.md` using the repo's PR template and conventions, include suggestions under "Known Improvements" and gate warnings under "Sensitive Files Changed", stop with `ship-approval`) and run 2 (push, existing-PR check, `gh pr create --body-file` with `pr.md`, record the URL, manual fallback when `gh` fails). Move the backlog completion steps behind the backlog workflow option. Remove self-review, debug cleanup, kickback routing, and the worktree banner.</action>
+      <verify>Nothing is pushed or opened before `ship-approval` is answered. No reference to `~/agents` or `-log.md` remains.</verify>
+    </task>
+    <task id="3.6">
+      <name>Slim the Architect and move the opt-in flows out</name>
+      <action>Edit `agents/architect.md` per "Architect changes". Remove the worktree banner and all archiving steps. Replace the branch strategy with the worktree-aware rule. Add the `## Workflow options` and `## Commands` questions to the conventions hard stop. Update the spec structure (add `PR strategy`), the plan template (task `id` attributes), and Phase 4 output (seed `status.md` and `notes.md` in `.gsd/&lt;slug&gt;/`). Move the "Visual Alignment via Lavish" block to a new `skills/lavish/architect-alignment.md` and leave a two-line pointer that applies only when the option is on and the work is UI work. Move the Next mode and Backlog mode intake text into a new "Architect intake" section of `skills/backlog-protocol/SKILL.md` with a pointer that applies only when the option is on. Rewrite Remediation mode to read `route: architect` findings from `notes.md`, and Recovery mode to read `status.md`. Replace the handoff prompts with setting `status.md`. Keep the read-before-plan rules, the alignment hard stop, and the Protected Behaviors requirement unchanged.</action>
+      <verify>`agents/architect.md` is smaller than v1 and contains no `~/agents`, `archive`, or `-log.md`. `skills/lavish/SKILL.md` is unchanged. The moved text exists in its new files.</verify>
+    </task>
+  </phase>
+
+  <phase name="4: Coordinator and commands">
+    <task id="4.1">
+      <name>Create the coordinator</name>
+      <action>Create `agents/coordinator.md` per Technical Design section 5: the routing table, the coordinator rules, ticket intake (pasted text, a GitHub issue number or URL read with `gh issue view`, or a backlog ID when the backlog option is on), and the Claude Code runtime section (roles as subagents, reuse of a live subagent for follow-ups, a fresh one reloading from files otherwise, planning handed to `/architect` in its own session). Add two clearly marked placeholder headings for the Orca runtime sections that say they are written under `docs/v2/orca-checklist.md` and contain no commands.</action>
+      <verify>Every row of the spec's routing table is present. The file contains no `orca` command.</verify>
+    </task>
+    <task id="4.2">
+      <name>Add the coordinator command and update the others</name>
+      <action>Create `commands/coordinator.md` using the mechanism chosen in task 1.3. Update `commands/architect.md` and `commands/pm.md` to the same mechanism. Simplify `commands/builder.md`, `commands/qa.md`, `commands/integrator.md`, and `commands/reviewer.md` for manual use: remove the worktree warnings and the checkpoint-holding rules, keep the no-editorializing rule, and name the `.gsd/&lt;slug&gt;/` files.</action>
+      <verify>No command file contains `~/agents`. A project-scope install into a scratch folder shows all seven commands in Claude Code.</verify>
+    </task>
+  </phase>
+
+  <phase name="5: Documentation">
+    <task id="5.1">
+      <name>Rewrite the README and update AGENTS.md</name>
+      <action>Rewrite `README.md` for v2: the roles, the three gates, the state layout, the fast path, the workflow options, setup through `scripts/install.mjs` (remove the manual symlink tables and the "clone to exactly ~/agents" rule), and the two runtimes with Orca marked as pending `docs/v2/orca-checklist.md`. In `AGENTS.md`, rewrite sections 5 and 6 for the coordinator and the new state files, and leave sections 1 to 4 untouched.</action>
+      <verify>Neither file contains `~/agents` or describes the per-phase checkpoint. `grep -c '—' README.md AGENTS.md` prints 0 for both.</verify>
+    </task>
+  </phase>
+
+  <phase name="6: Dry run in Claude Code">
+    <task id="6.1">
+      <name>Run one small ticket end to end on a scratch repository</name>
+      <action>Create a scratch git repository with a tiny Node project that has a test and a lint command. Install v2 into it with `node scripts/install.mjs --project &lt;scratch&gt;`. Run `/architect` on a small behavior-changing ticket, approve, then run `/coordinator` and let it reach `ship-approval`. Do not push. Then run a second ticket whose Protected Behaviors are `None` to confirm QA is skipped. Record every place a role stopped, misrouted, or needed a correction in `docs/v2/log.md`, and fix the prompt files.</action>
+      <verify>Both tickets reach `ship-approval` with the user stopped only at the gates in the spec. `docs/v2/log.md` lists the corrections made.</verify>
+    </task>
+  </phase>
+
+  <phase name="7: Orca runtime (needs a machine with Orca)">
+    <task id="7.1">
+      <name>Run the Orca trial</name>
+      <action>Follow Part A and Part B of `docs/v2/orca-checklist.md`. Record each answer in the checklist file itself.</action>
+      <verify>Every trial item in the checklist has a recorded answer.</verify>
+    </task>
+    <task id="7.2">
+      <name>Write the Orca runtime sections of the coordinator</name>
+      <action>Using only commands confirmed in task 7.1, fill the two Orca placeholder sections in `agents/coordinator.md` per Part C of the checklist, and add the `.gsd/` sharing setup to the README.</action>
+      <verify>Every command in the sections was run successfully during the trial.</verify>
+    </task>
+    <task id="7.3">
+      <name>Dry run in Orca</name>
+      <action>Repeat task 6.1 inside Orca per Part D of the checklist, including two tickets in parallel worktrees.</action>
+      <verify>Both tickets reach `ship-approval`, and the two parallel tickets do not touch each other's `.gsd/&lt;slug&gt;/` folder.</verify>
+    </task>
+  </phase>
+</plan>
