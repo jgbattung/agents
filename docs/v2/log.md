@@ -36,6 +36,10 @@ Tick a task when its verify step has passed and its commit exists. Add notes onl
 - [ ] 7.2 Write the Orca runtime sections of the coordinator
 - [ ] 7.3 Dry run in Orca
 
+### Phase 8: Cleanup before merging
+- [ ] 8.1 Remove the overhaul's working documents
+- [ ] 8.2 Open the pull request into main
+
 ## Notes
 
 ### Task 1.3 - How persona commands load a role without a hardcoded path
@@ -91,3 +95,22 @@ Tick a task when its verify step has passed and its commit exists. Add notes onl
 - The lint gate's finding names its locations in the command output, so the first `direct` condition now reads "names the exact location or locations to change".
 - Nothing was installed on the planning machine. No role or skill file has been run yet.
 - Open items for Phase 6 are listed in `RESUME.md` under "What to watch for".
+
+### Task 6.1 - Partial dry run on the planning machine (task NOT complete)
+Run headless (`claude -p`) in a scratch project with a project-scope install, with the agent answering as the user. Claude Code 2.1.332.
+
+Confirmed:
+- Individually symlinked agent files and command files are discovered. All five v2 agents and the four spawn commands appeared with their v2 descriptions.
+- Agent type names are case-sensitive. `Architect`, `Builder`, `QAEngineer`, `Reviewer`, `Integrator` were listed next to older lowercase agents of the same names.
+- `/coordinator` loads although it is hidden from the model's own skill list (`disable-model-invocation`). On a branch with no state folder it asked for planning through `/architect` and changed nothing.
+- `/architect` loads from the skill. It investigated, stopped at the alignment check with a ranked proposal, the Protected Behaviors, and the PR strategy, and wrote only `project-context.md` before approval.
+- After approval it wrote `spec.md`, `plan.xml` (with task IDs), `status.md`, and `notes.md` (five headings) in the `state-machine` formats, used the existing fresh branch, and excluded `.gsd/` from git.
+
+Found and fixed:
+- A project-scope install left `.claude/` showing as untracked, which would fail the Integrator's clean-tree check. `install.mjs` now adds the links it creates to `.git/info/exclude`.
+
+Found and not fixable on that machine:
+- A skill installed at user level shadows a project-level skill of the same name. The planning machine had an older `state-machine` and `git-standards` at user level, so roles loading those by name could get the old versions. The run was stopped there, because results past that point would not be trustworthy. A clean config folder could not be used because it is not logged in.
+- Consequence for the dry run: do it on a machine with no older copies of these skills at user level, or with v2 installed globally.
+
+Not yet exercised: the Builder, the QA Engineer, the gates inside the pipeline, the Reviewer, the Integrator, every stop except plan approval, the coordinator's loop, and the Architect stub's skill preload.

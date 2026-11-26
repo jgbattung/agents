@@ -11,10 +11,11 @@ Everything needed to continue this work is in this folder. No re-planning is req
 | 3. Roles (Builder, QA, Reviewer, Integrator, Architect) | Done |
 | 4. Coordinator and commands | Done |
 | 5. Documentation | Done |
-| **6. Dry run in Claude Code** | **Next. Not started** |
+| **6. Dry run in Claude Code** | **Next. Partly done: planning works, the pipeline after it is untested** |
 | 7. Orca runtime | Waiting for a machine with Orca |
+| 8. Cleanup and PR into `main` | After 6 and 7. Removes this `docs/v2/` folder |
 
-The two scripts are tested (`node --test scripts/install.test.mjs skills/gates/scripts/gates.test.mjs`). The role and skill files have never been run. Phase 6 is their first real test, so expect to correct them.
+The two scripts are tested (`node --test scripts/install.test.mjs skills/gates/scripts/gates.test.mjs`). A partial dry run confirmed that the install is discovered by Claude Code, that `/coordinator` loads, and that `/architect` plans a ticket and writes the state files correctly. Everything after planning (Builder, QA, gates in the pipeline, Reviewer, Integrator, and every stop except plan approval) has never been run, so expect to correct those files. The details are in `log.md` under "Task 6.1".
 
 `log.md` has the task checklist and every decision and deviation made during the build. Read its notes before changing a role file.
 
@@ -49,6 +50,7 @@ The two scripts are tested (`node --test scripts/install.test.mjs skills/gates/s
 5. Decide how to install v2 for the dry run:
    - **A machine with no existing `~/.claude` agents or skills:** `node scripts/install.mjs --dry-run`, then `node scripts/install.mjs`.
    - **A machine that already has them** (the script reports what it would skip): install into the scratch project only, in step 1 of Phase 6 below.
+   - **Warning:** a skill at user level (`~/.claude/skills`) shadows a project skill of the same name. If the machine has older copies of `state-machine`, `git-standards`, `review`, or `testing-standards` at user level, the dry run is not trustworthy until they are removed or replaced by this repository's versions.
 
 ## Phase 6: the dry run (do this next)
 
@@ -58,7 +60,7 @@ This is task 6.1 in `plan.xml`. It needs you at the keyboard, because the point 
    ```bash
    node scripts/install.mjs --project /path/to/scratch
    ```
-2. Open Claude Code in the scratch repository and type `/`. **Check first:** do `/architect`, `/coordinator`, `/pm`, `/builder`, `/qa`, `/integrator`, and `/reviewer` all appear? The Claude Code documentation covers symlinked skill folders but not individually symlinked agent and command files. If the four command files or the agents are missing, change `scripts/install.mjs` to copy those files instead of linking them, and record it in `log.md`.
+2. Open Claude Code in the scratch repository and type `/`. Check that `/architect`, `/coordinator`, `/pm`, `/builder`, `/qa`, `/integrator`, and `/reviewer` all appear. This worked on the planning machine with Claude Code 2.1.332.
 3. Run `/architect` with a small ticket that changes behavior (for example "add a function that formats a price, with two acceptance criteria"). Answer the project setup questions, approve the proposal, and check that `.gsd/<slug>/` holds `spec.md`, `plan.xml`, `status.md`, and `notes.md` in the formats of the `state-machine` skill.
 4. In a fresh session on the same branch, run `/coordinator` and let it run to the ship-approval stop. Do not approve the push.
 5. Run a second ticket whose Protected Behaviors are `None - this work changes no behavior` (for example a README change) and confirm QA is skipped.
@@ -71,7 +73,6 @@ This is task 6.1 in `plan.xml`. It needs you at the keyboard, because the point 
 
 | Check | Why it is uncertain |
 |---|---|
-| The coordinator can start `Builder`, `QAEngineer`, `Reviewer`, `Integrator`, `Architect` by those names | Whether agent type matching is case-sensitive is not documented |
 | The Architect stub loads the `architect` skill when run as a subagent | Skill preloading through the `skills:` field is documented but untested here |
 | `${CLAUDE_SKILL_DIR}` resolves when the `gates` and `backlog-protocol` skills call their scripts | Its behavior for a symlinked skill folder is not documented |
 | You are stopped only at the three gates | The stop rules are new |
@@ -103,12 +104,16 @@ Rules:
   `command -v orca`). When it is, follow docs/v2/orca-checklist.md from the top.
 ```
 
+## Phase 8: cleanup
+
+The files in `docs/v2/` exist only to carry this overhaul between machines. Task 8.1 deletes the folder before the branch is merged, and task 8.2 opens the PR into `main` after you approve. If Orca is still not available by then, the two Orca files move to `docs/orca/` so that work is not lost.
+
 ## Phase 7: Orca
 
 Phases 1 to 6 do not need Orca. When Phase 6 is done and Orca is installed, open `orca-checklist.md` and work through it top to bottom. It is written to be followed without the original planning conversation.
 
 ## When everything is done
 
-Open a PR from `feature/workflow-v2` into `main`. To turn the branch into a new repository instead, create an empty repository and run `git push <new-remote-url> feature/workflow-v2:main`.
+Phase 8 opens the PR from `feature/workflow-v2` into `main`. To turn the branch into a new repository instead, create an empty repository and run `git push <new-remote-url> feature/workflow-v2:main`.
 
 If the Notion backlog mirror is wanted on the new machine, run `npm install` in `skills/backlog-protocol/scripts/notion-sync/` first.

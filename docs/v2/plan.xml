@@ -110,4 +110,17 @@
       <verify>Both tickets reach `ship-approval`, and the two parallel tickets do not touch each other's `.gsd/&lt;slug&gt;/` folder.</verify>
     </task>
   </phase>
+
+  <phase name="8: Cleanup before merging">
+    <task id="8.1">
+      <name>Remove the overhaul's working documents</name>
+      <action>Run this only when Phases 6 and 7 are complete, or when the user decides to merge without Phase 7. First carry forward anything that must outlive the overhaul: if Phase 7 is not done, move `docs/v2/orca-checklist.md` and `docs/v2/orca-notes.md` to `docs/orca/` and point the README's Orca row at the new path. Then delete the `docs/v2/` folder, and remove every reference to `docs/v2` from `README.md` and `skills/coordinator/SKILL.md`. Remove the "Status: version 2" note from the top of the README. Leave the `v1` tag in place.</action>
+      <verify>`grep -rn 'docs/v2' .` (outside `.git`) prints nothing. `node --test scripts/install.test.mjs skills/gates/scripts/gates.test.mjs` passes. The gates script passes against `main`.</verify>
+    </task>
+    <task id="8.2">
+      <name>Open the pull request into main</name>
+      <action>Stop and ask the user for approval first. On approval, push the branch and open a PR from `feature/workflow-v2` into `main` with a summary of what changed between v1 and v2. No AI attribution in the title or body.</action>
+      <verify>The PR exists and its diff contains no `docs/v2/` files.</verify>
+    </task>
+  </phase>
 </plan>
