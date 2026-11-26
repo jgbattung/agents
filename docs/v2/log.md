@@ -18,7 +18,7 @@ Tick a task when its verify step has passed and its commit exists. Add notes onl
 - [x] 3.2 Rewrite the QA Engineer
 - [x] 3.3 Update the review, testing-standards, and git-standards skills
 - [x] 3.4 Rewrite the Reviewer with self and peer modes
-- [ ] 3.5 Rewrite the Integrator as the shipping role
+- [x] 3.5 Rewrite the Integrator as the shipping role
 - [ ] 3.6 Slim the Architect and move the opt-in flows out
 
 ### Phase 4: Coordinator and commands
@@ -70,3 +70,7 @@ Tick a task when its verify step has passed and its commit exists. Add notes onl
 - "A finding is routed once" needed a mechanism. A finding that repeats an earlier resolved or answered one is now raised with `route: user`. Updated in the spec, the `state-machine` skill, and the QA Engineer.
 - Removing a `[Debug Leftover]` counts as `direct` without a failing test or gate check, because the Reviewer can find leftovers the script cannot (for example commented-out code).
 - The coordinator may read the `route` and `status` lines of findings in `notes.md` as well as `status.md`. It still writes neither.
+
+### Task 3.5 - Notion sync script moved (deviation)
+- `scripts/notion-sync/` moved to `skills/backlog-protocol/scripts/notion-sync/`, contents unchanged apart from the paths in its README. The spec said not to touch it, but the `backlog-protocol` skill called it through a hardcoded `~/agents` path, and a script inside the skill folder can be reached through `${CLAUDE_SKILL_DIR}`.
+- After cloning on a new machine, run `npm install` in that folder before using the Notion mirror.

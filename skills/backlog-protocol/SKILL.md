@@ -121,10 +121,19 @@ The Notion `Tasks` database is a one-way mirror of `backlog/`. The files stay th
 After any operation in sections 4-6 (creating an item, changing a status, or archiving), run once from the project root:
 
 ```
-node "$HOME/agents/scripts/notion-sync/sync.ts" .
+node "${CLAUDE_SKILL_DIR}/scripts/notion-sync/sync.ts" .
 ```
 
 - Run it once at the end of a batch, not once per item. It syncs the whole project in one pass.
 - It only mirrors allowlisted projects. For any other project it prints a skip message and exits 0.
 - **Failure is non-fatal.** If the command exits non-zero, report the error line to the user as a warning and carry on. Never retry in a loop, and never let it block a status transition, a build, or a PR. The next successful run catches up.
 - Never edit the Notion database directly. Notion edits are overwritten.
+- If `${CLAUDE_SKILL_DIR}` is not substituted in your environment, the script is at `scripts/notion-sync/sync.ts` inside this skill's folder.
+
+## 8. Closing an Item After Its PR Opens
+
+Used by the Integrator, only when the project's Backlog workflow option is `on`, a PR was opened in the current run, and the spec's **Backlog ID** names an item. Never guess an item from the `backlog/` folder.
+
+1. Archive the item per Section 6 (set `status: done`, move it to `backlog/archive/`).
+2. Load the `roadmap-generator` skill and regenerate `backlog/ROADMAP.md` and `backlog/ROADMAP.html`.
+3. Run the Notion sync per Section 7. A failure is a warning, never a blocker.

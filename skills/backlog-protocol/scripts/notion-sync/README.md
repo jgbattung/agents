@@ -11,7 +11,7 @@ you never need to touch it. The commands below are for the rare manual cases.
    fully after setting it.
 2. Install dependencies:
    ```
-   cd "$HOME/agents/scripts/notion-sync"
+   cd "<this-repo>/skills/backlog-protocol/scripts/notion-sync"
    npm install
    ```
 
@@ -21,8 +21,8 @@ Run from anywhere; the argument is the project root.
 
 | When | Command |
 |---|---|
-| Preview what would change | `node "$HOME/agents/scripts/notion-sync/sync.ts" <project-root> --dry-run` |
-| Force a resync (after a warning, or after editing ticket files by hand) | `node "$HOME/agents/scripts/notion-sync/sync.ts" <project-root>` |
+| Preview what would change | `node "<this-repo>/skills/backlog-protocol/scripts/notion-sync/sync.ts" <project-root> --dry-run` |
+| Force a resync (after a warning, or after editing ticket files by hand) | `node "<this-repo>/skills/backlog-protocol/scripts/notion-sync/sync.ts" <project-root>` |
 
 A run with nothing to change makes no writes, so re-running is always safe.
 
