@@ -75,7 +75,7 @@ The command is idempotent. Never stage or commit anything under `.gsd/`.
 
 ## 6. The Status File
 
-`status.md` is the only file the coordinator reads to decide what happens next.
+`status.md` says where the pipeline is. The coordinator decides what happens next from this file and from the `route` and `status` lines of the findings in `notes.md`, and from nothing else.
 
 ```markdown
 # Status: <slug>
@@ -134,17 +134,17 @@ Every problem one role raises for another is a finding in `notes.md`:
 
 Whoever raises a finding sets its `route`. Apply these rules in order and take the first that matches:
 
-1. **`user`** - AI attribution in the branch's commit history. No role rewrites history.
+1. **`user`** - AI attribution in the branch's commit history (no role rewrites history), or a finding that repeats an earlier one which was already resolved or answered.
 2. **`qa`** - the finding concerns test code only: a `[Test Quality]` finding, a skip this branch introduced, or a protected behavior with no test.
 3. **`direct`** - all three of these hold:
    - it names one file and location;
    - fixing it adds or changes no protected behavior;
-   - a failing test or a gate check already proves it.
+   - a failing test or a gate check already proves it, or it is the removal of a `[Debug Leftover]`.
 4. **`architect`** - everything else.
 
 The Builder re-checks the three `direct` conditions before acting on such a finding. If any does not hold, it leaves the finding unfixed and stops with `stop: blocker`, and the finding goes to the Architect.
 
-A finding is routed once. If the same finding is raised again after its fix, the user decides.
+A finding is routed once. If the same finding is raised again after its fix or its answer, it is raised with `route: user` and names the earlier finding, and the user decides.
 
 Suggestions are not routed. They are listed in the PR description.
 

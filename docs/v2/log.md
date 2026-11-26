@@ -17,7 +17,7 @@ Tick a task when its verify step has passed and its commit exists. Add notes onl
 - [x] 3.1 Rewrite the Builder
 - [x] 3.2 Rewrite the QA Engineer
 - [x] 3.3 Update the review, testing-standards, and git-standards skills
-- [ ] 3.4 Rewrite the Reviewer with self and peer modes
+- [x] 3.4 Rewrite the Reviewer with self and peer modes
 - [ ] 3.5 Rewrite the Integrator as the shipping role
 - [ ] 3.6 Slim the Architect and move the opt-in flows out
 
@@ -65,3 +65,8 @@ Tick a task when its verify step has passed and its commit exists. Add notes onl
 - Orca was not installed on the planning machine. Everything in `orca-notes.md` comes from the documentation.
 - The GitHub CLI (`gh`) was not installed on the planning machine. The Integrator and Reviewer need it.
 - Decisions the user approved: three gates including the new ship approval, a slim Integrator kept separate from the coordinator, the fast-path rules, exception-only stops, per-item install links, Orca runtime sections deferred, within-feature parallelism deferred.
+
+### Task 3.4 - Route rules tightened while writing the Reviewer
+- "A finding is routed once" needed a mechanism. A finding that repeats an earlier resolved or answered one is now raised with `route: user`. Updated in the spec, the `state-machine` skill, and the QA Engineer.
+- Removing a `[Debug Leftover]` counts as `direct` without a failing test or gate check, because the Reviewer can find leftovers the script cannot (for example commented-out code).
+- The coordinator may read the `route` and `status` lines of findings in `notes.md` as well as `status.md`. It still writes neither.

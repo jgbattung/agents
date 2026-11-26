@@ -93,13 +93,13 @@ The tests already exist. Your job is to prove a change worked, not to start over
 
 1. **Establish what changed.** From `notes.md`, list the findings that were open at your last run and are now `resolved`, any open findings with `route: qa`, and any new entries in the spec's **Protected Behaviors**. From `status.md` and `git log`, list the commits made since your last test commit.
 2. **Check test integrity.** Run `git log --oneline -- <each test file you committed>` and diff those files against your last commit of them. If the Builder edited, weakened, skipped, or deleted any of your tests without a plan task explicitly instructing it, raise a `blocker` finding with route `architect` - a suite that is green because the test changed proves nothing. A deletion you made yourself and recorded as a prune is not a violation.
-3. **Run the full suite** and read the full output. For each resolved finding, confirm its failing test now passes. If it does not, the same finding has come back: set its `status` to `open` again and say so in your summary, so the user decides.
+3. **Run the full suite** and read the full output. For each resolved finding, confirm its failing test now passes. If it does not, the fix did not work: raise a new finding with `route: user` that names the earlier one, so the user decides.
 4. **Cover new behavior.** For a new Protected Behaviors entry that no existing test protects, write tests for that behavior alone, each with its failure statement.
 5. **Resolve `route: qa` findings.**
    - A `[Test Quality]` finding: strengthen, merge, or prune the test as the testing-standards skill directs. When the finding is that a failure statement does not hold, strengthen the test until it does and correct the statement.
    - A skip this branch introduced: remove the skip or guard and provide what the test needs (Section 5 of the skill).
    - A missing test: write it.
-   - If you judge a finding wrong, leave the test as it is and set the finding's status to `open` with your reason appended to `detail`. A finding answered this way and raised again goes to the user.
+   - If you judge a finding wrong, leave the test as it is, append your reason to the finding's `detail`, and set its `status` to `resolved (answered, no change)`. If the Reviewer raises it again, it goes to the user.
    - If resolving a finding needs a departure from the budget, raise the `budget` stop as in Phase 2.
 6. **Heal and record.** Handle failures as in Phase 4. Update the affected `## Test Ledger` entries in place, set each finding you resolved to `resolved (<commit hash>)`, and finish with Phase 5 steps 3 to 5.
 

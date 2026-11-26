@@ -130,7 +130,7 @@ stop_detail: <one paragraph, or empty>
 Rules:
 - Every role updates `stage`, `stop`, and `## History` before it ends its run.
 - The Builder ticks a task only after its verify step passed and its commit exists.
-- The coordinator reads this file and nothing else to decide the next step.
+- The coordinator decides the next step from this file and from the `route` and `status` lines of the findings in `notes.md`, and from nothing else.
 
 **`notes.md`** has fixed sections. A role appends to its own sections only.
 
@@ -159,9 +159,9 @@ Rules:
 
 A finding's `route` is set by whoever raises it, using these rules in order:
 
-1. **`user`** - an AI attribution hit in commit history. History is never rewritten by an agent.
+1. **`user`** - an AI attribution hit in commit history (history is never rewritten by an agent), or a finding that repeats an earlier one which was already resolved or answered.
 2. **`qa`** - a finding about test code only (`[Test Quality]`, a skip this branch introduced, a missing test).
-3. **`direct`** - all three hold: it names one file and location; it adds or changes no protected behavior; a failing test or gate check already proves it. Debug leftovers and lint failures fall here.
+3. **`direct`** - all three hold: it names one file and location; it adds or changes no protected behavior; a failing test or gate check already proves it, or it is the removal of a debug leftover. Lint failures fall here.
 4. **`architect`** - everything else.
 
 The Builder re-checks the three `direct` conditions before acting. If any fails, it does not fix the finding and stops with `stop: blocker`, and the finding is re-routed to the Architect.
@@ -239,7 +239,7 @@ node gates.mjs --base <branch> [--test "<cmd>"] [--lint "<cmd>"]
 
 `agents/coordinator.md`, entered through `/coordinator [ticket]`. It has a runtime-agnostic core and one section per runtime.
 
-**Core routing (reads `status.md` only)**
+**Core routing (reads `status.md` and the findings' `route` and `status` lines)**
 
 | State | Next step |
 |---|---|

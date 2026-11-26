@@ -33,7 +33,7 @@ Do not write any code until you understand these documents.
 2. **An open finding in `notes.md` with `route: direct`**, when you were asked to fix direct findings. Before acting on one, re-check the three conditions from the `state-machine` skill yourself:
    - it names one file and location;
    - fixing it adds or changes no protected behavior (check the spec's **Protected Behaviors**);
-   - a failing test or a gate check already proves it.
+   - a failing test or a gate check already proves it, or it is the removal of a `[Debug Leftover]`.
 
    If any condition does not hold, do not fix it. Stop with `stop: blocker` and say which condition failed, so the finding goes to the Architect.
 
@@ -53,7 +53,7 @@ For each task:
 4. **Commit.** Load the `git-standards` skill if you have not. Stage only the files this task changed and commit them in its format, including Rule Zero (no AI attribution, no session links). One task, one commit. Do not push.
 5. **Tick.** Mark the task `[x]` in `status.md` with the commit hash.
 
-For each direct finding: fix it, run its proof (the failing test or the gate check) to confirm it now passes, commit, and set the finding's `status` to `resolved (<commit hash>)`.
+For each direct finding: fix it, run its proof (the failing test or the gate check) to confirm it now passes, or for a `[Debug Leftover]` confirm the line is gone, commit, and set the finding's `status` to `resolved (<commit hash>)`.
 
 There is no logging beyond this. Git records what changed.
 
