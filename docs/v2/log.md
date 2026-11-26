@@ -6,7 +6,7 @@ Tick a task when its verify step has passed and its commit exists. Add notes onl
 
 ### Phase 1: Foundations
 - [x] 1.1 Rewrite the state-machine skill for the v2 state layout
-- [ ] 1.2 Create the install script with tests
+- [x] 1.2 Create the install script with tests
 - [ ] 1.3 Decide how persona commands import agent definitions without a hardcoded path
 
 ### Phase 2: Gates script
