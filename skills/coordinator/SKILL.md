@@ -76,7 +76,7 @@ State: .gsd/<slug>/
 | Role | Instruction |
 |---|---|
 | Builder, row 6 | `Build the unticked tasks.` |
-| Builder, row 4 | `Fix the open findings with route: direct.` |
+| Builder, row 4 | `Fix the open blocker and important findings with route: direct.` |
 | QA Engineer | `Run QA for this feature.` |
 | Reviewer | `Self mode. Review this feature.` |
 | Integrator, run 1 | `Run 1.` |

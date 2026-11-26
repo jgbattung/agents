@@ -121,7 +121,7 @@ Every problem one role raises for another is a finding in `notes.md`:
 ### F<n> - <one-line title>
 - source: qa | reviewer | gates | user
 - severity: blocker | important | suggestion
-- route: direct | architect | qa | user
+- route: direct | architect | qa | user | none
 - where: <file>:<line>
 - proof: <failing test name, gate check name, or none>
 - status: open | resolved (<commit hash>) | accepted by user
@@ -146,7 +146,7 @@ The Builder re-checks the three `direct` conditions before acting on such a find
 
 A finding is routed once. If the same finding is raised again after its fix or its answer, it is raised with `route: user` and names the earlier finding, and the user decides.
 
-Suggestions are not routed. They are listed in the PR description.
+Suggestions are not routed. A finding with `severity: suggestion` takes `route: none` and is listed in the PR description.
 
 ## 9. The Stop Protocol
 

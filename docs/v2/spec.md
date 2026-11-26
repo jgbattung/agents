@@ -148,7 +148,7 @@ Rules:
 ### F<n> - <one-line title>
 - source: qa | reviewer | gates | user
 - severity: blocker | important | suggestion
-- route: direct | architect | qa | user
+- route: direct | architect | qa | user | none
 - where: <file>:<line>
 - proof: <failing test name, gate check name, or "none">
 - status: open | resolved (<commit hash>) | accepted by user
