@@ -10,7 +10,7 @@ Tick a task when its verify step has passed and its commit exists. Add notes onl
 - [x] 1.3 Decide how persona commands import agent definitions without a hardcoded path
 
 ### Phase 2: Gates script
-- [ ] 2.1 Create the gates script with tests
+- [x] 2.1 Create the gates script with tests
 - [ ] 2.2 Write the gates skill file
 
 ### Phase 3: Roles
