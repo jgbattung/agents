@@ -1,46 +1,163 @@
 ---
 name: state-machine
-description: Defines strict protocols for interacting with the .gsd state directory, logging changes, and handling archives.
+description: Defines the .gsd state directory - the per-feature folder layout, the status and notes files, the finding format and routes, and the stop protocol every role follows.
 user-invocable: false
 ---
 
 # State Machine Protocol (.gsd)
 
-All agents must adhere to these rules to prevent context drift and ensure a reliable handoff between the Architect, Builder, QA, and Integrator.
+Roles never hand work to each other in conversation. They hand it off through the files below. Every role reads its inputs from these files and writes its results to them, so a role can be stopped, replaced, or restarted at any point without losing anything.
 
-## 1. Git Exclusion Rule (MANDATORY)
-* **Trigger:** Every time you create a `.gsd/` directory (via `mkdir -p .gsd` or any equivalent), you must **immediately** run the following command to ensure it is excluded from git without modifying `.gitignore`:
-  ```bash
-  grep -qxF '.gsd/' .git/info/exclude 2>/dev/null || echo '.gsd/' >> .git/info/exclude
-  ```
-* **Idempotent:** The command checks before appending, so it is safe to run multiple times.
-* **Scope:** This applies to every agent that creates a `.gsd/` folder, not just the Architect.
+Git already records what changed. These files record only what git cannot: what was approved, where the pipeline is, and what went differently.
 
-## 2. The Archive Rule (Scope Isolation)
-* **Active Workspace:** ONLY read and write files located in the root of the `.gsd/` directory.
-* **Isolation:** You must completely ignore any files inside `.gsd/archive/`. These are historical records and should not influence current implementation decisions.
-* **Archiving Procedure (canonical):** When a workflow calls for archiving old feature files, run `mkdir -p .gsd/archive` and move ONLY the files in the `.gsd/` root that match these patterns into `.gsd/archive/`: `*-spec.md`, `*-plan.xml`, `*-log.md`, `*-review.md`. Move nothing else. Living documents (e.g., `project-context.md`, `design-system.md`) are preserved by construction because they do not match the patterns - never add them to the move set manually.
+## 1. Layout
 
-## 3. The Slug Naming Rule
-The `[feature]` placeholder in filenames like `[feature]-spec.md`, `[feature]-plan.xml`, and `[feature]-log.md` must use the same kebab-case slug derived from the branch name's short description. For example, branch `feature/add-net-worth-component` produces files named `add-net-worth-component-spec.md`, `add-net-worth-component-plan.xml`, and `add-net-worth-component-log.md`. All agents must use the same slug for a given feature to prevent naming mismatches.
+```
+.gsd/
+  project-context.md          shared by every feature
+  <slug>/
+    spec.md                   what was approved
+    plan.xml                  the tasks
+    status.md                 where the pipeline is, and any open stop
+    notes.md                  decisions, deviations, findings, test ledger
+    review.md                 the Reviewer's last self review
+    pr.md                     the PR draft awaiting ship approval
+  peer-reviews/<slug>.md      Reviewer output for another developer's PR
+```
 
-## 4. The Logging Rule (Save State)
-The `.gsd/[feature]-log.md` file is the "save state" for the feature.
-* **Append-Only:** NEVER overwrite or delete existing content in the log. Always append new entries to the bottom of the file.
-* **Immediate Updates:** Log every move, code change, or decision immediately after it occurs.
-* **Source of Truth for Progress:** The log alone records what is done. Never write completion status (e.g., `status="done"`) into `[feature]-plan.xml`; to know which tasks are complete, read the log.
-* **Mandatory Sections:** Every log entry must use this AI-optimized format:
+Each feature has its own folder. Folders coexist, so several features can be in progress at once. Finished features stay where they are.
 
-### [Timestamp / Phase Name]
-1. **Changes Implemented**: Highly detailed breakdown of logic, functions created, and exact file paths modified.
-2. **Deviations/Pivots**: Any changes made that differ from the original XML plan and the rationale.
-3. **Unresolved Errors**: Any blockers, failing tests, or stack traces that require another agent's attention.
+## 2. Git Exclusion Rule
 
-## 5. QA & Verification Summary
-When testing is complete, the QA Engineer must append a `### QA & Testing Summary` section containing: the test ledger (each test, the behavior it protects, its reason, and its failure statement), every prune with its justification, every behavior deliberately not tested or left as a manual check with its reason, any skipped tests seen, and any Category B (source code) bugs found. The QA Engineer never fixes source code; Category B bugs are logged under `Unresolved Errors` for the Architect.
+Every time you create the `.gsd/` directory, immediately exclude it from git without touching `.gitignore`:
 
-## 6. The Project Context Rule (Living Knowledge Base)
-The `.gsd/project-context.md` file is the persistent memory for the repository.
-* **Persistent:** Unlike feature specs and plans, this file is NEVER archived.
-* **Merge-Only:** Agents may add new architectural patterns, tech stack details, or discoveries to this file, but you must **never** delete or overwrite the existing historical knowledge contained within it.
-* **Conventions (the one exception):** The `## Conventions` section records the team's current rules (base branch, branch naming, commit format, PR template, ticket reference, protected files). Every agent follows it instead of assuming defaults. It reflects the present, not history, so the Architect updates it in place when the user supplies new or corrected conventions.
+```bash
+grep -qxF '.gsd/' .git/info/exclude 2>/dev/null || echo '.gsd/' >> .git/info/exclude
+```
+
+The command is idempotent. Never stage or commit anything under `.gsd/`.
+
+## 3. Slug and Active Feature
+
+- **Slug:** the kebab-case short description of the branch name. Branch `feature/add-net-worth-component` gives the slug `add-net-worth-component`.
+- **Active feature:** the folder whose name matches the slug of the current branch (`git branch --show-current`).
+- If no folder matches the current branch, do not pick another one. Say which folders exist and ask.
+- Read and write only the active feature's folder and `project-context.md`. Other features' folders belong to other work.
+
+## 4. Project Context
+
+`.gsd/project-context.md` is the repository's memory across features.
+
+- **Merge-only:** add new patterns, stack details, and discoveries. Never delete or overwrite what is there.
+- **Three sections reflect the present, not history, and are updated in place** when the user gives new or corrected information:
+  - `## Conventions` - base branch, branch naming, commit format, PR template, ticket reference, protected files, other team rules.
+  - `## Commands` - the exact commands the gates use, one per line:
+    ```markdown
+    ## Commands
+    - test: <command>
+    - lint: <command>
+    ```
+    Write `none` for a command the project does not have.
+  - `## Workflow options` - which optional parts of the workflow this project uses:
+    ```markdown
+    ## Workflow options
+    - Visual alignment (Lavish): on | off
+    - Backlog (PM, backlog folder, roadmap, Notion): on | off
+    ```
+    When an option is `off` or the section is missing, do not read the skills or files that option covers.
+
+## 5. The Plan
+
+`plan.xml` keeps the `<phase>` and `<task>` structure. Every task has an `id` (`<task id="2.1">`), a `<name>`, an `<action>`, and a `<verify>`.
+
+- Never write completion status into the plan. Progress lives in `status.md`.
+- Only the Architect edits the plan. Fixes are appended as a new phase, never by rewriting earlier phases.
+
+## 6. The Status File
+
+`status.md` is the only file the coordinator reads to decide what happens next.
+
+```markdown
+# Status: <slug>
+
+stage: planning | build | qa | gates | review | ship | done
+stop: none | deviation | blocker | budget | remediation-approval | findings | ship-approval
+stop_detail: <one paragraph, or empty>
+
+## Tasks
+- [x] 1.1 <task name> (<commit hash>)
+- [ ] 1.2 <task name>
+
+## History
+- <date> <role>: <one-line outcome>
+```
+
+Rules:
+
+- Before a role ends its run, it sets `stage` and `stop`, and appends one line to `## History`.
+- The Builder ticks a task only after its `<verify>` passed and its commit exists.
+- When the Architect appends a phase to the plan, it adds that phase's tasks to `## Tasks` unticked.
+- `stage` names the step that should run next, not the one that just finished.
+
+## 7. The Notes File
+
+`notes.md` has fixed sections. A role appends to its own sections and never edits another role's entries, with one exception: the role that resolves a finding updates that finding's `status` line.
+
+| Section | Written by | Content |
+|---|---|---|
+| `## Decisions` | Architect | The approach chosen, trade-offs, and findings deliberately not planned |
+| `## Deviations` | Builder | Where the build departed from the plan, and why |
+| `## Findings` | QA Engineer, Reviewer, gates script | One entry per finding, in the format of Section 8 |
+| `## Test Ledger` | QA Engineer | Each test, the behavior it protects, its reason, and its failure statement |
+| `## Not Tested` | QA Engineer | Behaviors deliberately not tested or left as manual checks, with reasons |
+
+Write an entry only when there is something to record. A build that followed the plan leaves `## Deviations` empty.
+
+## 8. Findings
+
+Every problem one role raises for another is a finding in `notes.md`:
+
+```markdown
+### F<n> - <one-line title>
+- source: qa | reviewer | gates
+- severity: blocker | important | suggestion
+- route: direct | architect | qa | user
+- where: <file>:<line>
+- proof: <failing test name, gate check name, or none>
+- status: open | resolved (<commit hash>) | accepted by user
+- detail: <what is wrong, expected versus actual>
+```
+
+`<n>` is the next unused number in the file. A finding must be locatable from `where` without re-scanning the code.
+
+### Routes
+
+Whoever raises a finding sets its `route`. Apply these rules in order and take the first that matches:
+
+1. **`user`** - AI attribution in the branch's commit history. No role rewrites history.
+2. **`qa`** - the finding concerns test code only: a `[Test Quality]` finding, a skip this branch introduced, or a protected behavior with no test.
+3. **`direct`** - all three of these hold:
+   - it names one file and location;
+   - fixing it adds or changes no protected behavior;
+   - a failing test or a gate check already proves it.
+4. **`architect`** - everything else.
+
+The Builder re-checks the three `direct` conditions before acting on such a finding. If any does not hold, it leaves the finding unfixed and stops with `stop: blocker`, and the finding goes to the Architect.
+
+A finding is routed once. If the same finding is raised again after its fix, the user decides.
+
+Suggestions are not routed. They are listed in the PR description.
+
+## 9. The Stop Protocol
+
+A stop is the only time a role waits for the user. Each role's definition lists the stops it may raise. It may raise no others.
+
+To stop:
+
+1. Write `stop: <type>` and a `stop_detail` paragraph in `status.md`. The detail must let the user decide without opening other files: what happened, the options, and what you recommend.
+2. Append the `## History` line.
+3. End your run with the stop detail as your final message. Do not continue past the stop in the same run.
+
+To resume, you are given the user's answer. Treat it as the user's decision, set `stop: none` and clear `stop_detail`, and continue from where you stopped.
+
+Do not ask for confirmation of work that was already approved. Approved work proceeds without a stop.
