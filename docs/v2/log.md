@@ -16,7 +16,7 @@ Tick a task when its verify step has passed and its commit exists. Add notes onl
 ### Phase 3: Roles
 - [x] 3.1 Rewrite the Builder
 - [x] 3.2 Rewrite the QA Engineer
-- [ ] 3.3 Update the review, testing-standards, and git-standards skills
+- [x] 3.3 Update the review, testing-standards, and git-standards skills
 - [ ] 3.4 Rewrite the Reviewer with self and peer modes
 - [ ] 3.5 Rewrite the Integrator as the shipping role
 - [ ] 3.6 Slim the Architect and move the opt-in flows out
