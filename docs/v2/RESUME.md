@@ -11,11 +11,11 @@ Everything needed to continue this work is in this folder. No re-planning is req
 | 3. Roles (Builder, QA, Reviewer, Integrator, Architect) | Done |
 | 4. Coordinator and commands | Done |
 | 5. Documentation | Done |
-| **6. Dry run in Claude Code** | **Next. Partly done: planning works, the pipeline after it is untested** |
+| **6. Dry run in Claude Code** | **Next. Mostly done: the main path and the direct-fix path work. The remaining checks are listed below** |
 | 7. Orca runtime | Waiting for a machine with Orca |
 | 8. Cleanup and PR into `main` | After 6 and 7. Removes this `docs/v2/` folder |
 
-The two scripts are tested (`node --test scripts/install.test.mjs skills/gates/scripts/gates.test.mjs`). A partial dry run confirmed that the install is discovered by Claude Code, that `/coordinator` loads, and that `/architect` plans a ticket and writes the state files correctly. Everything after planning (Builder, QA, gates in the pipeline, Reviewer, Integrator, and every stop except plan approval) has never been run, so expect to correct those files. The details are in `log.md` under "Task 6.1".
+The two scripts are tested (`node --test scripts/install.test.mjs skills/gates/scripts/gates.test.mjs`). Two dry run sessions took a small ticket from `/architect` through the coordinator, Builder, QA Engineer, gates, Reviewer, and Integrator to the ship-approval stop, and through one direct fix. They found and fixed three bugs. The details, and the list of what is still not exercised, are in `log.md` under the two "Task 6.1" notes. Read those before continuing.
 
 `log.md` has the task checklist and every decision and deviation made during the build. Read its notes before changing a role file.
 
@@ -52,34 +52,34 @@ The two scripts are tested (`node --test scripts/install.test.mjs skills/gates/s
    - **A machine that already has them** (the script reports what it would skip): install into the scratch project only, in step 1 of Phase 6 below.
    - **Warning:** a skill at user level (`~/.claude/skills`) shadows a project skill of the same name. If the machine has older copies of `state-machine`, `git-standards`, `review`, or `testing-standards` at user level, the dry run is not trustworthy until they are removed or replaced by this repository's versions.
 
-## Phase 6: the dry run (do this next)
+## Phase 6: the dry run (finish this next)
 
-This is task 6.1 in `plan.xml`. It needs you at the keyboard, because the point is to see where the roles stop.
+This is task 6.1 in `plan.xml`. The main path already works. What remains is to exercise the paths below, in a scratch repository, with you at the keyboard so the stops are answered by a person in a live session.
 
-1. Create a scratch repository with a tiny Node project that has a real test command and a real lint command, and one commit on `main`. Install v2 into it:
-   ```bash
-   node scripts/install.mjs --project /path/to/scratch
-   ```
-2. Open Claude Code in the scratch repository and type `/`. Check that `/architect`, `/coordinator`, `/pm`, `/builder`, `/qa`, `/integrator`, and `/reviewer` all appear. This worked on the planning machine with Claude Code 2.1.332.
-3. Run `/architect` with a small ticket that changes behavior (for example "add a function that formats a price, with two acceptance criteria"). Answer the project setup questions, approve the proposal, and check that `.gsd/<slug>/` holds `spec.md`, `plan.xml`, `status.md`, and `notes.md` in the formats of the `state-machine` skill.
-4. In a fresh session on the same branch, run `/coordinator` and let it run to the ship-approval stop. Do not approve the push.
-5. Run a second ticket whose Protected Behaviors are `None - this work changes no behavior` (for example a README change) and confirm QA is skipped.
-6. Force each exception once, to see the stops work:
-   - ask the Builder for something that is not in the plan;
-   - add a debug print to the source and commit it, then run the gates;
-   - put an AI attribution trailer on a commit, then run the gates.
+Set up: create a scratch repository with a tiny Node project that has a real test command and a real lint command, one commit on `main`, and a GitHub remote you can push to (a throwaway private repository). Install v2 into it with `node scripts/install.mjs --project /path/to/scratch`, or globally on a machine with a clean `~/.claude`.
 
-**What to watch for, and fix in the role files:**
+| # | Do this | Expect |
+|---|---|---|
+| 1 | `/architect` a small behavior-changing ticket, approve, then `/coordinator` in a fresh session | The pipeline reaches `ship-approval`, stopping nowhere else. The gates print `Gates: PASSED` |
+| 2 | At `ship-approval`, approve | The Integrator pushes and opens the PR with `gh`, and `status.md` ends at `stage: done` with the URL |
+| 3 | On a new ticket, after QA has run, break the source so a QA test fails, commit, set `stage: gates`, run `/coordinator` | The gates record a test failure with `route: architect`. The Architect plans a remediation phase and stops for `remediation-approval`. After approval the Builder fixes it and the QA Engineer runs in Re-Verification Mode |
+| 4 | Plant a debug print, commit, run `/coordinator` | A `direct` finding, fixed by the Builder, then QA re-verification, gates, Reviewer |
+| 5 | Put an AI attribution trailer on a commit, run `/coordinator` | A `route: user` finding. The coordinator shows it and waits. No role rewrites history |
+| 6 | Plan a ticket whose approach forces the QA Engineer to leave a listed behavior untested, or ask it to prune a test | A `budget` stop |
+| 7 | Give the Builder a plan task that cannot be done as written | A `deviation` or `blocker` stop with options and a recommendation |
+| 8 | A ticket that changes no behavior (a README edit) | Protected Behaviors read `None`, and QA is skipped |
+| 9 | Answer one stop in the same session it was raised in | The coordinator continues the same subagent instead of starting a new one |
+
+**What to watch for in every run:**
 
 | Check | Why it is uncertain |
 |---|---|
-| The Architect stub loads the `architect` skill when run as a subagent | Skill preloading through the `skills:` field is documented but untested here |
-| `${CLAUDE_SKILL_DIR}` resolves when the `gates` and `backlog-protocol` skills call their scripts | Its behavior for a symlinked skill folder is not documented |
-| You are stopped only at the three gates | The stop rules are new |
+| The Architect stub loads the `architect` skill when the coordinator runs it as a subagent | Skill preloading through the `skills:` field is documented but has not been run |
+| `${CLAUDE_SKILL_DIR}` resolves when the `gates` skill calls its script | Its behavior for a symlinked skill folder is not documented. The script itself now works through a symlink |
 | The coordinator's prompts to roles contain no summary of the work | The no-characterization rule is easy for a model to drift from |
-| A role restarted mid-run picks up from `status.md` | Never exercised |
+| A recorded gates pass was actually printed | An earlier bug produced silent passes. The skill now says no output means it did not run |
 
-Record every correction in `log.md` under a "Task 6.1" note, then tick task 6.1.
+Record every correction in `log.md` under a "Task 6.1" note. Tick task 6.1 when rows 1 to 9 have all been seen to work.
 
 ## Resume prompt
 

@@ -114,3 +114,31 @@ Found and not fixable on that machine:
 - Consequence for the dry run: do it on a machine with no older copies of these skills at user level, or with v2 installed globally.
 
 Not yet exercised: the Builder, the QA Engineer, the gates inside the pipeline, the Reviewer, the Integrator, every stop except plan approval, the coordinator's loop, and the Architect stub's skill preload.
+
+### Task 6.1 - Second dry run session on the planning machine (task still NOT complete)
+The user removed the older user-level skills link on that machine, so the shadowing problem no longer applied. Three headless coordinator runs followed on the ticket planned earlier, with the agent answering as the user.
+
+Run 1, happy path. Confirmed:
+- The coordinator started Builder, QAEngineer, Reviewer, and Integrator by name, ran the gates itself, and stopped only at `ship-approval`. Nothing was pushed.
+- The Builder built the task in one atomic commit and ticked it. The QA Engineer wrote one test per approved behavior without asking for the budget again, and recorded the ledger with failure statements. The Reviewer wrote `review.md`. The Integrator wrote `pr.md` and carried the suggestion into "Known Improvements".
+- Commits were in the conventional format with no AI attribution. The coordinator wrote only the stage line and its own history lines.
+
+Run 2, a debug print planted in the source and the stage reset to `gates`. Confirmed:
+- The gates recorded the leftover as a `direct` finding, the Builder removed it in one commit and marked it resolved, with no re-planning.
+- The Builder refused a finding that failed the direct re-check and raised a `blocker` stop with a reason and a recommendation. The coordinator relayed it verbatim and did not answer it.
+
+Found and fixed:
+- **The gates script did nothing when called through the installed symlink.** Its entry-point guard compared the invoked path with the module's resolved path, so it exited 0 with no output. The two "gates passed" history lines of run 1 were false. Fixed by comparing real paths in both scripts, with a test that calls the script through a symlinked folder. The `gates` skill now states that no output means the script did not run.
+- **A suggestion was handed to the Builder.** The QA Engineer gave a suggestion `route: direct`, and the coordinator's instruction did not exclude suggestions. A suggestion now takes `route: none`, the instruction names blocker and important findings only, and the Builder leaves suggestions alone.
+
+Run 3, after the fixes, from the `gates` stage. Confirmed: gates passed for real, the Reviewer re-reviewed, the Integrator updated the draft and stopped at `ship-approval`.
+
+Still not exercised (this is what remains of task 6.1):
+- QA Re-Verification Mode after a fix. In run 2 the Builder stopped before setting the stage, and the stop was cleared by hand.
+- The Architect's Remediation Mode under the coordinator, the `remediation-approval` stop, and the Architect stub's skill preload.
+- The QA Engineer's `budget` stop and the Builder's `deviation` stop.
+- A `route: user` finding (AI attribution in a commit, or a repeated finding).
+- The Integrator's run 2: push and `gh pr create`. The planning machine had no `gh` and the scratch repository had no remote.
+- A ticket whose Protected Behaviors are `None`, to confirm QA is skipped.
+- Resuming a stop in the same session with SendMessage. Every headless run was a new session, so each stop was resumed from the files, which worked.
+- The roles reached the gates script by its real path in runs 2 and 3 because the history line told them to. The symlinked path was verified directly from a shell after the fix, not through a role.
