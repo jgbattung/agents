@@ -62,6 +62,24 @@ function checks(result) {
   return result.failures.map((f) => f.check);
 }
 
+test('runs its checks when called through a symlinked skill folder', () => {
+  const cwd = repo();
+  write(cwd, 'src/app.js', `${CONSOLE_CALL}\n`);
+  commit(cwd, 'feat: add output');
+  // The installed layout: the skill folder is a symlink, and the script is called through it.
+  const installed = path.join(fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'gates-link-'))), 'gates');
+  fs.symlinkSync(path.dirname(path.dirname(SCRIPT)), installed, 'dir');
+
+  const result = spawnSync(process.execPath, [path.join(installed, 'scripts', 'gates.mjs'), '--base', 'main'], {
+    cwd,
+    env: GIT_ENV,
+    encoding: 'utf8',
+  });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stdout, /^Gates: FAILED/);
+});
+
 test('passes with exit 0 when the commands succeed and the branch is clean', () => {
   const cwd = repo();
   write(cwd, 'src/app.js', 'export const one = 1;\nexport const two = 2;\n');

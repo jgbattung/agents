@@ -178,6 +178,8 @@ function main() {
   return 0;
 }
 
-if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+// Compare real paths: when the script is reached through a symlink (an installed
+// skill folder), argv[1] is the link while import.meta.url is the target.
+if (process.argv[1] && fs.realpathSync(process.argv[1]) === fs.realpathSync(fileURLToPath(import.meta.url))) {
   process.exitCode = main();
 }

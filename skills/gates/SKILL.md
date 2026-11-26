@@ -56,6 +56,7 @@ Add `--json` for a machine-readable result.
 
 ## Reading the Result
 
+- The first line of output is always `Gates: PASSED` or `Gates: FAILED` (or a JSON object with `--json`). **No output means the script did not run.** Never record a pass you did not see printed.
 - **Exit 0:** nothing failed. Warnings may still be listed.
 - **Exit 1:** at least one check failed. Each failure is already written to `## Findings` in `notes.md` with its route. Re-running does not record the same open finding twice.
 - **Exit 2:** the script was called wrongly (missing `--base`, or a base branch that does not exist). Fix the call.
