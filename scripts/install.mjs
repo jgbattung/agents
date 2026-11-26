@@ -50,6 +50,29 @@ function skillFolders(dir) {
     .sort();
 }
 
+/**
+ * Hides the links from git in a project-scope install, through
+ * .git/info/exclude, so they never show up as untracked files (which would
+ * fail the "working tree is clean" check before shipping) and are never
+ * committed. Returns the lines added.
+ */
+export function excludeFromGit(projectRoot, linkedPaths) {
+  const gitDir = path.join(projectRoot, '.git');
+  // A worktree has a .git file, not a directory; its excludes live elsewhere.
+  if (!exists(gitDir) || !fs.lstatSync(gitDir).isDirectory()) return [];
+  const excludeFile = path.join(gitDir, 'info', 'exclude');
+  const current = exists(excludeFile) ? fs.readFileSync(excludeFile, 'utf8') : '';
+  const present = new Set(current.split('\n'));
+  const lines = linkedPaths
+    .map((p) => `/${path.relative(projectRoot, p).split(path.sep).join('/')}`)
+    .filter((line) => !present.has(line));
+  if (lines.length === 0) return [];
+  fs.mkdirSync(path.dirname(excludeFile), { recursive: true });
+  const separator = current === '' || current.endsWith('\n') ? '' : '\n';
+  fs.writeFileSync(excludeFile, `${current}${separator}${lines.join('\n')}\n`);
+  return lines;
+}
+
 /** Lists every link the install would create, without touching the disk. */
 export function planLinks({ repo = REPO_ROOT, targetRoot, scope }) {
   const links = [];
@@ -138,6 +161,11 @@ function main() {
     : path.join(os.homedir(), '.claude');
 
   const results = install({ targetRoot, scope, dryRun: values['dry-run'] });
+  if (scope === 'project' && !values['dry-run']) {
+    const ours = results.filter((r) => r.action === 'linked' || r.action === 'already-linked').map((r) => r.dest);
+    const excluded = excludeFromGit(path.resolve(values.project), ours);
+    if (excluded.length > 0) process.stdout.write(`${excluded.length} path(s) added to .git/info/exclude\n`);
+  }
   for (const r of results) {
     const note = r.reason ? ` (${r.reason})` : '';
     process.stdout.write(`${r.action.padEnd(14)} ${r.dest}${note}\n`);

@@ -4,7 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { test } from 'node:test';
 
-import { install } from './install.mjs';
+import { excludeFromGit, install } from './install.mjs';
 
 function tempDir() {
   return fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'install-test-')));
@@ -102,4 +102,23 @@ test('running twice reports existing links instead of failing', () => {
   const second = install({ repo, targetRoot, scope: 'project' });
 
   assert.ok(second.every((r) => r.action === 'already-linked'));
+});
+
+test('a project install hides its links from git without touching other excludes', () => {
+  const repo = fakeRepo();
+  const project = tempDir();
+  fs.mkdirSync(path.join(project, '.git', 'info'), { recursive: true });
+  fs.writeFileSync(path.join(project, '.git', 'info', 'exclude'), '.gsd/');
+  const results = install({ repo, targetRoot: path.join(project, '.claude'), scope: 'project' });
+  const linked = results.map((r) => r.dest);
+
+  excludeFromGit(project, linked);
+  const added = excludeFromGit(project, linked);
+
+  // The second call adds nothing, and the existing line is kept.
+  assert.deepEqual(added, []);
+  assert.equal(
+    fs.readFileSync(path.join(project, '.git', 'info', 'exclude'), 'utf8'),
+    '.gsd/\n/.claude/agents/builder.md\n/.claude/skills/alpha\n/.claude/commands/builder.md\n',
+  );
 });
