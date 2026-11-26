@@ -179,7 +179,7 @@ A finding is routed once. If the same finding is raised again after its fix, the
 | QA Engineer | Autonomous | Tests, fixtures, test config. Never source | It wants to add a behavior to the budget, prune an existing test, or leave a budgeted behavior untested |
 | Reviewer | Autonomous | `review.md`, `notes.md` findings, peer review files | Never. It reports findings |
 | Integrator | Autonomous, two runs | `pr.md`, then push and PR | Always, for ship approval between its two runs |
-| Coordinator | The session the user talks to | `status.md` history lines only | It relays every stop above, verbatim |
+| Coordinator | The session the user talks to | In `status.md`: the stage after gates and its own history lines. In `notes.md`: the status or route line of a `route: user` finding, to record the user's decision | It relays every stop above, verbatim |
 
 **Architect changes**
 - Branching: on a feature branch with no `.gsd/<slug>/` folder (a fresh worktree), it uses that branch. On the base branch, it creates the branch after approval, as in v1.

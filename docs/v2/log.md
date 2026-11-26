@@ -22,8 +22,8 @@ Tick a task when its verify step has passed and its commit exists. Add notes onl
 - [x] 3.6 Slim the Architect and move the opt-in flows out
 
 ### Phase 4: Coordinator and commands
-- [ ] 4.1 Create the coordinator
-- [ ] 4.2 Add the coordinator command and update the others
+- [x] 4.1 Create the coordinator
+- [x] 4.2 Add the coordinator command and update the others
 
 ### Phase 5: Documentation
 - [ ] 5.1 Rewrite the README and update AGENTS.md
@@ -79,3 +79,9 @@ Tick a task when its verify step has passed and its commit exists. Add notes onl
 - Per the task 1.3 decision, the definition is `skills/architect/SKILL.md` and `agents/architect.md` is a stub that preloads it.
 - Findings gained `source: user`, for review feedback from people (PR comments, diff annotations) that the Architect records.
 - A remediation task names the finding it resolves, and the Builder marks that finding resolved when it commits the task.
+
+### Tasks 4.1 and 4.2 - Coordinator and commands
+- The coordinator is `skills/coordinator/SKILL.md` (task 1.3 decision). It sets `disable-model-invocation`, so only the user starts it.
+- The coordinator may also write the `stage` line after it runs the gates, and the `status` or `route` line of a `route: user` finding to record the user's decision. The spec's role table was updated to say so.
+- The PM moved from `agents/pm.md` to `skills/pm/SKILL.md`, with its skill references changed from paths to names. Its other content is unchanged.
+- Task 4.2's verify ("all seven commands appear in Claude Code") could not be run on the planning machine and is part of the Phase 6 dry run. The slash commands are now `/architect`, `/pm`, `/coordinator` (skills) and `/builder`, `/qa`, `/integrator`, `/reviewer` (command files).
