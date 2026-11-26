@@ -137,7 +137,7 @@ Whoever raises a finding sets its `route`. Apply these rules in order and take t
 1. **`user`** - AI attribution in the branch's commit history (no role rewrites history), or a finding that repeats an earlier one which was already resolved or answered.
 2. **`qa`** - the finding concerns test code only: a `[Test Quality]` finding, a skip this branch introduced, or a protected behavior with no test.
 3. **`direct`** - all three of these hold:
-   - it names one file and location;
+   - it names the exact location or locations to change (a lint failure names them in its output);
    - fixing it adds or changes no protected behavior;
    - a failing test or a gate check already proves it, or it is the removal of a `[Debug Leftover]`.
 4. **`architect`** - everything else.

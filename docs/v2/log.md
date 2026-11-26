@@ -85,3 +85,9 @@ Tick a task when its verify step has passed and its commit exists. Add notes onl
 - The coordinator may also write the `stage` line after it runs the gates, and the `status` or `route` line of a `route: user` finding to record the user's decision. The spec's role table was updated to say so.
 - The PM moved from `agents/pm.md` to `skills/pm/SKILL.md`, with its skill references changed from paths to names. Its other content is unchanged.
 - Task 4.2's verify ("all seven commands appear in Claude Code") could not be run on the planning machine and is part of the Phase 6 dry run. The slash commands are now `/architect`, `/pm`, `/coordinator` (skills) and `/builder`, `/qa`, `/integrator`, `/reviewer` (command files).
+
+### 2026-11-27 - End of the first build session
+- Phases 1 to 5 are complete and pushed. Phase 6 has not been started.
+- The lint gate's finding names its locations in the command output, so the first `direct` condition now reads "names the exact location or locations to change".
+- Nothing was installed on the planning machine. No role or skill file has been run yet.
+- Open items for Phase 6 are listed in `RESUME.md` under "What to watch for".

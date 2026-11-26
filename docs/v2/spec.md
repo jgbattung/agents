@@ -161,7 +161,7 @@ A finding's `route` is set by whoever raises it, using these rules in order:
 
 1. **`user`** - an AI attribution hit in commit history (history is never rewritten by an agent), or a finding that repeats an earlier one which was already resolved or answered.
 2. **`qa`** - a finding about test code only (`[Test Quality]`, a skip this branch introduced, a missing test).
-3. **`direct`** - all three hold: it names one file and location; it adds or changes no protected behavior; a failing test or gate check already proves it, or it is the removal of a debug leftover. Lint failures fall here.
+3. **`direct`** - all three hold: it names the exact location or locations to change; it adds or changes no protected behavior; a failing test or gate check already proves it, or it is the removal of a debug leftover. Lint failures fall here.
 4. **`architect`** - everything else.
 
 The Builder re-checks the three `direct` conditions before acting. If any fails, it does not fix the finding and stops with `stop: blocker`, and the finding is re-routed to the Architect.
@@ -237,7 +237,7 @@ node gates.mjs --base <branch> [--test "<cmd>"] [--lint "<cmd>"]
 
 ### 5. Coordinator
 
-`agents/coordinator.md`, entered through `/coordinator [ticket]`. It has a runtime-agnostic core and one section per runtime.
+`skills/coordinator/SKILL.md`, entered through `/coordinator [ticket]` (see the task 1.3 decision in `log.md`). It has a runtime-agnostic core and one section per runtime.
 
 **Core routing (reads `status.md` and the findings' `route` and `status` lines)**
 
@@ -307,7 +307,7 @@ The prompt files have no automated tests. They are verified by the dry run in Ph
 
 ## Execution Guidelines
 
-- **Affected files:** see the plan. New: `agents/coordinator.md`, `commands/coordinator.md`, `skills/gates/`, `scripts/install.mjs`, `skills/lavish/architect-alignment.md`.
+- **Affected files:** see the plan. New: `skills/coordinator/`, `skills/architect/`, `skills/pm/`, `skills/gates/`, `scripts/install.mjs`, `skills/lavish/architect-alignment.md`. Removed: `agents/pm.md`, `commands/architect.md`, `commands/pm.md`.
 - **Watch-outs:**
   - `skills/review/SKILL.md` and `skills/testing-standards/SKILL.md` refer to v1 log sections (`### QA & Testing Summary`, `### QA Re-Verification`). Every such reference must move to the `notes.md` sections.
   - Agent `name:` frontmatter values are what `subagent_type` matches. Do not rename existing agents.

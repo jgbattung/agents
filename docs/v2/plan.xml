@@ -67,7 +67,7 @@
   <phase name="4: Coordinator and commands">
     <task id="4.1">
       <name>Create the coordinator</name>
-      <action>Create `agents/coordinator.md` per Technical Design section 5: the routing table, the coordinator rules, ticket intake (pasted text, a GitHub issue number or URL read with `gh issue view`, or a backlog ID when the backlog option is on), and the Claude Code runtime section (roles as subagents, reuse of a live subagent for follow-ups, a fresh one reloading from files otherwise, planning handed to `/architect` in its own session). Add two clearly marked placeholder headings for the Orca runtime sections that say they are written under `docs/v2/orca-checklist.md` and contain no commands.</action>
+      <action>Create `skills/coordinator/SKILL.md` per Technical Design section 5: the routing table, the coordinator rules, ticket intake (pasted text, a GitHub issue number or URL read with `gh issue view`, or a backlog ID when the backlog option is on), and the Claude Code runtime section (roles as subagents, reuse of a live subagent for follow-ups, a fresh one reloading from files otherwise, planning handed to `/architect` in its own session). Add two clearly marked placeholder headings for the Orca runtime sections that say they are written under `docs/v2/orca-checklist.md` and contain no commands.</action>
       <verify>Every row of the spec's routing table is present. The file contains no `orca` command.</verify>
     </task>
     <task id="4.2">
@@ -101,7 +101,7 @@
     </task>
     <task id="7.2">
       <name>Write the Orca runtime sections of the coordinator</name>
-      <action>Using only commands confirmed in task 7.1, fill the two Orca placeholder sections in `agents/coordinator.md` per Part C of the checklist, and add the `.gsd/` sharing setup to the README.</action>
+      <action>Using only commands confirmed in task 7.1, fill the two Orca placeholder sections in `skills/coordinator/SKILL.md` per Part C of the checklist, and add the `.gsd/` sharing setup to the README.</action>
       <verify>Every command in the sections was run successfully during the trial.</verify>
     </task>
     <task id="7.3">

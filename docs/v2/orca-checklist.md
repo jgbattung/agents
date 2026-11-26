@@ -69,7 +69,7 @@ Use the scratch repository. Each item maps to an unknown in `orca-notes.md`.
 
 ## Part C: Write the Orca runtime sections
 
-Fill the two placeholder sections in `agents/coordinator.md`. Use only commands that worked in Part B.
+Fill the two placeholder sections in `skills/coordinator/SKILL.md`. Use only commands that worked in Part B.
 
 - [ ] **C1. Choose the transport.**
   - Use **orchestration** when B9, B12, B13, and B15 all worked: it gives explicit completion and structured questions.
@@ -82,7 +82,7 @@ Fill the two placeholder sections in `agents/coordinator.md`. Use only commands 
   - How it surfaces a stop to the user (B7 or B13).
   - How it passes the user's answer back to the role that stopped.
   - The commands it must never run (B16).
-- [ ] **C3.** The core routing table in `agents/coordinator.md` does not change. If the trial shows it must, record why in `log.md` first.
+- [ ] **C3.** The core routing table in `skills/coordinator/SKILL.md` does not change. If the trial shows it must, record why in `log.md` first.
 - [ ] **C4.** Add the `.gsd/` sharing setup that worked in B1 or B2 to the README's Orca section.
 - [ ] **C5.** Note in the README how the Orca UI fits the three gates: review the diff and annotate before ship approval, and use Design Mode for UI adjustments after the build.
 
@@ -97,5 +97,5 @@ Fill the two placeholder sections in `agents/coordinator.md`. Use only commands 
 ## Done when
 
 - Every box above is ticked and every answer is filled in.
-- `agents/coordinator.md` has no placeholder section.
+- `skills/coordinator/SKILL.md` has no placeholder section.
 - `log.md` marks tasks 7.1, 7.2, and 7.3 complete.

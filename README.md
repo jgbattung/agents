@@ -62,7 +62,7 @@ Every problem a role raises is a **finding** with a route. The first rule that m
 |---|---|---|
 | `user` | AI attribution in commit history, or a finding that came back after its fix | You decide |
 | `qa` | The finding concerns test code only | QA Engineer |
-| `direct` | It names one location, changes no protected behavior, and a failing test or gate check already proves it | Builder, with no re-planning |
+| `direct` | It names the exact location to change, changes no protected behavior, and a failing test or gate check already proves it | Builder, with no re-planning |
 | `architect` | Everything else | Architect plans a phase, you approve it, Builder builds it |
 
 When the spec's Protected Behaviors read `None - this work changes no behavior`, QA is skipped.

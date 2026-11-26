@@ -31,7 +31,7 @@ Do not write any code until you understand these documents.
 
 1. **A `<task>` in `plan.xml`.** Every task there went through the Architect.
 2. **An open finding in `notes.md` with `route: direct`**, when you were asked to fix direct findings. Before acting on one, re-check the three conditions from the `state-machine` skill yourself:
-   - it names one file and location;
+   - it names the exact location or locations to change (a lint failure names them in its output);
    - fixing it adds or changes no protected behavior (check the spec's **Protected Behaviors**);
    - a failing test or a gate check already proves it, or it is the removal of a `[Debug Leftover]`.
 
