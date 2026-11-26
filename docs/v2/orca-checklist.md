@@ -80,7 +80,7 @@ Fill the two placeholder sections in `skills/coordinator/SKILL.md`. Use only com
   - How it starts each role in the ticket's worktree with a prompt that contains only the slug and file paths.
   - How it learns a role finished. With stable commands, the wait returning is not success: read `status.md`.
   - How it surfaces a stop to the user (B7 or B13).
-  - How it passes the user's answer back to the role that stopped.
+  - How it passes the user's answer back to the role that stopped. In Claude Code a role did not act on an answer relayed by message from another agent, so the rule there is a fresh instance with the `Resume` instruction. Test whether a role in its own Orca terminal accepts the answer typed or sent into that terminal; if not, use a fresh instance here too.
   - The commands it must never run (B16).
 - [ ] **C3.** The core routing table in `skills/coordinator/SKILL.md` does not change. If the trial shows it must, record why in `log.md` first.
 - [ ] **C4.** Add the `.gsd/` sharing setup that worked in B1 or B2 to the README's Orca section.

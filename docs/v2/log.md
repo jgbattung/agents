@@ -142,3 +142,24 @@ Still not exercised (this is what remains of task 6.1):
 - A ticket whose Protected Behaviors are `None`, to confirm QA is skipped.
 - Resuming a stop in the same session with SendMessage. Every headless run was a new session, so each stop was resumed from the files, which worked.
 - The roles reached the gates script by its real path in runs 2 and 3 because the history line told them to. The symlinked path was verified directly from a shell after the fix, not through a role.
+
+### Task 6.1 - Third dry run session on the planning machine (one check left)
+Five scratch copies, run headless in parallel with the agent answering as the user. Each stop was answered by continuing the same headless session.
+
+Confirmed, each run ending at `ship-approval` with nothing pushed:
+- **Remediation.** A source change broke an approved behavior. The gates recorded the test failure with `route: architect`. The Architect, started as a subagent through its stub, loaded its skill, found the commit and line at fault, appended phase "2: QA Remediation", and raised `remediation-approval`. After approval the Builder built the task and marked the finding resolved, and the QA Engineer ran Re-Verification Mode: suite green, test integrity checked, no tests rewritten.
+- **AI attribution.** The gates recorded a `route: user` finding. The coordinator showed it and waited. After the user rewrote the commit, the coordinator re-ran the gates, saw them pass, and recorded the finding as resolved. No role rewrote history.
+- **No behavior change.** For a README ticket the Architect set Protected Behaviors to `None - this work changes no behavior`, and the pipeline went Builder, gates, Reviewer, Integrator with no QA run.
+- **Deviation stop.** On a hand-written plan with a task that named a file that does not exist, the Builder committed the task it could do, then raised `deviation` with options and a recommendation. On the answer it recorded the dropped task under `## Deviations` and did not edit the plan.
+- **Budget stop.** For an approved behavior with nothing to test it against, the QA Engineer raised `budget` with three options. On the answer it wrote only the approved test and recorded the behavior under `## Not Tested` as a manual check by the user's decision.
+- The Integrator left out the attribution footer that Claude Code's own session reminder suggests, citing Rule Zero.
+- State files written by hand were followed the same as ones the Architect wrote.
+
+Found and fixed:
+- **A role did not act on a user answer relayed with SendMessage.** It treated the message as the coordinator's words. The coordinator recovered each time by starting a fresh instance. That is now the rule everywhere: a stop is resumed by a fresh instance given the `Resume` instruction, which reads the stop from `status.md`. This replaces the earlier design of continuing the same subagent, so the "same-session resume" check no longer exists.
+- **A finding stayed `open` while its approved remediation task waited to be built**, so the loop's row 3 could have sent it back to the Architect. Findings gained the status `planned (<task id>)`, set by the Architect on approval. Only `open` findings are routed.
+- The coordinator may record a `route: user` finding as `resolved (<commit hash>)` when the user fixed it and the gates confirm it.
+
+A confirmation run of the remediation scenario after these fixes passed: the approval was accepted by the first fresh Architect, the finding went open, planned, resolved, and every role ran the gates through the installed symlinked skill folder with no workaround.
+
+The only check left in task 6.1: **the Integrator's run 2**, the real `git push` and `gh pr create`. The planning machine had no `gh` and the scratch repositories had no remote. Everything else in Phase 6 has been seen to work, headless. It has not yet been driven by a person in a live interactive session.

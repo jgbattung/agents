@@ -262,7 +262,7 @@ node gates.mjs --base <branch> [--test "<cmd>"] [--lint "<cmd>"]
 - It can be killed and restarted at any time. The new one resumes from `status.md`.
 
 **Runtime sections**
-- **Claude Code** - roles are subagents. Follow-ups reuse the same subagent when it still exists, and otherwise start a fresh one that reloads from the files. Built and verified in this work.
+- **Claude Code** - roles are subagents. A stop is resumed by starting a fresh instance of the role with the user's answer quoted in a `Resume` instruction; it reloads from the files. A subagent does not act on a user decision relayed by message. Built and verified in this work.
 - **Orca, stable commands** - deferred to `orca-checklist.md`.
 - **Orca, orchestration** - deferred to `orca-checklist.md`.
 
