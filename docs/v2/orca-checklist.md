@@ -12,6 +12,8 @@ Read `orca-notes.md` first. It lists what the documentation says and what it lea
 - [ ] `git`, Node 22+, and the GitHub CLI (`gh auth login`) are present.
 - [ ] This repository is cloned, on branch `feature/workflow-v2` (or `main` once merged).
 - [ ] A scratch repository exists with a test command and a lint command (reuse the one from task 6.1 if it is on this machine).
+- [ ] Both repositories are registered in Orca: this one (where the checklist is recorded and the coordinator is edited) and the scratch one (where the trial creates workspaces). Orca only creates workspaces in repositories it knows about. Register each from a terminal with `orca repo add --path <folder>`, then confirm with `orca repo list`. The command is in Orca's CLI reference but was not run during planning; if it differs, add the repository from the Orca app instead and note the difference here.
+- [ ] Run this checklist from a Claude Code session started inside Orca, in this repository. The `orca` commands only work while the Orca app is running. Approve each `orca` command individually until item B16 is answered.
 
 ## Part A: Install without surprises
 
