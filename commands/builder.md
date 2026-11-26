@@ -13,8 +13,9 @@ Rules:
 - The spawn prompt contains only the feature slug, the branch, the state folder
   `.gsd/<slug>/`, and the user's request verbatim. Add no summary or assessment.
 - When the Builder reports back, relay its summary faithfully, including every deviation.
-  If it ended on a stop, show the stop verbatim and send the user's answer verbatim to the
-  same Builder. Do not answer for the user.
+  If it ended on a stop, show the stop verbatim, then start a fresh Builder with
+  `Resume. The user's answer to your <stop type> stop: "<the answer, verbatim>"`.
+  Do not answer for the user.
 - A requested change that is not in the plan is unplanned work: point the user to
   `/architect` instead of relaying it.
 

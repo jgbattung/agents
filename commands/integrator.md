@@ -13,7 +13,8 @@ Rules:
 - **No editorializing:** the spawn prompt contains only the feature slug, the branch, the
   state folder `.gsd/<slug>/`, and the user's request verbatim.
 - The Integrator works in two runs. Its first run ends on a ship-approval stop: show the
-  PR draft verbatim and wait. Send the user's answer verbatim to the same Integrator.
+  PR draft verbatim and wait. Then start a fresh Integrator with
+  `Resume. The user's answer to your ship-approval stop: "<the answer, verbatim>"`.
   Never approve on the user's behalf - nothing is pushed until the user says so.
 - When it reports back, relay the PR URL (or the manual fallback) and every warning.
 

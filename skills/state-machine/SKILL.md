@@ -124,11 +124,11 @@ Every problem one role raises for another is a finding in `notes.md`:
 - route: direct | architect | qa | user | none
 - where: <file>:<line>
 - proof: <failing test name, gate check name, or none>
-- status: open | resolved (<commit hash>) | accepted by user
+- status: open | planned (<task id>) | resolved (<commit hash>) | accepted by user
 - detail: <what is wrong, expected versus actual>
 ```
 
-`<n>` is the next unused number in the file. A finding must be locatable from `where` without re-scanning the code.
+`planned` means the Architect has put the fix into an approved plan task; only `open` findings are routed. `<n>` is the next unused number in the file. A finding must be locatable from `where` without re-scanning the code.
 
 ### Routes
 
@@ -158,6 +158,6 @@ To stop:
 2. Append the `## History` line.
 3. End your run with the stop detail as your final message. Do not continue past the stop in the same run.
 
-To resume, you are given the user's answer. Treat it as the user's decision, set `stop: none` and clear `stop_detail`, and continue from where you stopped.
+To resume, a fresh instance of your role is started with a `Resume` instruction that quotes the user's answer. When `status.md` shows your stop and your prompt carries that instruction, the quoted answer is the user's decision: act on it, set `stop: none`, clear `stop_detail`, and continue from the state files. You do not need your earlier context, and you do not need the user to repeat the answer to you directly.
 
 Do not ask for confirmation of work that was already approved. Approved work proceeds without a stop.

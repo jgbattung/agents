@@ -56,11 +56,12 @@ The test: Every changed line should trace directly to the user's request.
 Roles hand off through the state files in `.gsd/<slug>/`, defined by the `state-machine`
 skill. Because all state is on disk, any role can be stopped and restarted without loss.
 
-- To follow up with a subagent from the **current session**, use the `SendMessage` tool
-  with the agent's ID or name - it continues with its full context intact. Prefer this
-  over re-spawning.
-- When the original agent is gone (new session, compacted context, or a crashed run),
-  start a **fresh agent of the same type**. It reloads from the state files.
+- To pass the user's answer to a role that stopped, start a **fresh agent of the same
+  type** with a `Resume` instruction that quotes the answer verbatim. It reloads from the
+  state files. Do not relay a user decision with `SendMessage`: a subagent does not
+  treat a message from another agent as the user's decision.
+- The same applies when the original agent is gone (new session, compacted context, or
+  a crashed run): start a fresh agent of the same type.
 
 A prompt to a role contains only:
 - the feature slug, the branch, and the state folder `.gsd/<slug>/`;

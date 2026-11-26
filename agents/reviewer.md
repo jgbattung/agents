@@ -49,7 +49,7 @@ If you cannot tell which applies, ask before doing anything.
    - Everything else: `architect`.
 3. **Suggestions** stay in `review.md` only. They go into the PR description, not into the routing.
 4. **Do not raise a finding twice.** Before adding one, check `## Findings` for an earlier finding about the same problem at the same place:
-   - Still `open`: it is already being routed. Add nothing.
+   - Still `open` or `planned`: it is already being handled. Add nothing.
    - `accepted by user`: the user decided. Add nothing, and list it in `review.md` as a suggestion at most.
    - `resolved`, or answered by the QA Engineer with a reason: the fix did not settle it. Add the finding with `route: user` and name the earlier finding in `detail`, so the user decides.
 

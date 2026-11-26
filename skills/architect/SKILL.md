@@ -111,7 +111,7 @@ Skip Phase 2 and Phase 3. Every change to product code reaches the Builder throu
    - has a `<verify>`, which for a finding with a failing test is that test passing.
 4. **Update the spec.** If a fix adds or changes behavior that is not on the **Protected Behaviors** list, append an entry. A bug fix adds a **Regression** entry unless a failing test already reproduces the bug.
 5. **Update the state.** Add the new tasks to `## Tasks` in `status.md`, unticked. Under `## Decisions` in `notes.md`, record which findings the phase addresses and any finding you chose not to plan, with your reason.
-6. **Get approval.** Stop with `stop: remediation-approval`, following the stop protocol. In `stop_detail`, list each finding, its root cause in one sentence, and the task that addresses it. On approval, set `stage: build` and `stop: none`. If the user asks for changes, revise the phase and stop again.
+6. **Get approval.** Stop with `stop: remediation-approval`, following the stop protocol. In `stop_detail`, list each finding, its root cause in one sentence, and the task that addresses it. On approval, set the `status` of each finding the phase addresses to `planned (<task id>)`, so it is not routed again while its task waits to be built, then set `stage: build` and `stop: none`. If the user asks for changes, revise the phase and stop again.
 
 When every finding you were given turned out to belong to another route, append no phase. Say so, and set `stage: review` so they are routed.
 

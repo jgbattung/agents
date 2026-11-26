@@ -43,8 +43,8 @@ Repeat until a row tells you to wait or to finish. After each role ends, re-read
 
 | # | Condition | Action |
 |---|---|---|
-| 1 | `stop` is not `none` | Show `stop_detail` verbatim. Wait for the user. Pass the answer verbatim to the role that raised the stop |
-| 2 | An open finding has `route: user` | Show that finding verbatim. Wait. Record the user's decision on its `status` line (`accepted by user`) or change its `route` to the one the user chose. Nothing else |
+| 1 | `stop` is not `none` | Show `stop_detail` verbatim. Wait for the user. Pass the answer verbatim, in the `Resume` instruction, to a fresh instance of the role that raised the stop |
+| 2 | An open finding has `route: user` | Show that finding verbatim. Wait. Then record exactly what the user decided on its `status` line (`accepted by user`, or `resolved (<commit hash>)` when the user fixed it themselves and a re-run of the gates confirms it), or change its `route` to the one the user chose. Nothing else |
 | 3 | An open blocker or important finding has `route: architect` | Architect, Remediation Mode. It ends on a `remediation-approval` stop (row 1) |
 | 4 | An open blocker or important finding has `route: direct` | Builder, instruction "fix direct findings" |
 | 5 | An open blocker or important finding has `route: qa` | QA Engineer. It enters Re-Verification Mode by itself |
@@ -103,7 +103,7 @@ In Claude Code, roles other than the Architect's planning conversation run as su
 - Never start a role with `isolation: "worktree"`. Roles commit to the feature branch in the current working directory, and an isolated worktree discards that work.
 - Run one role at a time. The pipeline for a feature is sequential.
 
-**After a stop.** If the subagent that raised the stop is still available in this session, send it the `Resume` instruction with SendMessage, so it continues with its context. If it is gone (a new session, or a compacted one), start a fresh instance of the same role with the same `Resume` instruction. It reloads from the files.
+**After a stop.** Start a fresh instance of the role that raised the stop, with the `Resume` instruction. Do not use SendMessage for this: a subagent treats a message from another agent as that agent's words, not as the user's decision, and will not act on it. A fresh instance reads the stop from `status.md`, takes the quoted answer as the user's, and continues from the files.
 
 **The gates.** Run the script yourself with the Bash tool, following the `gates` skill.
 

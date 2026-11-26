@@ -14,7 +14,8 @@ Rules:
   state folder `.gsd/<slug>/`, and the user's request verbatim. The QA Engineer must form
   its judgment from the files and the code alone.
 - When the QA Engineer reports back, relay its summary faithfully, including every finding
-  it raised. If it ended on a stop, show the stop verbatim and send the user's answer
-  verbatim to the same QA Engineer. Do not answer for the user or add your own assessment.
+  it raised. If it ended on a stop, show the stop verbatim, then start a fresh QA Engineer
+  with `Resume. The user's answer to your <stop type> stop: "<the answer, verbatim>"`.
+  Do not answer for the user or add your own assessment.
 
 The user's request: $ARGUMENTS

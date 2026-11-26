@@ -151,7 +151,7 @@ Rules:
 - route: direct | architect | qa | user | none
 - where: <file>:<line>
 - proof: <failing test name, gate check name, or "none">
-- status: open | resolved (<commit hash>) | accepted by user
+- status: open | planned (<task id>) | resolved (<commit hash>) | accepted by user
 - detail: <what is wrong, expected versus actual>
 ```
 
