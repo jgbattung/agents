@@ -26,7 +26,7 @@ Tick a task when its verify step has passed and its commit exists. Add notes onl
 - [x] 4.2 Add the coordinator command and update the others
 
 ### Phase 5: Documentation
-- [ ] 5.1 Rewrite the README and update AGENTS.md
+- [x] 5.1 Rewrite the README and update AGENTS.md
 
 ### Phase 6: Dry run in Claude Code
 - [ ] 6.1 Run one small ticket end to end on a scratch repository
