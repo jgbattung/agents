@@ -14,7 +14,7 @@ Tick a task when its verify step has passed and its commit exists. Add notes onl
 - [x] 2.2 Write the gates skill file
 
 ### Phase 3: Roles
-- [ ] 3.1 Rewrite the Builder
+- [x] 3.1 Rewrite the Builder
 - [ ] 3.2 Rewrite the QA Engineer
 - [ ] 3.3 Update the review, testing-standards, and git-standards skills
 - [ ] 3.4 Rewrite the Reviewer with self and peer modes
