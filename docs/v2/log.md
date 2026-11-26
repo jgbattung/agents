@@ -11,7 +11,7 @@ Tick a task when its verify step has passed and its commit exists. Add notes onl
 
 ### Phase 2: Gates script
 - [x] 2.1 Create the gates script with tests
-- [ ] 2.2 Write the gates skill file
+- [x] 2.2 Write the gates skill file
 
 ### Phase 3: Roles
 - [ ] 3.1 Rewrite the Builder
