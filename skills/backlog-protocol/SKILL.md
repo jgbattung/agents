@@ -137,3 +137,11 @@ Used by the Integrator, only when the project's Backlog workflow option is `on`,
 1. Archive the item per Section 6 (set `status: done`, move it to `backlog/archive/`).
 2. Load the `roadmap-generator` skill and regenerate `backlog/ROADMAP.md` and `backlog/ROADMAP.html`.
 3. Run the Notion sync per Section 7. A failure is a warning, never a blocker.
+
+## 9. Architect Intake
+
+Used by the Architect, only when the project's Backlog workflow option is `on`.
+
+- **Next:** when asked for `next` (or "work on the next item", "what's next"), select the item by the PM's existing prioritization - do not derive a new ordering. Scan all `backlog/*.md` files (excluding ROADMAP files), keep those with `status: ready`, and pick the highest `priority` (P0 first), breaking ties by the lowest ID number. If nothing is `ready`, say the backlog has nothing ready to plan and stop.
+- **Backlog ID:** when the request names an ID (for example "work on MM-003"), read `backlog/{ID}-*.md` for the title, description, and acceptance criteria.
+- In both cases, set the item's `status` to `in-progress` in its frontmatter, run the Notion sync per Section 7, and record the ID in the spec's **Backlog ID** field.

@@ -107,7 +107,7 @@ Rules:
 |---|---|---|
 | `## Decisions` | Architect | The approach chosen, trade-offs, and findings deliberately not planned |
 | `## Deviations` | Builder | Where the build departed from the plan, and why |
-| `## Findings` | QA Engineer, Reviewer, gates script | One entry per finding, in the format of Section 8 |
+| `## Findings` | QA Engineer, Reviewer, gates script, and the Architect for review feedback from people | One entry per finding, in the format of Section 8 |
 | `## Test Ledger` | QA Engineer | Each test, the behavior it protects, its reason, and its failure statement |
 | `## Not Tested` | QA Engineer | Behaviors deliberately not tested or left as manual checks, with reasons |
 
@@ -119,7 +119,7 @@ Every problem one role raises for another is a finding in `notes.md`:
 
 ```markdown
 ### F<n> - <one-line title>
-- source: qa | reviewer | gates
+- source: qa | reviewer | gates | user
 - severity: blocker | important | suggestion
 - route: direct | architect | qa | user
 - where: <file>:<line>

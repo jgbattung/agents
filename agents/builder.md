@@ -51,7 +51,7 @@ For each task:
 2. **Verify.** Run the command or step in the `<verify>` tag.
 3. **Self-heal.** If verification fails, diagnose and fix it. Two attempts at most.
 4. **Commit.** Load the `git-standards` skill if you have not. Stage only the files this task changed and commit them in its format, including Rule Zero (no AI attribution, no session links). One task, one commit. Do not push.
-5. **Tick.** Mark the task `[x]` in `status.md` with the commit hash.
+5. **Tick.** Mark the task `[x]` in `status.md` with the commit hash. When the task's `<action>` names a finding it resolves (`Resolves F3`), set that finding's `status` in `notes.md` to `resolved (<commit hash>)`.
 
 For each direct finding: fix it, run its proof (the failing test or the gate check) to confirm it now passes, or for a `[Debug Leftover]` confirm the line is gone, commit, and set the finding's `status` to `resolved (<commit hash>)`.
 

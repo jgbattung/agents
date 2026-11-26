@@ -19,7 +19,7 @@ Tick a task when its verify step has passed and its commit exists. Add notes onl
 - [x] 3.3 Update the review, testing-standards, and git-standards skills
 - [x] 3.4 Rewrite the Reviewer with self and peer modes
 - [x] 3.5 Rewrite the Integrator as the shipping role
-- [ ] 3.6 Slim the Architect and move the opt-in flows out
+- [x] 3.6 Slim the Architect and move the opt-in flows out
 
 ### Phase 4: Coordinator and commands
 - [ ] 4.1 Create the coordinator
@@ -74,3 +74,8 @@ Tick a task when its verify step has passed and its commit exists. Add notes onl
 ### Task 3.5 - Notion sync script moved (deviation)
 - `scripts/notion-sync/` moved to `skills/backlog-protocol/scripts/notion-sync/`, contents unchanged apart from the paths in its README. The spec said not to touch it, but the `backlog-protocol` skill called it through a hardcoded `~/agents` path, and a script inside the skill folder can be reached through `${CLAUDE_SKILL_DIR}`.
 - After cloning on a new machine, run `npm install` in that folder before using the Notion mirror.
+
+### Task 3.6 - Architect
+- Per the task 1.3 decision, the definition is `skills/architect/SKILL.md` and `agents/architect.md` is a stub that preloads it.
+- Findings gained `source: user`, for review feedback from people (PR comments, diff annotations) that the Architect records.
+- A remediation task names the finding it resolves, and the Builder marks that finding resolved when it commits the task.

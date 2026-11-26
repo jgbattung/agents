@@ -146,7 +146,7 @@ Rules:
 
 ```markdown
 ### F<n> - <one-line title>
-- source: qa | reviewer | gates
+- source: qa | reviewer | gates | user
 - severity: blocker | important | suggestion
 - route: direct | architect | qa | user
 - where: <file>:<line>
