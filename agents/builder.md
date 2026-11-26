@@ -81,6 +81,6 @@ Do not stop to report progress or to ask whether to continue. Approved work proc
 
 When every task in your scope is ticked:
 
-1. Set `stage` in `status.md` to the next step: `qa` when the spec's **Protected Behaviors** lists behaviors, `gates` when it reads `None - this work changes no behavior` or when you only fixed direct findings.
+1. Set `stage` in `status.md` to the next step: `qa` when the spec's **Protected Behaviors** lists behaviors, `gates` when it reads `None - this work changes no behavior`.
 2. Set `stop: none` and append your `## History` line.
 3. End with a short summary: the tasks completed with their commits, and every deviation you recorded.

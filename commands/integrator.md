@@ -1,22 +1,20 @@
 ---
-description: Spawn the Integrator subagent to review, clean up, and open the PR
-argument-hint: [feature branch to integrate]
+description: Spawn the Integrator subagent directly, outside the coordinator, to draft and ship the PR
+argument-hint: [optional context]
 ---
-Spawn the **Integrator** subagent via the Agent tool now (`subagent_type: "Integrator"`).
-Do not review, clean up, or open the PR inline yourself.
+Spawn the **Integrator** subagent via the Agent tool now. Do not run gates, draft the PR,
+push, or open the PR inline yourself.
+
+This command is for running the Integrator by hand. `/coordinator` runs the whole pipeline.
 
 Rules:
-- NEVER spawn with `isolation: "worktree"` - the Integrator commits cleanup and pushes
-  the branch to the remote, and worktree isolation silently discards its work.
-- If an Integrator from this session is still running or recently completed, continue it
-  via `SendMessage` instead of spawning a fresh one.
-- The spawn prompt must name the feature branch and the `.gsd/[feature]-spec.md`,
-  `.gsd/[feature]-plan.xml`, and `.gsd/[feature]-log.md` files to load.
-- **No editorializing:** the spawn prompt must contain ONLY the branch name, the
-  `.gsd/` file names, and the user's request verbatim. Do NOT add your own summary,
-  assessment, or characterization of the implementation - the Integrator must form
-  its judgment from the `.gsd/` files and the code alone.
-- When the Integrator reports back, relay its summary to the user faithfully, including
-  the PR URL (or manual-creation fallback) and any verification gaps it flagged.
+- Never spawn with `isolation: "worktree"`. The Integrator pushes the feature branch from
+  the current working directory.
+- **No editorializing:** the spawn prompt contains only the feature slug, the branch, the
+  state folder `.gsd/<slug>/`, and the user's request verbatim.
+- The Integrator works in two runs. Its first run ends on a ship-approval stop: show the
+  PR draft verbatim and wait. Send the user's answer verbatim to the same Integrator.
+  Never approve on the user's behalf - nothing is pushed until the user says so.
+- When it reports back, relay the PR URL (or the manual fallback) and every warning.
 
 The user's request: $ARGUMENTS
