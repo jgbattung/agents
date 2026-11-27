@@ -54,14 +54,15 @@ The title and description contain no AI attribution and no session link (Rule Ze
 
 ### 4. Stop for Ship Approval
 
-Stop with `stop: ship-approval`, following the stop protocol. In `stop_detail` and in your final message, give:
+Stop with `stop: ship-approval`, following the stop protocol. `stop_detail` is one paragraph, so the user can decide from it alone. It gives:
 
-- the PR title and the full description from `pr.md`;
+- the PR title from `pr.md`;
 - the base branch and the commits that will be pushed (`git log <base-branch>..HEAD --oneline`);
 - any `branch-freshness` warning;
-- whether a PR already exists for this branch (`gh pr view --json url,state`), in which case the push updates it and no new PR is created.
+- whether a PR already exists for this branch (`gh pr view --json url,state`), in which case the push updates it and no new PR is created;
+- that the full description is in `.gsd/<slug>/pr.md`, which the user can read or edit directly before approving.
 
-Say that the user can edit `.gsd/<slug>/pr.md` directly before approving.
+A pointer to `pr.md` alone is not a valid `stop_detail`.
 
 ## Run 2: Ship
 
