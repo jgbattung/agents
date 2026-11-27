@@ -163,3 +163,12 @@ Found and fixed:
 A confirmation run of the remediation scenario after these fixes passed: the approval was accepted by the first fresh Architect, the finding went open, planned, resolved, and every role ran the gates through the installed symlinked skill folder with no workaround.
 
 The only check left in task 6.1: **the Integrator's run 2**, the real `git push` and `gh pr create`. The planning machine had no `gh` and the scratch repositories had no remote. Everything else in Phase 6 has been seen to work, headless. It has not yet been driven by a person in a live interactive session.
+
+### Task 6.1 - Live session on a Windows machine
+Git for Windows 2.46, Node 22.22, `gh` 2.95 logged in. The old install was four whole-folder links in `~/.claude` (`skills`, `agents`, `commands`, `CLAUDE.md`) pointing at this repository's working tree. They were removed and v2 was installed globally with `install.mjs`: 29 linked, 0 skipped.
+
+Found and fixed:
+- **The gates tests failed on Windows (9 of 16).** The fixture set `GIT_CONFIG_GLOBAL` and `GIT_CONFIG_SYSTEM` to `os.devNull`, and Git for Windows cannot read `\.\nul` as a config file, so `git init` failed in every test repository. The fixture now points both at an empty temporary file. One test also used `echo ...; exit 3` as the failing test command, which `cmd.exe` (the shell `gates.mjs` uses on Windows) runs as one echo that exits 0. It now uses a `node -e` command that means the same in both shells. `gates.mjs` itself was not changed.
+
+Noted, not changed:
+- On this machine `skills/lavish` is a local symlink to `~/.agents/skills/lavish` (made outside this repository, content identical to HEAD). `install.mjs` links only real skill folders, so it was not linked. On a clean clone the folder is real and is linked.

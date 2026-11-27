@@ -15,14 +15,18 @@ const CONSOLE_CALL = 'console.' + "log('debugging');";
 const MARKER_COMMENT = '// TO' + 'DO: remove this';
 const ATTRIBUTION_TRAILER = 'Co-Authored-' + 'By: Claude <noreply@example.com>';
 
+// An empty file, not os.devNull: Git for Windows cannot read `\\.\nul` as a config file.
+const EMPTY_CONFIG = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'gates-config-')), 'empty');
+fs.writeFileSync(EMPTY_CONFIG, '');
+
 const GIT_ENV = {
   ...process.env,
   GIT_AUTHOR_NAME: 'Test',
   GIT_AUTHOR_EMAIL: 'test@example.com',
   GIT_COMMITTER_NAME: 'Test',
   GIT_COMMITTER_EMAIL: 'test@example.com',
-  GIT_CONFIG_GLOBAL: os.devNull,
-  GIT_CONFIG_SYSTEM: os.devNull,
+  GIT_CONFIG_GLOBAL: EMPTY_CONFIG,
+  GIT_CONFIG_SYSTEM: EMPTY_CONFIG,
 };
 
 function git(cwd, ...args) {
@@ -97,7 +101,9 @@ test('exits 1 and names the check when the test or lint command fails', () => {
   write(cwd, 'src/app.js', 'export const one = 2;\n');
   commit(cwd, 'feat: change one');
 
-  const result = gates(cwd, '--test', 'echo "1 failing"; exit 3', '--lint', 'exit 1');
+  // Node, not `echo ...; exit 3`, so the command means the same in sh and cmd.exe.
+  const failingTest = `node -e "process.stdout.write('1 failing'); process.exit(3)"`;
+  const result = gates(cwd, '--test', failingTest, '--lint', 'exit 1');
 
   assert.equal(result.status, 1);
   assert.deepEqual(checks(result), ['test', 'lint']);
