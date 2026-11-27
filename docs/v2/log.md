@@ -29,7 +29,7 @@ Tick a task when its verify step has passed and its commit exists. Add notes onl
 - [x] 5.1 Rewrite the README and update AGENTS.md
 
 ### Phase 6: Dry run in Claude Code
-- [ ] 6.1 Run one small ticket end to end on a scratch repository
+- [x] 6.1 Run one small ticket end to end on a scratch repository
 
 ### Phase 7: Orca runtime (needs a machine with Orca)
 - [ ] 7.1 Run the Orca trial
@@ -172,3 +172,17 @@ Found and fixed:
 
 Noted, not changed:
 - On this machine `skills/lavish` is a local symlink to `~/.agents/skills/lavish` (made outside this repository, content identical to HEAD). `install.mjs` links only real skill folders, so it was not linked. On a clean clone the folder is real and is linked.
+
+Live run, driven by the user in interactive sessions on a private throwaway repository (`jgbattung/v2-dryrun`: Node 22, no dependencies, `npm test` with `node --test`, `npm run lint` with a small lint script). Ticket: `formatDuration` throws a `RangeError` for negative, non-integer, and non-number input.
+
+Confirmed:
+- `/architect` in its own session excluded `.gsd/` through `.git/info/exclude` by itself, used the fresh branch, asked the project setup questions, and stopped with the proposal, the Protected Behaviors, and the PR strategy. After approval it wrote the four state files and the three `project-context.md` sections, with the tree still clean.
+- `/coordinator` in a fresh session ran Builder, QAEngineer, the gates, Reviewer, and Integrator with no relay, and stopped only at `ship-approval`. The gates printed `Gates: PASSED` through the installed skill path. Every role prompt held only the feature, branch, state folder, and instruction (checked in the session transcript).
+- The approval went to a fresh Integrator as `Resume. The user's answer to your ship-approval stop: "Approve. Ship it"`. It pushed the branch, opened https://github.com/jgbattung/v2-dryrun/pull/1 against `main`, and set `stage: done` with the URL. No AI attribution in the commits, the PR title, or the body.
+- The second ticket of the task (Protected Behaviors `None`, QA skipped) was confirmed in the third dry run and was not repeated.
+
+Found and fixed:
+- **The ship-approval stop detail was only a pointer to `pr.md`.** `agents/integrator.md` asked for the full PR description in `stop_detail`, which the spec and the `state-machine` skill define as one paragraph. The coordinator filled the gap with details of its own, which goes past "show `stop_detail` verbatim". The Integrator now writes one self-contained paragraph (title, base, commits, freshness warning, existing PR) that points to `pr.md` for the body. The user chose this over having the coordinator print `pr.md`, which would have changed the design.
+
+Noted, not changed:
+- The Architect put the project setup questions and the alignment proposal in one message, although setup is its own hard stop that says to wait for the answers. With no UI work and no backlog ID, the answers could not change the proposal. Left as is.
