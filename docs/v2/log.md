@@ -227,3 +227,10 @@ Open: artifact publishing still read as on at the end of the trial, although the
 - Not yet resolved: how the coordinator should handle a tab it cannot close. Raised with the user.
 - Correction (approved by the user): the coordinator sends `/exit` to a role's tab before closing it, and carries on if the close times out. In the trial `/exit` ended the session every time, which freed memory from 256 MB to about 1.4 GB once the leaked role sessions were ended.
 - D4 verified after the fix (`lint-trailing-newline`): the ship-approval code change became finding F1 with `route: architect`, and the loop sent it to the Architect, which stopped for `remediation-approval`. D4 and D5 ticked; task 7.3 complete.
+
+### After Phase 7 - fixes from the ledger session's report
+A `units-toggle` run in the ledger project took about 4 user round trips and 5 agent runs for a one-line test expectation change. Fixed with the user's approval:
+- The Builder records a QA test that the planned change makes wrong as a `route: qa` finding and keeps going, and re-routes a direct finding that fails its re-check to `architect`, instead of stopping (`e8c8725`).
+- Each stop option names exactly one action by one role (`56baa37`).
+- A delegating answer ("you decide") is the user's choice of the role's recommended option (`d8a6397`).
+Not changed, by the user's choice: the Architect still stops for `remediation-approval`. Also not changed: QA leaves `stage: qa` when a suite run is killed for low memory, which a re-run picks up.
