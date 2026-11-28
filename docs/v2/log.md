@@ -33,7 +33,7 @@ Tick a task when its verify step has passed and its commit exists. Add notes onl
 
 ### Phase 7: Orca runtime (needs a machine with Orca)
 - [x] 7.1 Run the Orca trial
-- [ ] 7.2 Write the Orca runtime sections of the coordinator
+- [x] 7.2 Write the Orca runtime sections of the coordinator
 - [ ] 7.3 Dry run in Orca
 
 ### Phase 8: Cleanup before merging
@@ -202,7 +202,7 @@ Results that shape Part C:
 
 Open: artifact publishing still read as on at the end of the trial, although the user chose to turn it off. The first box of the checklist stays open until it reads off. Closed later the same day: the user switched it off, the profile read `artifactSharingEnabled: false`, and the box is ticked.
 
-### Task 7.2 - Orca runtime sections (task NOT complete)
+### Task 7.2 - Orca runtime sections
 - Transport: stable commands, by C1's rule (B13 failed). The orchestration section is one line saying why.
 - The user chose to run each role in its own terminal tab, started with its slash command (`/builder`, `/qa`, `/reviewer`, `/integrator`, or `/architect` for Remediation Mode) and the fixed prompt on one line, over running roles as subagents of the coordinator. This matches the README's Orca row.
 - The coordinator marks a stop with `orca worktree set --comment ... --unread`, which fires a system notification, and passes the answer to a fresh tab with the `Resume` instruction.
@@ -215,3 +215,8 @@ Open: artifact publishing still read as on at the end of the trial, although the
 - The C2 typed-answer test did not run, because the ship-approval stop was answered first. It moves to the next stop.
 - User feedback from D1: a stop that asks for a decision should not be a block of text; it should be laid out so the user can read it, get the context, and decide quickly. The state protocol defines `stop_detail` as one paragraph, so this is a design change, raised with the user before any edit.
 - Correction (approved by the user): every stop now uses a fixed stop block instead of a paragraph: the decision as one bold question, Context bullets, numbered Options with their consequence, the recommendation, and a Reply line. Defined in Section 9 of the `state-machine` skill; `stop_detail:` in `status.md` is followed by the block on the lines below. The Integrator's ship-approval stop lists what goes under Context and Options, the coordinator shows the block verbatim with nothing before it, and the Architect lays out its proposal and project setup questions the same way, with numbered questions.
+- C2 closed: an answer typed into the stopped Architect's own tab was acted on. The fresh-instance rule stays, because the other roles run as subagents of their tab and their tabs are closed before a stop is shown. Task 7.2 ticked.
+- D2 passed (`readme-usage`, PR #3): Protected Behaviors `None`, QA skipped.
+- D3 passed (`readme-usage` and `duration-weeks` at once): no cross-touching of feature folders; `project-context.md` intact, with a `## Stacked branches` section added by the Architect.
+- D4 found a gap: a "change the code" answer at ship approval was recorded by the Integrator only as a History line with `stage: review`, so the loop had no route to the Architect. The coordinator stepped outside the loop on the user's choice; the Architect then made it finding F1 and phase 2 (PR #4). Fix raised with the user.
+- Noted, not changed: after phase 2 the Builder set `stage: ship` instead of `qa` or `gates`, against its own rule; the coordinator ran the gates and review anyway. The rule is already explicit.

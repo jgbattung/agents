@@ -90,14 +90,14 @@ Fill the two placeholder sections in `skills/coordinator/SKILL.md`. Use only com
   - Otherwise use the **stable commands** (B4, B5, B7).
   - Write the section for the chosen transport fully. For the other, write one line saying why it was not chosen and the date.
   - Answer: Stable commands, because B13 failed (2026-11-28). The user chose to run each role in its own tab (`orca agent launch --prompt "/<command> <fixed prompt>"`) over running roles as subagents of the coordinator.
-- [ ] **C2.** The section must cover, with exact commands:
+- [x] **C2.** The section must cover, with exact commands:
   - How the coordinator opens the Architect in a new tab for the user to talk to.
   - How it starts each role in the ticket's worktree with a prompt that contains only the slug and file paths.
   - How it learns a role finished. With stable commands, the wait returning is not success: read `status.md`.
   - How it surfaces a stop to the user (B7 or B13).
   - How it passes the user's answer back to the role that stopped. In Claude Code a role did not act on an answer relayed by message from another agent, so the rule there is a fresh instance with the `Resume` instruction. Test whether a role in its own Orca terminal accepts the answer typed or sent into that terminal; if not, use a fresh instance here too.
   - The commands it must never run (B16).
-  - Answer: Written in `skills/coordinator/SKILL.md`, using only commands run during the trial (`agent launch --focus` and `worktree set --worktree current` were run separately to confirm those forms). Open: the typed-answer test. The section uses a fresh instance, because in its tab the role is a subagent of that tab's session. It is tested at D1's ship-approval stop, and this box is ticked then. D1's stop was answered through the fresh-instance path before the test ran, which confirms that path in Orca; the typed-answer test moves to the next stop in D2 or D3.
+  - Answer: Written in `skills/coordinator/SKILL.md`, using only commands run during the trial (`agent launch --focus` and `worktree set --worktree current` were run separately to confirm those forms). Open: the typed-answer test. The section uses a fresh instance, because in its tab the role is a subagent of that tab's session. It is tested at D1's ship-approval stop, and this box is ticked then. D1's stop was answered through the fresh-instance path before the test ran, which confirms that path in Orca; the typed-answer test moves to the next stop in D2 or D3. Tested in D4: the `duration-weeks` Architect, a top-level session in its own tab, stopped for `remediation-approval`, and the answer `1` typed into that tab was taken as the user's and acted on. A role started with `/builder`, `/qa`, `/reviewer`, or `/integrator` runs as a subagent of its tab's session, and the coordinator closes a role's tab before it shows the stop, so the fresh-instance rule stays for every role.
 - [x] **C3.** The core routing table in `skills/coordinator/SKILL.md` does not change. If the trial shows it must, record why in `log.md` first.
   - Answer: Unchanged.
 - [x] **C4.** Add the `.gsd/` sharing setup that worked in B1 or B2 to the README's Orca section.
@@ -108,9 +108,12 @@ Fill the two placeholder sections in `skills/coordinator/SKILL.md`. Use only com
 
 - [x] **D1.** One behavior-changing ticket from workspace creation to `ship-approval`. The user is stopped only at the three gates.
   - Answer: 2026-11-28, ticket `days-in-duration` in `v2-dryrun`. The Architect opened in its own tab; after plan approval each role ran in its own tab and closed. The user was stopped only at plan approval and ship approval, and reported that everything worked as expected. `status.md` shows one History line per role and the gates run by the coordinator; PR #2 opened with two commits and no findings. The ship-approval stop was answered before the C2 typed-answer test was run, so that test moves to the next stop.
-- [ ] **D2.** One ticket whose Protected Behaviors are `None`. QA is skipped.
-- [ ] **D3.** Two tickets in two workspaces at once. Neither touches the other's `.gsd/<slug>/` folder, and `project-context.md` is intact afterwards.
+- [x] **D2.** One ticket whose Protected Behaviors are `None`. QA is skipped.
+  - Answer: 2026-11-28, ticket `readme-usage`. The proposal listed `None - this work changes no behavior`; the Builder set `stage: gates`, QA never ran, and gates, review, and ship approval followed. PR #3.
+- [x] **D3.** Two tickets in two workspaces at once. Neither touches the other's `.gsd/<slug>/` folder, and `project-context.md` is intact afterwards.
+  - Answer: `readme-usage` and `duration-weeks` were created with `orca worktree create --agent claude --prompt "/coordinator <ticket>"` and planned and built at the same time. Neither folder mentions the other feature, and `project-context.md` keeps all its sections. The `duration-weeks` Architect added a `## Stacked branches` section to it, because it stacked the branch on open PR #2.
 - [ ] **D4.** Annotate a diff line and send it to an agent. Confirm the change request is treated as unplanned work and routed, not applied directly by the Builder.
+  - Answer (open): the change request was sent as the answer to `duration-weeks`'s ship-approval stop ("3. Change the code: add a one-line JSDoc..."), since the CLI cannot create diff annotations. The Integrator did not apply it and called it unplanned work, but recorded it only as a `## History` line with `stage: review`, so the loop had no route to the Architect. The coordinator noticed, asked the user, and opened the Architect outside the loop; the Architect then recorded it as finding F1, planned phase 2, and the rest ran normally (PR #4). The Integrator's rule needs a fix, raised with the user.
 - [ ] **D5.** Record every correction made to a prompt file in `log.md`.
 
 ## Done when
