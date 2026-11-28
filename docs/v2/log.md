@@ -34,7 +34,7 @@ Tick a task when its verify step has passed and its commit exists. Add notes onl
 ### Phase 7: Orca runtime (needs a machine with Orca)
 - [x] 7.1 Run the Orca trial
 - [x] 7.2 Write the Orca runtime sections of the coordinator
-- [ ] 7.3 Dry run in Orca
+- [x] 7.3 Dry run in Orca
 
 ### Phase 8: Cleanup before merging
 - [ ] 8.1 Remove the overhaul's working documents
@@ -210,7 +210,7 @@ Open: artifact publishing still read as on at the end of the trial, although the
 - The README gained an Orca subsection: the `.gsd/` sharing setup, how to run a ticket, and how the Orca UI fits the three gates. Diff annotations and Design Mode changes go to the Architect as unplanned work.
 - Left open: checklist C2's test of whether a role accepts an answer typed into its own tab. It is run at the ship-approval stop in D1, and the task is ticked after that.
 
-### Task 7.3 - Dry run in Orca (in progress)
+### Task 7.3 - Dry run in Orca
 - D1 passed: ticket `days-in-duration` in `v2-dryrun` ran from workspace creation to PR #2, each role in its own tab, with the user stopped only at plan approval and ship approval. No corrections.
 - The C2 typed-answer test did not run, because the ship-approval stop was answered first. It moves to the next stop.
 - User feedback from D1: a stop that asks for a decision should not be a block of text; it should be laid out so the user can read it, get the context, and decide quickly. The state protocol defines `stop_detail` as one paragraph, so this is a design change, raised with the user before any edit.
@@ -226,3 +226,4 @@ Open: artifact publishing still read as on at the end of the trial, although the
 - Also seen: `terminal wait --for tui-idle` returned while a role was still working (the coordinator saw it, and so did a test tab), so the coordinator's rule to re-read `status.md` and wait once more when there is no new History line is needed.
 - Not yet resolved: how the coordinator should handle a tab it cannot close. Raised with the user.
 - Correction (approved by the user): the coordinator sends `/exit` to a role's tab before closing it, and carries on if the close times out. In the trial `/exit` ended the session every time, which freed memory from 256 MB to about 1.4 GB once the leaked role sessions were ended.
+- D4 verified after the fix (`lint-trailing-newline`): the ship-approval code change became finding F1 with `route: architect`, and the loop sent it to the Architect, which stopped for `remediation-approval`. D4 and D5 ticked; task 7.3 complete.
