@@ -172,6 +172,7 @@ Found and fixed:
 
 Noted, not changed:
 - On this machine `skills/lavish` is a local symlink to `~/.agents/skills/lavish` (made outside this repository, content identical to HEAD). `install.mjs` links only real skill folders, so it was not linked. On a clean clone the folder is real and is linked.
+- Later fixed on this machine: the symlink was replaced with the tracked folder (same content apart from line endings) and `install.mjs` linked it: 1 linked, 29 already linked. `~/.agents` is no longer used by this repository.
 
 Live run, driven by the user in interactive sessions on a private throwaway repository (`jgbattung/v2-dryrun`: Node 22, no dependencies, `npm test` with `node --test`, `npm run lint` with a small lint script). Ticket: `formatDuration` throws a `RangeError` for negative, non-integer, and non-number input.
 
