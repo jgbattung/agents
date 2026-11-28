@@ -200,7 +200,7 @@ Results that shape Part C:
 - Windows: from Git Bash, MSYS path conversion rewrites an argument starting with `/` (`/coordinator` became `C:/Program Files/Git/coordinator`). `orca` must be run from PowerShell or with `MSYS_NO_PATHCONV=1`.
 - `orca-notes.md` is out of date in places: worktree removal keeps the branch by default, `worker-start` takes `--spec` directly, and the coordinator is woken by text typed into its terminal instead of polling.
 
-Open: artifact publishing still read as on at the end of the trial, although the user chose to turn it off. The first box of the checklist stays open until it reads off.
+Open: artifact publishing still read as on at the end of the trial, although the user chose to turn it off. The first box of the checklist stays open until it reads off. Closed later the same day: the user switched it off, the profile read `artifactSharingEnabled: false`, and the box is ticked.
 
 ### Task 7.2 - Orca runtime sections (task NOT complete)
 - Transport: stable commands, by C1's rule (B13 failed). The orchestration section is one line saying why.

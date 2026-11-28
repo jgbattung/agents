@@ -6,8 +6,8 @@ Read `orca-notes.md` first. It lists what the documentation says and what it lea
 
 ## Before you start
 
-- [ ] Orca is allowed on this machine. On a work laptop, confirm with whoever owns that decision, and check Orca's telemetry page (`orca.dev/docs/telemetry`) and that artifact publishing is off (it is off by default).
-  - 2026-11-28, Windows 11, Orca 1.4.281. A personal machine. Telemetry ("Share anonymous usage data", Settings -> Privacy) is on, by the user's choice: per the telemetry page it sends version, OS, random install and session IDs, feature events, and token counts to PostHog, and is designed to exclude file contents, prompts, responses, terminal output, and paths. Artifact publishing (Settings -> Artifacts) was found **on**. The user chose to turn it off; at the end of Part B the profile still read `artifactSharingEnabled: true`, so this box stays open until it reads false.
+- [x] Orca is allowed on this machine. On a work laptop, confirm with whoever owns that decision, and check Orca's telemetry page (`orca.dev/docs/telemetry`) and that artifact publishing is off (it is off by default).
+  - 2026-11-28, Windows 11, Orca 1.4.281. A personal machine. Telemetry ("Share anonymous usage data", Settings -> Privacy) is on, by the user's choice: per the telemetry page it sends version, OS, random install and session IDs, feature events, and token counts to PostHog, and is designed to exclude file contents, prompts, responses, terminal output, and paths. Artifact publishing (Settings -> Artifacts) was found **on**. The user chose to turn it off; at the end of Part B the profile still read `artifactSharingEnabled: true`, so this box stayed open until it read false. The user then switched it off, and the profile read `artifactSharingEnabled: false` on 2026-11-28.
 - [x] Orca installed. Windows build at `%LOCALAPPDATA%\Programs\orca`.
 - [x] Orca CLI enabled in Settings, and `orca status --json` succeeds.
 - [x] `git`, Node 22+, and the GitHub CLI (`gh auth login`) are present. Git 2.46, Node 22.22, `gh` 2.106 logged in.
