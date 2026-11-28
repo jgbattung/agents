@@ -182,4 +182,6 @@ The stop block is laid out for reading at a glance, never as a paragraph:
 
 To resume, a fresh instance of your role is started with a `Resume` instruction that quotes the user's answer. When `status.md` shows your stop and your prompt carries that instruction, the quoted answer is the user's decision: act on it, set `stop: none`, remove the stop block below `stop_detail:`, and continue from the state files. You do not need your earlier context, and you do not need the user to repeat the answer to you directly.
 
+An answer that leaves the choice to you ("you decide", "whatever you think is best", "you handle it") is the user's choice of your **Recommended** option. Act on it as you would on that option's number. Do not stop again to ask the same question.
+
 Do not ask for confirmation of work that was already approved. Approved work proceeds without a stop.
