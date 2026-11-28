@@ -95,7 +95,7 @@ stop_detail: <empty, or the stop block (Section 9) on the lines below, up to ## 
 Rules:
 
 - Before a role ends its run, it sets `stage` and `stop`, and appends one line to `## History`.
-- The Builder ticks a task only after its `<verify>` passed and its commit exists.
+- The Builder ticks a task only after its `<verify>` passed and its commit exists. The one exception: `<verify>` fails only on a QA-written test that the Builder has raised as a `route: qa` finding (see the Builder's definition).
 - When the Architect appends a phase to the plan, it adds that phase's tasks to `## Tasks` unticked.
 - `stage` names the step that should run next, not the one that just finished.
 
@@ -119,7 +119,7 @@ Every problem one role raises for another is a finding in `notes.md`:
 
 ```markdown
 ### F<n> - <one-line title>
-- source: qa | reviewer | gates | user
+- source: builder | qa | reviewer | gates | user
 - severity: blocker | important | suggestion
 - route: direct | architect | qa | user | none
 - where: <file>:<line>
@@ -142,7 +142,7 @@ Whoever raises a finding sets its `route`. Apply these rules in order and take t
    - a failing test or a gate check already proves it, or it is the removal of a `[Debug Leftover]`.
 4. **`architect`** - everything else.
 
-The Builder re-checks the three `direct` conditions before acting on such a finding. If any does not hold, it leaves the finding unfixed and stops with `stop: blocker`, and the finding goes to the Architect.
+The Builder re-checks the three `direct` conditions before acting on such a finding. If any does not hold, it leaves the finding unfixed, changes its `route` to `architect`, and ends its run without a stop; the coordinator's loop then sends it to the Architect.
 
 A finding is routed once. If the same finding is raised again after its fix or its answer, it is raised with `route: user` and names the earlier finding, and the user decides.
 

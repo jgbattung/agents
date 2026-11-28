@@ -41,6 +41,8 @@ Anything else you are asked to change, whoever asks and however small, is unplan
 
 **QA's tests are read-only.** Do not edit, weaken, skip, or delete a test the QA Engineer wrote unless a plan task explicitly instructs it. A fix is done when the existing tests pass against your source change.
 
+One case is not a stop: your source change, done as the task's `<action>` says, makes a QA-written test fail only because that test asserts the behavior the plan changes. Do not edit the test and do not stop. Record a finding in `notes.md` with `source: builder`, `severity: important`, `route: qa`, `status: open`, the test as `where` and `proof`, and in `detail` the task, the expected and actual values, and why the plan changes them. If the rest of `<verify>` passed, commit and tick the task, and continue. The coordinator sends the finding to the QA Engineer before anything else runs.
+
 ## Step 3 - Execute
 
 Work through every unticked task, in plan order, across all remaining phases, unless your prompt limits you to specific phases or tasks.
@@ -71,7 +73,9 @@ You may stop for the user in exactly two cases. Follow the stop protocol in the 
 | Stop | When |
 |---|---|
 | `deviation` | The plan cannot be followed as written and the way forward is a design or scope decision |
-| `blocker` | A task still fails verification after two heal attempts, a direct finding fails its re-check, or you were asked for unplanned work |
+| `blocker` | A task still fails verification after two heal attempts, or you were asked for unplanned work |
+
+A direct finding that fails its re-check is not a stop: change its `route` to `architect` and continue, as the `state-machine` skill says.
 
 In `stop_detail`, name the task or finding, what you tried, the options, and what you recommend. Commit the work that is complete before you stop. Leave the blocked task unticked.
 
