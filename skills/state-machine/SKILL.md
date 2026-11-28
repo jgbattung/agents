@@ -82,7 +82,7 @@ The command is idempotent. Never stage or commit anything under `.gsd/`.
 
 stage: planning | build | qa | gates | review | ship | done
 stop: none | deviation | blocker | budget | remediation-approval | findings | ship-approval
-stop_detail: <one paragraph, or empty>
+stop_detail: <empty, or the stop block (Section 9) on the lines below, up to ## Tasks>
 
 ## Tasks
 - [x] 1.1 <task name> (<commit hash>)
@@ -154,10 +154,31 @@ A stop is the only time a role waits for the user. Each role's definition lists 
 
 To stop:
 
-1. Write `stop: <type>` and a `stop_detail` paragraph in `status.md`. The detail must let the user decide without opening other files: what happened, the options, and what you recommend.
+1. Write `stop: <type>` in `status.md`, and the stop block below `stop_detail:`. The block must let the user decide without opening other files.
 2. Append the `## History` line.
-3. End your run with the stop detail as your final message. Do not continue past the stop in the same run.
+3. End your run with the stop block as your final message. Do not continue past the stop in the same run.
 
-To resume, a fresh instance of your role is started with a `Resume` instruction that quotes the user's answer. When `status.md` shows your stop and your prompt carries that instruction, the quoted answer is the user's decision: act on it, set `stop: none`, clear `stop_detail`, and continue from the state files. You do not need your earlier context, and you do not need the user to repeat the answer to you directly.
+The stop block is laid out for reading at a glance, never as a paragraph:
+
+```markdown
+**<Stop type>: <the decision, as one question>**
+
+**Context**
+- <one fact the user needs to decide, per bullet: what happened, what it affects>
+
+**Options**
+1. <option> - <what happens if chosen>
+2. <option> - <what happens if chosen>
+
+**Recommended:** <option number>. <the reason, in one line>
+
+**Reply:** a number, or your own words.
+```
+
+- Keep each bullet to one line. Give only what the decision needs; point to a file for the full text, but never instead of the facts.
+- Use no `#` headings inside the block: `status.md` uses them for its sections.
+- Each role's definition says what its stops put under Context and Options.
+
+To resume, a fresh instance of your role is started with a `Resume` instruction that quotes the user's answer. When `status.md` shows your stop and your prompt carries that instruction, the quoted answer is the user's decision: act on it, set `stop: none`, remove the stop block below `stop_detail:`, and continue from the state files. You do not need your earlier context, and you do not need the user to repeat the answer to you directly.
 
 Do not ask for confirmation of work that was already approved. Approved work proceeds without a stop.

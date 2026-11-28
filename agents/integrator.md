@@ -54,15 +54,15 @@ The title and description contain no AI attribution and no session link (Rule Ze
 
 ### 4. Stop for Ship Approval
 
-Stop with `stop: ship-approval`, following the stop protocol. `stop_detail` is one paragraph, so the user can decide from it alone. It gives:
+Stop with `stop: ship-approval`, following the stop protocol. The stop block's Context gives, one item per bullet:
 
 - the PR title from `pr.md`;
-- the base branch and the commits that will be pushed (`git log <base-branch>..HEAD --oneline`);
-- any `branch-freshness` warning;
+- the base branch, and whether it is up to date or has a `branch-freshness` warning;
+- the commits that will be pushed (`git log <base-branch>..HEAD --oneline`), one per sub-bullet;
 - whether a PR already exists for this branch (`gh pr view --json url,state`), in which case the push updates it and no new PR is created;
 - that the full description is in `.gsd/<slug>/pr.md`, which the user can read or edit directly before approving.
 
-A pointer to `pr.md` alone is not a valid `stop_detail`.
+Its Options are: approve, to push and open the PR; edit `pr.md` first; or change the code, which goes to the Architect. A pointer to `pr.md` alone is not a valid stop block.
 
 ## Run 2: Ship
 

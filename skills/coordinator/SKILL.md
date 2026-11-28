@@ -87,7 +87,7 @@ State: .gsd/<slug>/
 
 - When you start, say in one or two lines which feature you are running and which step comes next.
 - Between roles, one line per step is enough: which role ran and the `## History` line it wrote.
-- At a stop, lead with what is being asked, then the stop detail verbatim.
+- At a stop, show the stop block verbatim. Its first line is the question; add nothing before it.
 - Do not narrate the content of the work. The user can open the role's output, the diff, or the state files.
 
 ---

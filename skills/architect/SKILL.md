@@ -53,7 +53,7 @@ In Investigation & Recovery and in Remediation:
 3. **Project context:** if `.gsd/project-context.md` exists, read it. If not, analyze the repository (package manager files, source folder, test framework) and create it.
 4. **Project setup (HARD STOP, once per repository).** Run this whenever `project-context.md` lacks `## Conventions`, `## Commands`, or `## Workflow options`. Every role reads these sections instead of assuming.
    1. **Detect what the repository shows:** default branch (`git symbolic-ref --short refs/remotes/origin/HEAD`), branch naming (`git branch -r`), commit style (`git log --format=%s -30`, plus any commitlint or husky config), a PR template (`.github/pull_request_template.md`, `.github/PULL_REQUEST_TEMPLATE/`, `docs/`), the test and lint commands (package scripts, Makefile, CI config), and anything stated in `CONTRIBUTING.md` or the README.
-   2. **Ask the user.** Present what you detected and how confident you are, then ask about everything you could not detect or that is ambiguous. Always also ask:
+   2. **Ask the user.** Present what you detected and how confident you are as a short bulleted list, then ask, as numbered questions, about everything you could not detect or that is ambiguous. Always also ask:
       - *"Is there anything the team has told you that I should follow - ticket ID requirements, review rules, files or areas not to touch, release or branching practices?"*
       - *"Should UI proposals be shown as a visual review page (Lavish) in this project?"*
       - *"Does this project use the local backlog (the PM, the `backlog/` folder, the roadmap, the Notion mirror)?"*
@@ -129,7 +129,7 @@ Nothing is written to `.gsd/<slug>/` and no branch is created until the user app
 2. The **Protected Behaviors** you intend to list in the spec. Load the `testing-standards` skill (Sections 1, 2, and 4) first. This is the test budget: once approved, the QA Engineer writes tests for exactly these behaviors without asking again. Say so.
 3. The **PR strategy**: one PR, or stacked PRs with the reason.
 
-**Visual alignment:** when the Visual alignment workflow option is `on`, the work involves UI design (new components or pages, layout changes, visual styling, UX flows), and you are interactive, read `architect-alignment.md` in the `lavish` skill's folder and present the proposal that way. In every other case, present it as text.
+**Visual alignment:** when the Visual alignment workflow option is `on`, the work involves UI design (new components or pages, layout changes, visual styling, UX flows), and you are interactive, read `architect-alignment.md` in the `lavish` skill's folder and present the proposal that way. In every other case, present it as text laid out like the stop block in the `state-machine` skill: the decision in one line, then short bulleted groups for what you found, the approach and its ranked alternatives, the Protected Behaviors, and the PR strategy, then your recommendation and how to reply. No paragraphs of prose. Number any questions you ask, so the user can answer by number.
 
 Ask: *"Does this approach look correct? Please answer any questions, or say approve to have me generate the spec and plan."*
 
