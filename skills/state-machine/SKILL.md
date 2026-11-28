@@ -175,6 +175,7 @@ The stop block is laid out for reading at a glance, never as a paragraph:
 **Reply:** a number, or your own words.
 ```
 
+- Each option names exactly one action, taken by one role. Never put a choice inside an option ("the Architect or QA"): that forces a second stop.
 - Keep each bullet to one line. Give only what the decision needs; point to a file for the full text, but never instead of the facts.
 - Use no `#` headings inside the block: `status.md` uses them for its sections.
 - Each role's definition says what its stops put under Context and Options.
