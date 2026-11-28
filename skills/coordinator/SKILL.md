@@ -113,8 +113,53 @@ In Claude Code, roles other than the Architect's planning conversation run as su
 
 ## Runtime: Orca, stable commands
 
-Not written yet. This section is written on a machine that has Orca, by following `docs/v2/orca-checklist.md` in this repository. It contains no commands until that trial has confirmed them.
+Use this section when you run inside Orca: the `TERM_PROGRAM` environment variable is `Orca`, or `orca status --json` succeeds. One Orca workspace holds one ticket: its worktree, its branch, and this coordinator session. Each role runs in its own terminal tab of that workspace, where the user can watch it.
+
+**Running `orca`.** Run it from PowerShell. From Git Bash, set `MSYS_NO_PATHCONV=1` first: otherwise Git Bash rewrites an argument that starts with `/` (such as `/builder`) into a Windows path. Pass `--json` and read the result from the JSON.
+
+**Planning.** Open the Architect in a new tab of this workspace, passing the ticket verbatim, then tell the user to plan there and to run `/coordinator` here again once the plan is approved. Then stop.
+
+```
+orca agent launch --agent claude --surface terminal --worktree current --focus --prompt "/architect <the ticket, verbatim>" --json
+```
+
+**Starting a role.** Start each role in a new tab with its slash command and the fixed prompt, written on one line:
+
+```
+orca agent launch --agent claude --surface terminal --worktree current --prompt "/<command> Feature: <slug> Branch: <branch> State: .gsd/<slug>/ <instruction>" --json
+```
+
+- `<command>` is `builder`, `qa`, `reviewer`, or `integrator`. For the Architect's Remediation Mode it is `architect`.
+- Keep the handle from `result.outcome.handle`. If `result.outcome.kind` is not `terminal`, tell the user and stop: the rest of this section needs a terminal.
+- Run one role at a time. The pipeline for a feature is sequential.
+
+**Knowing a role finished.** Wait for its tab to go idle:
+
+```
+orca terminal wait --terminal <handle> --for tui-idle --timeout-ms 540000 --json
+```
+
+- Exit 0 means the tab is idle, not that the role succeeded. Re-read `status.md` and the findings, and take the next row of the loop from them.
+- Exit 1 with `error.code` `timeout` means it is still working. Before waiting again, run `orca worktree ps --agent-wait --json` and find the row whose `address` is the handle. If its `state` is `waiting`, the role is stuck on a question in its own tab, which no role should ask. Tell the user which tab it is, and wait for them.
+- If the tab is idle and the role has not added a `## History` line, wait on the same handle once more before treating it as a role that ended without updating `status.md`.
+- When you have read the result, close the tab: `orca terminal close --terminal <handle> --tab --json`.
+
+**Showing a stop.** Show `stop_detail` verbatim in this session, as row 1 says, and mark the workspace so the user is notified even when they are looking elsewhere. This fires a system notification:
+
+```
+orca worktree set --worktree current --comment "<stop type> stop" --unread --json
+```
+
+After the user answers, clear it with `orca worktree set --worktree current --read --comment "" --json`.
+
+**After a stop.** Start a fresh tab of the role with the `Resume` instruction in the fixed prompt. Do not type the answer into the stopped role's tab: there the role is a subagent of that tab's session, and a subagent does not act on a decision relayed by another agent.
+
+**The gates.** Run the script yourself, following the `gates` skill.
+
+**Commands you never run.** Orca does not restrict which `orca` commands an agent may run, and it starts agents with bypass permissions, so this list is the only guard: `orca worktree rm`, `orca workspace cleanup run`, `orca orchestration reset`, `orca orchestration worker-abandon`, `orca artifacts share`, and `orca artifacts update`. Removing a workspace is the user's decision, made in the Orca app.
+
+**Several features.** One workspace per ticket, each with its own coordinator. The workspaces share `.gsd/` through `orca.yaml` (see the README's Orca section), so each coordinator touches only the folder for its own branch.
 
 ## Runtime: Orca, orchestration
 
-Not written yet. Same as above.
+Not used. In the trial of 2026-11-28 (Orca 1.4.281), a worker's question never reached the user, and while the coordinator waited on the user Orca told the worker to decide the question itself, which breaks the rule that only the user answers a stop.

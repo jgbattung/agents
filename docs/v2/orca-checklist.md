@@ -85,10 +85,11 @@ Use the scratch repository. Each item maps to an unknown in `orca-notes.md`.
 
 Fill the two placeholder sections in `skills/coordinator/SKILL.md`. Use only commands that worked in Part B.
 
-- [ ] **C1. Choose the transport.**
+- [x] **C1. Choose the transport.**
   - Use **orchestration** when B9, B12, B13, and B15 all worked: it gives explicit completion and structured questions.
   - Otherwise use the **stable commands** (B4, B5, B7).
   - Write the section for the chosen transport fully. For the other, write one line saying why it was not chosen and the date.
+  - Answer: Stable commands, because B13 failed (2026-11-28). The user chose to run each role in its own tab (`orca agent launch --prompt "/<command> <fixed prompt>"`) over running roles as subagents of the coordinator.
 - [ ] **C2.** The section must cover, with exact commands:
   - How the coordinator opens the Architect in a new tab for the user to talk to.
   - How it starts each role in the ticket's worktree with a prompt that contains only the slug and file paths.
@@ -96,9 +97,12 @@ Fill the two placeholder sections in `skills/coordinator/SKILL.md`. Use only com
   - How it surfaces a stop to the user (B7 or B13).
   - How it passes the user's answer back to the role that stopped. In Claude Code a role did not act on an answer relayed by message from another agent, so the rule there is a fresh instance with the `Resume` instruction. Test whether a role in its own Orca terminal accepts the answer typed or sent into that terminal; if not, use a fresh instance here too.
   - The commands it must never run (B16).
-- [ ] **C3.** The core routing table in `skills/coordinator/SKILL.md` does not change. If the trial shows it must, record why in `log.md` first.
-- [ ] **C4.** Add the `.gsd/` sharing setup that worked in B1 or B2 to the README's Orca section.
-- [ ] **C5.** Note in the README how the Orca UI fits the three gates: review the diff and annotate before ship approval, and use Design Mode for UI adjustments after the build.
+  - Answer: Written in `skills/coordinator/SKILL.md`, using only commands run during the trial (`agent launch --focus` and `worktree set --worktree current` were run separately to confirm those forms). Open: the typed-answer test. The section uses a fresh instance, because in its tab the role is a subagent of that tab's session. It is tested at D1's ship-approval stop, and this box is ticked then.
+- [x] **C3.** The core routing table in `skills/coordinator/SKILL.md` does not change. If the trial shows it must, record why in `log.md` first.
+  - Answer: Unchanged.
+- [x] **C4.** Add the `.gsd/` sharing setup that worked in B1 or B2 to the README's Orca section.
+  - Answer: Added as a new "Orca" subsection under Runtimes. Also confirmed that `orca.yaml` can itself be excluded through `.git/info/exclude` and still shares `.gsd`.
+- [x] **C5.** Note in the README how the Orca UI fits the three gates: review the diff and annotate before ship approval, and use Design Mode for UI adjustments after the build.
 
 ## Part D: Dry run in Orca
 

@@ -201,3 +201,11 @@ Results that shape Part C:
 - `orca-notes.md` is out of date in places: worktree removal keeps the branch by default, `worker-start` takes `--spec` directly, and the coordinator is woken by text typed into its terminal instead of polling.
 
 Open: artifact publishing still read as on at the end of the trial, although the user chose to turn it off. The first box of the checklist stays open until it reads off.
+
+### Task 7.2 - Orca runtime sections (task NOT complete)
+- Transport: stable commands, by C1's rule (B13 failed). The orchestration section is one line saying why.
+- The user chose to run each role in its own terminal tab, started with its slash command (`/builder`, `/qa`, `/reviewer`, `/integrator`, or `/architect` for Remediation Mode) and the fixed prompt on one line, over running roles as subagents of the coordinator. This matches the README's Orca row.
+- The coordinator marks a stop with `orca worktree set --comment ... --unread`, which fires a system notification, and passes the answer to a fresh tab with the `Resume` instruction.
+- The section lists the `orca` commands the coordinator never runs, because Orca restricts none of them and starts agents with bypass permissions.
+- The README gained an Orca subsection: the `.gsd/` sharing setup, how to run a ticket, and how the Orca UI fits the three gates. Diff annotations and Design Mode changes go to the Architect as unplanned work.
+- Left open: checklist C2's test of whether a role accepts an answer typed into its own tab. It is run at the ship-approval stop in D1, and the task is ticked after that.

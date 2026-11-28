@@ -10,7 +10,7 @@ The workflow is built on three rules:
 
 The repository can live at any path. It is installed into the tools that use it by a script (see **Setup**).
 
-> **Status:** version 2. It runs in Claude Code today. The Orca ADE runtime is pending the trial in `docs/v2/orca-checklist.md`. The previous sequential workflow is the `v1` tag.
+> **Status:** version 2. It runs in Claude Code today. The Orca ADE runtime is written and awaits its dry run in `docs/v2/orca-checklist.md`. The previous sequential workflow is the `v1` tag.
 
 ---
 
@@ -215,9 +215,31 @@ To review someone else's PR, check out their branch and run `/reviewer <PR numbe
 | Runtime | Status | How roles run |
 |---|---|---|
 | **Claude Code** | Built | The Architect in its own session. Every other role as a subagent of the coordinator's session. |
-| **Orca ADE** | Pending | Each role in its own terminal tab of the ticket's worktree, with one worktree per ticket. To be written and verified by following `docs/v2/orca-checklist.md`. |
+| **Orca ADE** | Written, dry run pending | Each role in its own terminal tab of the ticket's worktree, with one worktree per ticket. The dry run is Part D of `docs/v2/orca-checklist.md`. |
 
 The roles, the state files, and the scripts are the same in both. Only the coordinator's runtime section differs.
+
+### Orca
+
+**Share `.gsd/` between workspaces.** Every workspace of a repository must see the same `.gsd/`, so that `project-context.md` is shared and each feature folder survives its workspace. In the repository's primary checkout:
+
+1. Keep `.gsd/` excluded through `.git/info/exclude` (the Architect does this on first use).
+2. Create `orca.yaml` at the root of the primary checkout:
+   ```yaml
+   worktree:
+     sharedDirectories:
+       - .gsd
+   ```
+   Orca reads it from the primary checkout, so it can stay untracked. To keep the primary checkout's tree clean, add `orca.yaml` to `.git/info/exclude` too.
+
+Each new workspace then gets `.gsd` as a link to the primary checkout's folder (a junction on Windows). Removing a workspace leaves the primary folder intact.
+
+**Run a ticket.** Create a workspace for the ticket in Orca, open a Claude Code terminal in it, and run `/coordinator <ticket>`. The coordinator opens the Architect in a new tab for planning; after you approve the plan there, run `/coordinator` again and it runs each role in its own tab. A stop marks the workspace unread with a comment, which fires a system notification.
+
+**The Orca UI and the three gates.**
+- **Plan approval** happens in the Architect's tab.
+- **Before ship approval,** review the branch's diff in Orca and annotate the lines you want changed. A change you ask for there is unplanned work: send the annotations to the Architect, not to the Builder, so it is planned like any other fix. Then answer the ship-approval stop.
+- **After the build,** use Design Mode in Orca's browser to point at UI elements you want adjusted. Those adjustments are unplanned work too, and go to the Architect the same way.
 
 ---
 
