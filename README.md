@@ -10,8 +10,6 @@ The workflow is built on three rules:
 
 The repository can live at any path. It is installed into the tools that use it by a script (see **Setup**).
 
-> **Status:** version 2. It runs in Claude Code today. The Orca ADE runtime is written and awaits its dry run in `docs/v2/orca-checklist.md`. The previous sequential workflow is the `v1` tag.
-
 ---
 
 ## The Roles
@@ -215,7 +213,7 @@ To review someone else's PR, check out their branch and run `/reviewer <PR numbe
 | Runtime | Status | How roles run |
 |---|---|---|
 | **Claude Code** | Built | The Architect in its own session. Every other role as a subagent of the coordinator's session. |
-| **Orca ADE** | Written, dry run pending | Each role in its own terminal tab of the ticket's worktree, with one worktree per ticket. The dry run is Part D of `docs/v2/orca-checklist.md`. |
+| **Orca ADE** | Built | Each role in its own terminal tab of the ticket's worktree, with one worktree per ticket. |
 
 The roles, the state files, and the scripts are the same in both. Only the coordinator's runtime section differs.
 
