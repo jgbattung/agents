@@ -32,7 +32,7 @@ Tick a task when its verify step has passed and its commit exists. Add notes onl
 - [x] 6.1 Run one small ticket end to end on a scratch repository
 
 ### Phase 7: Orca runtime (needs a machine with Orca)
-- [ ] 7.1 Run the Orca trial
+- [x] 7.1 Run the Orca trial
 - [ ] 7.2 Write the Orca runtime sections of the coordinator
 - [ ] 7.3 Dry run in Orca
 
@@ -187,3 +187,17 @@ Found and fixed:
 
 Noted, not changed:
 - The Architect put the project setup questions and the alignment proposal in one message, although setup is its own hard stop that says to wait for the answers. With no UI work and no backlog ID, the answers could not change the proposal. Left as is.
+
+### Task 7.1 - Orca trial on the Windows machine
+Orca 1.4.281, run from a Claude Code session inside Orca in this repository, against `jgbattung/v2-dryrun`. Every answer is in `orca-checklist.md` under its item; the worker preamble and the version-matched guide are saved next to it as `orca-preamble.txt` and `orchestration-guide.txt`.
+
+Results that shape Part C:
+- `.gsd/` sharing works with `worktree.sharedDirectories` in an untracked `orca.yaml` and `.gsd/` excluded only through `.git/info/exclude`. A worktree gets a junction to the primary checkout's `.gsd`, and removing the worktree leaves the primary `.gsd` intact.
+- Stable commands work: `orca agent launch --surface terminal` opens a role in its own tab of the ticket's worktree, a slash command passed as `--prompt` runs as a command, and `orca worktree set --comment ... --unread` fires a Windows notification.
+- `terminal wait --for tui-idle` does not return while an agent waits on a question. `orca worktree ps --agent-wait --json` shows that state (`state: "waiting"`, `programStatus.kind: "question"`).
+- Orchestration works mechanically (Runs, workers in a shared worktree, `check`, takeover with `run-use`), but its question path does not reach the user. Worse, when the coordinator is blocked waiting on the user, Orca tells the asking worker to decide by itself, and the worker did, twice. Under C1's rule (orchestration only when B9, B12, B13, and B15 all work), B13 fails.
+- Orca starts Claude with `--dangerously-skip-permissions` (`agentPermissionDefault: full-access`), and nothing restricts individual `orca` commands, so the coordinator's Orca section must forbid the destructive ones itself (B16).
+- Windows: from Git Bash, MSYS path conversion rewrites an argument starting with `/` (`/coordinator` became `C:/Program Files/Git/coordinator`). `orca` must be run from PowerShell or with `MSYS_NO_PATHCONV=1`.
+- `orca-notes.md` is out of date in places: worktree removal keeps the branch by default, `worker-start` takes `--spec` directly, and the coordinator is woken by text typed into its terminal instead of polling.
+
+Open: artifact publishing still read as on at the end of the trial, although the user chose to turn it off. The first box of the checklist stays open until it reads off.
