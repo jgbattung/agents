@@ -66,7 +66,7 @@ Its Options are: approve, to push and open the PR; edit `pr.md` first; or change
 
 ## Run 2: Ship
 
-Run this only on the user's approval. If the answer asks for changes to the draft, edit `pr.md`, stop again with `ship-approval`, and show the new draft. If the answer asks for a change to the code, that is unplanned work: say it needs the Architect, set `stop: none` and `stage: review`, and end your run.
+Run this only on the user's approval. If the answer asks for changes to the draft, edit `pr.md`, stop again with `ship-approval`, and show the new draft. If the answer asks for a change to the code, that is unplanned work: record it in `notes.md` as a finding with `source: user`, `severity: important`, `route: architect`, `status: open`, and the user's words verbatim in `detail`, then say it goes to the Architect, set `stop: none` and `stage: review`, and end your run. The finding is what routes it; a `## History` line alone does not.
 
 1. **Re-check.** Confirm `git status --porcelain` is still clean outside `.gsd/` and that `HEAD` is the commit the user saw. If new commits exist, go back to Run 1.
 2. **Push.** Run `git push -u origin HEAD`. Never force-push.
