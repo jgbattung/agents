@@ -68,7 +68,7 @@ Rules:
 When reviewing a diff that adds, changes, or removes tests, ask of each test:
 - Which behavior does it protect, and for which reason from Section 1? If there is no answer, it is a finding.
 - Would it still pass if that behavior were broken? If yes, it is a finding.
-- When the feature's log gives a failure statement for it (the workflow's own self-review only): does the statement hold? Read the named assertion and the code it exercises. If the stated change would not make that assertion fail, it is a finding.
+- When the `## Test Ledger` section of `.gsd/<slug>/notes.md` gives a failure statement for it (the workflow's own self-review only): does the statement hold? Read the named assertion and the code it exercises. If the stated change would not make that assertion fail, it is a finding.
 - Does it fall under Section 2?
 - Does another test already protect the same behavior at the same or a lower level?
 - Does it introduce a skip, or a guard against a missing tool or data, in violation of Section 5?

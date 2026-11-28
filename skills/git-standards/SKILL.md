@@ -56,7 +56,7 @@ Use one of the following types:
 
 ### 3. Body Rules
 * Separate from the subject line with a single blank line.
-* Explain **what** changed and **why** (pull this directly from your `.gsd/[feature]-log.md` file).
+* Explain **what** changed and **why** (take this from the plan task you implemented and any deviation you recorded in `.gsd/<slug>/notes.md`).
 * Wrap text at 72 characters per line.
 * Use bullet points for multiple distinct changes.
 

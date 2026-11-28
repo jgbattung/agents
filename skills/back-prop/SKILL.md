@@ -14,7 +14,7 @@ This skill is **procedure**. `component-library/AGENTS.md` is **policy**. Every 
 - After `npm run deploy` succeeds for a prototype build **and** the live URL is verified, **before** outreach begins.
 - One prototype at a time.
 - Manual invocation by the owner, typically:
-  > "Read `~/agents/skills/back-prop/SKILL.md` and run back-prop on `sites/{slug}`."
+  > "Load the `back-prop` skill and run back-prop on `sites/{slug}`."
 
 ## Required Inputs
 

@@ -1,117 +1,136 @@
 # Local AI Agent Workflow
 
-A globally accessible, highly adaptable AI agent toolset designed to automate the software development lifecycle (SDLC).
+A set of AI agent roles, skills, and scripts that take a ticket from plan to pull request, with you deciding at the points that matter and nowhere else.
 
-These agents live in one centralized directory, `~/agents/` (the path is hardcoded in the agent files), but execute locally within any project. They maintain strict interconnectivity and prevent LLM hallucination by passing context through a local, git-ignored state machine folder (`.gsd/`).
+The workflow is built on three rules:
+
+1. **Every role works in its own session.** No single context holds the whole feature.
+2. **Roles hand off through files, never through a summary.** The files in `.gsd/` are the shared source of truth.
+3. **You own the decisions.** You approve the plan, you rule on exceptions, and nothing leaves your machine until you approve it.
+
+The repository can live at any path. It is installed into the tools that use it by a script (see **Setup**).
 
 ---
 
-## The 6-Agent Lifecycle
+## The Roles
 
-This workflow mimics a real-world engineering team, compartmentalizing tasks to preserve context windows and maintain strict quality control.
-
-| Agent | Invoke | Role | Responsibility |
+| Role | Invoke | What it does | Edits |
 |---|---|---|---|
-| **PM** | `/pm` | The Product Manager | Parses external PRDs or generates stories from rough ideas, breaks them into backlog items with acceptance criteria, and prioritizes work. |
-| **Architect** | `/architect` | The Planner | Analyzes feature requirements, records the team's conventions, researches approaches, and outputs a strict XML execution plan and feature spec. Also plans every remediation: QA findings, Integrator findings, and PR review feedback all come back here. |
-| **Builder** | `/builder` | The Executor | Implements the Architect's XML plan phase-by-phase, with one atomic commit per task and a checkpoint stop per phase. Strictly logs all code changes and deviations. Only ever builds tasks that are in the plan. |
-| **QAEngineer** | `/qa` | The Tester | Reads the Builder's logs, pattern-matches existing repository test styles, writes the smallest set of tests that protects what the feature changed, and self-heals its own test code. Never edits source code: every implementation bug it finds is logged and routed to the Architect for a remediation phase. Re-verifies instead of starting over when run again after remediation. |
-| **Integrator** | `/integrator` | The Tech Lead | Verifies the plan was completed, runs a self-review quality gate, scrubs the branch of debug artifacts, runs the mechanical gates, and opens the Pull Request using the repo's PR template and conventions. Findings that need a code change go to the Architect, never straight to the Builder. |
-| **Reviewer** | `/reviewer` | The Peer Reviewer | Standalone and off-cycle. Reviews another developer's Pull Request against the ticket's Acceptance Criteria and the relevant skills, runs the PR's executable "How to test" steps, and writes a review file only when it finds issues. |
+| **Architect** | `/architect` | Researches the codebase, proposes an approach, and after you approve, writes the spec and the plan. Also plans every fix that needs a design decision. | `.gsd/` only |
+| **Coordinator** | `/coordinator` | Runs the plan through the roles below and brings you in only at a stop. It routes; it never writes content or answers for you. | Status lines only |
+| **Builder** | run by the coordinator | Implements the plan's tasks, one atomic commit each. Builds only what was planned. | Source code |
+| **QA Engineer** | run by the coordinator | Writes the smallest set of tests that protects what the feature changed. Never edits source. | Tests only |
+| **Reviewer** | run by the coordinator, or `/reviewer` | Reviews the finished branch against its spec. Also reviews another developer's PR against its ticket. | Review files only |
+| **Integrator** | run by the coordinator | Runs the gates, drafts the PR, and after you approve, pushes and opens it. | The PR draft only |
+| **PM** (optional) | `/pm` | Turns a PRD or rough idea into prioritized backlog items. Only for projects that use the local backlog. | `backlog/` |
 
-### Invoking Agents (Claude Code)
-
-Each agent has a slash command (defined in `commands/`) - type `/` in the CLI to get a
-tab-completable picker. The commands come in two flavors:
-
-- **Main-chat persona** (`/pm`, `/architect`): the command inlines the agent's
-  full definition into the conversation, so the agent *becomes* the session and can ask
-  clarifying questions interactively. Use one session per phase.
-- **Subagent spawn** (`/builder`, `/qa`, `/integrator`, `/reviewer`): the command deterministically
-  spawns the agent in an isolated context window via the `Agent` tool. Follow-ups
-  continue the same agent via `SendMessage`.
-
-`@AgentName` mentions still work as a soft alias, but the slash commands are the
-canonical, deterministic entry points.
-
-### Sessions and Checkpoints
-
-Use two Claude Code sessions per feature:
-
-1. **Planning session:** run `/architect` until the spec and plan are written to `.gsd/`,
-   then close it. Its research and spec work is not needed for the build.
-2. **Build session:** run `/builder`, `/qa`, and `/integrator` in one new session. Stay in
-   it, because the main session can only continue the Builder and QA it started itself.
-
-Subagents never talk to you directly, so the main session holds their checkpoints:
-
-- The Builder runs one phase (or the phases you asked for), reports, and ends. Reply in
-  plain words ("continue", "run the rest") and the main session sends the same Builder its
-  next phase.
-- The QA Engineer ends its run at the test ledger. Reply in plain words and the main
-  session relays your answer verbatim.
-
-A remediation prompt (`/architect ...`) from QA or the Integrator can run in the build
-session or a fresh one, since the Architect reloads from `.gsd/`. Then run `/builder` in
-the build session for the remediation phase.
+`/builder`, `/qa`, and `/integrator` also exist for running a single role by hand.
 
 ---
 
-## The State Machine (`.gsd/`)
+## How a Ticket Flows
 
-To allow agents to pause, hand off tasks, and recover from failures, all state is saved locally in the project root inside a `.gsd/` directory.
+```
+you ── ticket ──> Architect ── proposal ──> you approve          (gate 1)
+                      │
+                      └─ spec + plan
+                             │
+Coordinator ──> Builder ──> QA ──> gates ──> Reviewer ──> Integrator ── PR draft ──> you approve   (gate 3)
+                   ^                             │                                        │
+                   └──── fixes, routed by rule ──┘                                   push + PR
 
-| File | Purpose |
-|---|---|
-| `.gsd/project-context.md` | Repo framework, stack, test commands, and the team's `## Conventions` (base branch, branch naming, commit format, PR template). |
-| `.gsd/[feature]-spec.md` | Feature requirements and architectural decisions. |
-| `.gsd/[feature]-plan.xml` | The atomic, phase-by-phase task list. |
-| `.gsd/[feature]-log.md` | The Builder & QA's running ledger of changes. |
-| `.gsd/[feature]-review.md` | Code quality review findings. |
-| `.gsd/[ticket]-peer-review.md` | The Reviewer's findings on another developer's PR (only written when issues are found). |
+                    any role may stop on an exception ──> you decide                 (gate 2)
+```
+
+### The three gates
+
+| Gate | When | What you decide |
+|---|---|---|
+| **1. Plan approval** | Before anything is written | The approach, and the **Protected Behaviors**: the list of behaviors that must not break. That list is the test budget |
+| **2. Exceptions** | Only when something departs from what you approved | A build deviation or blocker, a change to the test budget, a remediation phase, a finding that came back after its fix |
+| **3. Ship approval** | Before anything is pushed | The PR title and description, and the commits going out |
+
+Roles do not stop to report progress or to re-confirm approved work.
+
+### How fixes are routed
+
+Every problem a role raises is a **finding** with a route. The first rule that matches wins:
+
+| Route | When | Who fixes it |
+|---|---|---|
+| `user` | AI attribution in commit history, or a finding that came back after its fix | You decide |
+| `qa` | The finding concerns test code only | QA Engineer |
+| `direct` | It names the exact location to change, changes no protected behavior, and a failing test or gate check already proves it | Builder, with no re-planning |
+| `architect` | Everything else | Architect plans a phase, you approve it, Builder builds it |
+
+When the spec's Protected Behaviors read `None - this work changes no behavior`, QA is skipped.
+
+---
+
+## State (`.gsd/`)
+
+All state lives in a `.gsd/` folder in the project, excluded from git. Each feature has its own folder, named after its branch, so several features can be in progress at once.
+
+```
+.gsd/
+  project-context.md        stack, conventions, commands, workflow options
+  <slug>/
+    spec.md                 what you approved
+    plan.xml                the tasks
+    status.md               where the pipeline is, and any open stop
+    notes.md                decisions, deviations, findings, test ledger
+    review.md               the Reviewer's last review
+    pr.md                   the PR draft awaiting your approval
+  peer-reviews/<slug>.md    reviews of other developers' PRs
+```
+
+Git records what changed. These files record only what git cannot: what was approved, where things stand, and what went differently. The full protocol is the `state-machine` skill.
 
 ---
 
 ## Skills (`skills/`)
 
-Skills are knowledge files that define standards, protocols, and domain expertise followed across all projects. Agents load them explicitly as part of their defined phases.
-
-### Workflow Skills
+### Roles
 
 | Skill | Description |
 |---|---|
-| `state-machine` | Protocols for reading/writing the `.gsd/` state directory, used by all agents. |
-| `git-standards` | Standardized multi-line git commit message format, used at agent handoff points. |
-| `testing-standards` | What earns a test, what never does, how strong a test must be, and how tests are pruned and judged. Loaded by the QA Engineer, Architect, Reviewer, and the `review` skill. |
-| `review` | Code quality review that checks correctness, security, readability, DRY/YAGNI/SOLID compliance, and more. Used by the Integrator and available on-demand. |
-| `lavish` | Turns plans, comparisons, and reports into reviewable HTML artifacts via the `lavish-axi` CLI. Used by the Architect for visual alignment on UI work. |
-| `back-prop` | Back-propagates reusable components from a deployed prototype into the canonical component library, with an audit-trail notes file. User-invocable. |
+| `architect` | The Architect's definition. Invoked as `/architect`. |
+| `coordinator` | The coordinator's definition. Invoked as `/coordinator`. |
+| `pm` | The PM's definition. Invoked as `/pm`. |
 
-### Design & Copy Skills
+### Workflow
 
 | Skill | Description |
 |---|---|
-| `impeccable` | Hands-on frontend design toolkit (`/impeccable <command>`) - shape, critique, audit, polish, typeset, animate, clarify UX copy, live browser iteration, and more. User-invocable; not wired into the agents. |
-| `copywriting` | Writes marketing and page copy - headlines, CTAs, value propositions, hero sections. Loaded by the Architect and Builder when a work item involves marketing or page copy. |
-| `copy-editing` | Edits and refreshes existing marketing copy through structured sweeps. Loaded by the Architect and Builder when existing copy is revised, and by Builder as a final pass after `copywriting`. |
+| `state-machine` | The `.gsd/` layout, the status and notes files, finding routes, and the stop protocol. Loaded by every role. |
+| `gates` | The mechanical checks as a script: test and lint commands, skip markers and debug leftovers on added lines, AI attribution in commits, protected files, branch freshness. |
+| `testing-standards` | What earns a test, what never does, how strong a test must be, and how tests are pruned and judged. |
+| `review` | The code quality review the Reviewer applies. Also usable on demand. |
+| `git-standards` | Commit message format and the no-AI-attribution rule. |
 
-### Product & Backlog Skills
+### Per-project options
+
+The Architect asks about these once per project and records the answer under `## Workflow options` in `.gsd/project-context.md`. With an option off, no role reads the files it covers.
+
+| Option | What it turns on |
+|---|---|
+| **Visual alignment** | For UI work, the Architect presents its proposal as a `lavish` review page instead of text. |
+| **Backlog** | The `/pm` role, the `backlog/` folder (`backlog-protocol`, `backlog-list`), `roadmap-generator`, and the Notion mirror. The Architect accepts a backlog ID or `next` as the ticket, and the Integrator closes the item when its PR opens. |
+
+### On demand
 
 | Skill | Description |
 |---|---|
-| `backlog-protocol` | Strict protocols for CRUD operations on backlog items — file creation, status transitions, ID management, and archive moves. Used by the PM. |
-| `backlog-list` | Reads the `backlog/` folder and displays items grouped or filtered by status, priority, or epic. User-invocable. |
-| `roadmap-generator` | Generates `ROADMAP.md` and an optional `ROADMAP.html` visual board from backlog items, grouped by epic with progress bars. Used by the PM. |
+| `impeccable` | Frontend design toolkit (`/impeccable <command>`). You invoke it; no role calls it. |
+| `copywriting`, `copy-editing` | Marketing and page copy. Selected per ticket by the Architect when the work involves copy. |
+| `lavish` | Turns plans, comparisons, and reports into reviewable HTML pages. |
+| `back-prop` | Back-propagates reusable components from a deployed prototype into the canonical component library. |
 
-> To add a new skill, create a `SKILL.md` inside a new subfolder under `skills/`. The YAML frontmatter must include a `name` and a `description` — the Architect uses this description to decide relevance, and records the skills it selects on a `Skills:` line in the spec so the Builder and QA Engineer load exactly those.
+> To add a skill, create `skills/<name>/SKILL.md` with a `name` and a `description` in its frontmatter, then run the install script again. The Architect uses the description to decide relevance and records the skills it selects on the spec's `Skills:` line, so the Builder and QA Engineer load exactly those.
 
 ---
 
-## Machine Setup
-
-This repo is the **source of truth** for the entire AI workflow. Nothing works until
-it is projected into the locations Claude Code reads, via symlinks. Follow these steps
-in order on a new machine.
+## Setup
 
 ### 1. Prerequisites
 
@@ -119,65 +138,40 @@ in order on a new machine.
 |---|---|
 | Claude Code | Everything |
 | `git` | Everything |
-| GitHub CLI (`gh`), authenticated with `gh auth login` | The Integrator (opening PRs) and the Reviewer (reading PRs) |
-| Node.js 22+ | Optional: the Lavish visual alignment step (`npx`) and the Notion backlog mirror |
+| Node.js 22+ | The install script, the gates script, and the optional Lavish and Notion pieces |
+| GitHub CLI (`gh`), authenticated with `gh auth login` | The Integrator (opening PRs), the Reviewer (reading PRs), and tickets given as GitHub issues |
 
-### 2. Clone to exactly `~/agents`
+### 2. Clone anywhere
 
 ```bash
-git clone https://github.com/jgbattung/agents.git ~/agents
+git clone https://github.com/jgbattung/agents.git
+cd agents
 ```
 
-The path is not configurable: the agent files reference `~/agents/skills/...` and
-`~/agents/agents/...` directly. If the repo must live elsewhere, symlink `~/agents` to it.
+### 3. Install
 
-### 3. Create the symlinks
+The install script links each agent, skill, and command individually into the tool's folders. It never overwrites anything: an existing path is reported and skipped.
 
-| Link (what the tool reads) | Target (in this repo) | Purpose |
-|---|---|---|
-| `~/.claude/agents` | `~/agents/agents` | Claude Code agent definitions |
-| `~/.claude/skills` | `~/agents/skills` | Claude Code skills |
-| `~/.claude/commands` | `~/agents/commands` | Claude Code slash commands (agent invocation) |
-| `~/.claude/CLAUDE.md` | `~/agents/AGENTS.md` | Global instructions (all projects) |
-
-**Before linking:** if any of those four link paths already exists as a real file or
-folder, a symlink cannot be created over it. Move its contents somewhere safe (or into
-this repo, if you want to keep them) and remove the original first. Never delete an
-existing `~/.claude/CLAUDE.md` or skills folder without checking what is in it.
-
-On macOS / Linux this fails silently: `ln -s` onto an existing folder succeeds but puts
-the link *inside* it (e.g., `~/.claude/agents/agents`), so nothing loads and no error is
-shown. On Windows the command errors with "item already exists" and creates nothing.
-
-**Windows** (elevated PowerShell, or any shell with Developer Mode enabled):
-```powershell
-New-Item -ItemType SymbolicLink -Path "$HOME.claudeagents" -Target "$HOMEagentsagents"
-New-Item -ItemType SymbolicLink -Path "$HOME.claudeskills" -Target "$HOMEagentsskills"
-New-Item -ItemType SymbolicLink -Path "$HOME.claudecommands" -Target "$HOMEagentscommands"
-New-Item -ItemType SymbolicLink -Path "$HOME.claudeCLAUDE.md" -Target "$HOMEagentsAGENTS.md"
-```
-> No admin rights? For `CLAUDE.md` only, a plain file at `~/.claude/CLAUDE.md`
-> containing the single line `@C:Users<you>agentsAGENTS.md` works identically
-> (Claude Code resolves `@` imports natively).
-
-**macOS / Linux:**
 ```bash
-ln -s ~/agents/agents ~/.claude/agents
-ln -s ~/agents/skills ~/.claude/skills
-ln -s ~/agents/commands ~/.claude/commands
-ln -s ~/agents/AGENTS.md ~/.claude/CLAUDE.md
+# See what it would do
+node scripts/install.mjs --dry-run
+
+# All projects (links into ~/.claude, and AGENTS.md as ~/.claude/CLAUDE.md)
+node scripts/install.mjs
+
+# One project only (links into <project>/.claude)
+node scripts/install.mjs --project /path/to/project
 ```
 
-`AGENTS.md` is the single global instructions file. It carries the provider-neutral
-standard name; each provider gets a symlink at whatever location/name it expects. When
-adopting another AI provider, add one more symlink pointing at `AGENTS.md` from that
-provider's global config location (e.g., `~/.codex/AGENTS.md` for Codex).
+- If a target folder such as `~/.claude/skills` is itself a symlink to somewhere else, the script refuses to link into it and says so. Remove that link first, or use a project install.
+- On Windows, creating symlinks needs Developer Mode or an elevated shell.
+- After pulling new agents or skills, run the script again. Existing links are left alone.
+
+`AGENTS.md` is the global instructions file. It carries the provider-neutral name; the script links it to the name each tool expects.
 
 ### 4. Turn off Claude Code's own attribution
 
-The agents never add AI attribution to commits or PRs (Rule Zero in the `git-standards`
-skill). Also switch off the harness default so nothing appends it behind their back. Add
-this to `~/.claude/settings.json` (this file is per machine and is not part of this repo):
+The roles never add AI attribution to commits or PRs (Rule Zero of the `git-standards` skill), and the gates fail a branch that has any. Also switch off the tool default so nothing appends it behind their back. Add this to `~/.claude/settings.json`:
 
 ```json
 {
@@ -187,34 +181,70 @@ this to `~/.claude/settings.json` (this file is per machine and is not part of t
 
 ### 5. Verify
 
-Start a new Claude Code session in any project and type `/`. You should see `/pm`,
-`/architect`, `/builder`, `/qa`, `/integrator`, and `/reviewer`. If they are missing,
-the symlinks are wrong: list `~/.claude` and check that all four links point into `~/agents`.
+Start a new Claude Code session in any project and type `/`. You should see `/architect`, `/coordinator`, `/pm`, `/builder`, `/qa`, `/integrator`, and `/reviewer`. If they are missing, run the install script with `--dry-run` and read what it reports.
 
-### 6. Optional pieces
+### 6. Optional: Notion backlog mirror
 
-- **Notion backlog mirror:** only for allowlisted personal projects. Skip it on a machine
-  that does not need it; every other project is skipped automatically and a failed sync
-  never blocks anything. Setup is in `scripts/notion-sync/README.md`.
-- **Per-project setup:** none. The first `/architect` run in a repository creates
-  `.gsd/`, excludes it from git, and asks you for the team's conventions.
+Only for allowlisted personal projects. Setup is in `skills/backlog-protocol/scripts/notion-sync/README.md`. A failed sync never blocks anything.
 
 ---
 
 ## Quick Start
 
-1. Complete **Machine Setup** above (clone to `~/agents`, create the symlinks, verify).
-
-2. Navigate to your target project repository.
-
-3. **(Optional)** Invoke the PM to break down a PRD or idea into backlog items:
+1. Complete **Setup**.
+2. In your project, start on a branch for the ticket, or on the base branch and let the Architect create one.
+3. Plan the ticket. The first run in a project also asks for the team's conventions, the test and lint commands, and the workflow options.
    ```
-   /pm Here's our PRD: docs/prd-v1.md
+   /architect <ticket text, or a GitHub issue number or URL>
    ```
+4. Approve the proposal. The Architect writes the spec and plan to `.gsd/<slug>/`.
+5. In a fresh session on the same branch, run the pipeline:
+   ```
+   /coordinator
+   ```
+6. Answer the stops as they come. The last one is the PR draft.
 
-4. Invoke the Architect to begin planning a feature:
-   ```
-   /architect I need to build [Feature Name]. Here's the description: ...
-   ```
+To review someone else's PR, check out their branch and run `/reviewer <PR number> <acceptance criteria>`.
 
-5. Follow the agent handoff instructions as you move through the lifecycle.
+---
+
+## Runtimes
+
+| Runtime | Status | How roles run |
+|---|---|---|
+| **Claude Code** | Built | The Architect in its own session. Every other role as a subagent of the coordinator's session. |
+| **Orca ADE** | Built | Each role in its own terminal tab of the ticket's worktree, with one worktree per ticket. |
+
+The roles, the state files, and the scripts are the same in both. Only the coordinator's runtime section differs.
+
+### Orca
+
+**Share `.gsd/` between workspaces.** Every workspace of a repository must see the same `.gsd/`, so that `project-context.md` is shared and each feature folder survives its workspace. In the repository's primary checkout:
+
+1. Keep `.gsd/` excluded through `.git/info/exclude` (the Architect does this on first use).
+2. Create `orca.yaml` at the root of the primary checkout:
+   ```yaml
+   worktree:
+     sharedDirectories:
+       - .gsd
+   ```
+   Orca reads it from the primary checkout, so it can stay untracked. To keep the primary checkout's tree clean, add `orca.yaml` to `.git/info/exclude` too.
+
+Each new workspace then gets `.gsd` as a link to the primary checkout's folder (a junction on Windows). Removing a workspace leaves the primary folder intact.
+
+**Run a ticket.** Create a workspace for the ticket in Orca, open a Claude Code terminal in it, and run `/coordinator <ticket>`. The coordinator opens the Architect in a new tab for planning; after you approve the plan there, run `/coordinator` again and it runs each role in its own tab. A stop marks the workspace unread with a comment, which fires a system notification.
+
+**The Orca UI and the three gates.**
+- **Plan approval** happens in the Architect's tab.
+- **Before ship approval,** review the branch's diff in Orca and annotate the lines you want changed. A change you ask for there is unplanned work: send the annotations to the Architect, not to the Builder, so it is planned like any other fix. Then answer the ship-approval stop.
+- **After the build,** use Design Mode in Orca's browser to point at UI elements you want adjusted. Those adjustments are unplanned work too, and go to the Architect the same way.
+
+---
+
+## Tests
+
+The two scripts have tests. The role and skill files are verified by running a ticket through the pipeline.
+
+```bash
+node --test scripts/install.test.mjs skills/gates/scripts/gates.test.mjs
+```

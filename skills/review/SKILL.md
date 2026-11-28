@@ -1,11 +1,11 @@
 ---
 name: review
-description: 'Conduct a code quality review of changes at any point in development — mid-feature, before a commit, or before raising a PR. Analyses code for correctness, security, readability, maintainability, test value, DRY/YAGNI/SOLID compliance, accessibility, debug leftovers, and documentation drift. Writes findings to .gsd/[feature]-review.md. Use when asked to review changes, do a self-review, check code quality, audit recent edits, or verify implementation before committing.'
+description: 'Conduct a code quality review of changes at any point in development — mid-feature, before a commit, or before raising a PR. Analyses code for correctness, security, readability, maintainability, test value, DRY/YAGNI/SOLID compliance, accessibility, debug leftovers, and documentation drift. Writes findings to .gsd/<slug>/review.md. Use when asked to review changes, do a self-review, check code quality, audit recent edits, or verify implementation before committing.'
 ---
 
 # Code Review
 
-Conducts a focused code quality review of changes in the workspace. Can be run at any point during development — not only before a PR. Findings are written to `.gsd/[feature]-review.md`.
+Conducts a focused code quality review of changes in the workspace. Can be run at any point during development — not only before a PR. Findings are written to `.gsd/<slug>/review.md`.
 
 ## When to Use This Skill
 
@@ -13,7 +13,7 @@ Conducts a focused code quality review of changes in the workspace. Can be run a
 - "Check code quality before I commit"
 - "Audit what I've written so far"
 - "Verify this implementation looks correct"
-- Automatically invoked by the Integrator agent during Phase 2
+- Loaded by the Reviewer agent in self mode
 
 ## Step 1 — Gather Context
 
@@ -73,18 +73,18 @@ Analyse the diff against each dimension below. Collect every finding before writ
 - Will future developers understand this code without the author present?
 
 ### Testing
-Read `~/agents/skills/testing-standards/SKILL.md` and judge the tests in the diff by its Section 7. Do not count tests or ask whether lines are covered.
+Load the `testing-standards` skill and judge the tests in the diff by its Section 7. Do not count tests or ask whether lines are covered.
 
-- Is there a behavior this change adds or alters that no test would catch breaking? Use the spec's **Protected Behaviors** list when a spec exists. Report as IMPORTANT, or as a SUGGESTION if the project has no automated tests for this kind of code. A behavior that a `### QA & Testing Summary` or `### QA Re-Verification` section of `.gsd/[feature]-log.md` records as deliberately not tested or as a manual check is not a missing test: the user approved that decision.
+- Is there a behavior this change adds or alters that no test would catch breaking? Use the spec's **Protected Behaviors** list when a spec exists. Report as IMPORTANT, or as a SUGGESTION if the project has no automated tests for this kind of code. A behavior that the `## Not Tested` section of `.gsd/<slug>/notes.md` records as deliberately not tested or as a manual check is not a missing test: the user approved that decision.
 - Does each added or changed test protect a named behavior, and would it fail if that behavior broke? A test of the framework, a constant, an argument's mere existence, or a mock's own return value does not.
-- When `.gsd/[feature]-log.md` has a `### QA & Testing Summary` or `### QA Re-Verification` section, check each test's latest failure statement against the code: would the stated change really make the named assertion fail? A statement that does not hold is a finding.
+- When `.gsd/<slug>/notes.md` has a `## Test Ledger` section, check each test's failure statement there against the code: would the stated change really make the named assertion fail? A statement that does not hold is a finding.
 - Does a test duplicate what another test already protects?
 - Does this change introduce a skipped test, or a guard against a missing tool or data set, instead of letting the test fail? A bare `.skip` or `.only` marker is a `[Debug Leftover]`, not a `[Test Quality]` finding. A test that was already skipped before this change is pre-existing: mention it as a SUGGESTION at most.
 - Are the tests in proportion to the behavior changed?
 - For each removed test: is the removal justified by the pruning rules?
 - Are mocks limited to system boundaries and scoped so they do not leak between tests?
 
-Apart from the two skip cases above (a bare marker and a pre-existing skip, neither of which takes the `[Test Quality]` prefix), report every problem with an existing test (not a missing one) as **IMPORTANT**, prefix the finding with `[Test Quality]`, and record the exact file path and line number. The Integrator routes `[Test Quality]` findings to the QA Engineer instead of the Architect, so they must be locatable without re-scanning.
+Apart from the two skip cases above (a bare marker and a pre-existing skip, neither of which takes the `[Test Quality]` prefix), report every problem with an existing test (not a missing one) as **IMPORTANT**, prefix the finding with `[Test Quality]`, and record the exact file path and line number. `[Test Quality]` findings take the `qa` route (see the `state-machine` skill), so they must be locatable without re-scanning.
 
 ### Accessibility
 - Are interactive elements reachable by keyboard?
@@ -109,7 +109,7 @@ Apart from the two skip cases above (a bare marker and a pre-existing skip, neit
 - Are there `.skip` or `.only` markers left in test files?
 - Is there AI attribution in comments or strings (`Generated with Claude Code`, `Co-Authored-By: Claude`, "AI-assisted", or any mention of an AI model, vendor, or tool as an author)?
 
-Report each of these as a **BLOCKER**, prefix the finding with `[Debug Leftover]`, and record the exact file path and line number. The Integrator removes `[Debug Leftover]` findings automatically from those coordinates instead of kicking them back, so they must be locatable without re-scanning.
+Report each of these as a **BLOCKER**, prefix the finding with `[Debug Leftover]`, and record the exact file path and line number. `[Debug Leftover]` findings take the `direct` route (see the `state-machine` skill), so they must be locatable without re-scanning.
 
 ### Documentation Drift
 Check whether the changes contradict or invalidate anything documented in existing project docs (e.g., README, ARCHITECTURE.md, CONTRIBUTING.md, inline doc pages).
@@ -123,7 +123,7 @@ Report contradictions as IMPORTANT findings. Report sections that need updating 
 
 ## Step 4 — Write the Report
 
-Write findings to `.gsd/[feature]-review.md`. Create the file if it does not exist; overwrite it if it does.
+Write findings to `.gsd/<slug>/review.md`, where `<slug>` is the active feature (see the `state-machine` skill). Create the file if it does not exist; overwrite it if it does.
 
 If no `.gsd/` directory or feature context exists (e.g., standalone review outside the agent workflow), write to `tmp/self-review.md` instead.
 
@@ -182,5 +182,5 @@ No findings. Changes meet all quality standards reviewed.
 - Do not autonomously edit source files. Describe the fix; the developer decides whether to apply it.
 - Do not run the test suite, make commits, or push changes.
 - Do not read credential files, `.env` files, or files listed in `.gitignore`.
-- Do not flag test pass/fail, lint status, or build status — those are mechanical gates owned by the Integrator's pre-flight phase.
+- Do not flag test pass/fail, lint status, or build status - those are mechanical gates owned by the `gates` skill.
 - One finding per bullet. No paragraphs per finding.

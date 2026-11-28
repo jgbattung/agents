@@ -1,26 +1,21 @@
 ---
-description: Spawn the QA Engineer subagent to test and self-heal the built feature
-argument-hint: [feature branch to QA, plus any resume context]
+description: Spawn the QA Engineer subagent directly, outside the coordinator, to test the built feature
+argument-hint: [optional context]
 ---
-Spawn the **QAEngineer** subagent via the Agent tool now (`subagent_type: "QAEngineer"`).
-Do not write or run tests inline yourself.
+Spawn the **QAEngineer** subagent via the Agent tool now. Do not write or run tests inline
+yourself.
+
+This command is for running QA by hand. `/coordinator` runs the whole pipeline.
 
 Rules:
-- NEVER spawn with `isolation: "worktree"` - the QA Engineer commits test files directly
-  to the user's feature branch, and worktree isolation silently discards its work.
-- If a QAEngineer from this session is still running or recently completed, continue it
-  via `SendMessage` instead of spawning a fresh one.
-- The spawn prompt must name the feature branch and the `.gsd/[feature]-spec.md`,
-  `.gsd/[feature]-plan.xml`, and `.gsd/[feature]-log.md` files to load.
-- **No editorializing:** the spawn prompt must contain ONLY the branch name, the
-  `.gsd/` file names, and the user's request verbatim. Do NOT add your own summary,
-  assessment, or characterization of the implementation - the QA Engineer must form
-  its judgment from the `.gsd/` files and the code alone.
-- When the QA Engineer reports back, relay its summary to the user faithfully. If it
-  halted with a kickback for the Architect, surface that copy-pasteable prompt verbatim.
-- **You hold QA's hard stops.** When the QA Engineer ends its run on a HARD STOP (the
-  test ledger, or a behavior it proposes to leave untested), present it to the user
-  verbatim, then send the user's answer verbatim to the same QA Engineer via
-  `SendMessage`. Do not answer for the user or add your own assessment.
+- Never spawn with `isolation: "worktree"`. The QA Engineer commits tests to the feature
+  branch in the current working directory, and an isolated worktree discards that work.
+- **No editorializing:** the spawn prompt contains only the feature slug, the branch, the
+  state folder `.gsd/<slug>/`, and the user's request verbatim. The QA Engineer must form
+  its judgment from the files and the code alone.
+- When the QA Engineer reports back, relay its summary faithfully, including every finding
+  it raised. If it ended on a stop, show the stop verbatim, then start a fresh QA Engineer
+  with `Resume. The user's answer to your <stop type> stop: "<the answer, verbatim>"`.
+  Do not answer for the user or add your own assessment.
 
 The user's request: $ARGUMENTS
