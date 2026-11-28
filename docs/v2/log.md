@@ -209,3 +209,8 @@ Open: artifact publishing still read as on at the end of the trial, although the
 - The section lists the `orca` commands the coordinator never runs, because Orca restricts none of them and starts agents with bypass permissions.
 - The README gained an Orca subsection: the `.gsd/` sharing setup, how to run a ticket, and how the Orca UI fits the three gates. Diff annotations and Design Mode changes go to the Architect as unplanned work.
 - Left open: checklist C2's test of whether a role accepts an answer typed into its own tab. It is run at the ship-approval stop in D1, and the task is ticked after that.
+
+### Task 7.3 - Dry run in Orca (in progress)
+- D1 passed: ticket `days-in-duration` in `v2-dryrun` ran from workspace creation to PR #2, each role in its own tab, with the user stopped only at plan approval and ship approval. No corrections.
+- The C2 typed-answer test did not run, because the ship-approval stop was answered first. It moves to the next stop.
+- User feedback from D1: a stop that asks for a decision should not be a block of text; it should be laid out so the user can read it, get the context, and decide quickly. The state protocol defines `stop_detail` as one paragraph, so this is a design change, raised with the user before any edit.

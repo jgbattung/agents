@@ -97,7 +97,7 @@ Fill the two placeholder sections in `skills/coordinator/SKILL.md`. Use only com
   - How it surfaces a stop to the user (B7 or B13).
   - How it passes the user's answer back to the role that stopped. In Claude Code a role did not act on an answer relayed by message from another agent, so the rule there is a fresh instance with the `Resume` instruction. Test whether a role in its own Orca terminal accepts the answer typed or sent into that terminal; if not, use a fresh instance here too.
   - The commands it must never run (B16).
-  - Answer: Written in `skills/coordinator/SKILL.md`, using only commands run during the trial (`agent launch --focus` and `worktree set --worktree current` were run separately to confirm those forms). Open: the typed-answer test. The section uses a fresh instance, because in its tab the role is a subagent of that tab's session. It is tested at D1's ship-approval stop, and this box is ticked then.
+  - Answer: Written in `skills/coordinator/SKILL.md`, using only commands run during the trial (`agent launch --focus` and `worktree set --worktree current` were run separately to confirm those forms). Open: the typed-answer test. The section uses a fresh instance, because in its tab the role is a subagent of that tab's session. It is tested at D1's ship-approval stop, and this box is ticked then. D1's stop was answered through the fresh-instance path before the test ran, which confirms that path in Orca; the typed-answer test moves to the next stop in D2 or D3.
 - [x] **C3.** The core routing table in `skills/coordinator/SKILL.md` does not change. If the trial shows it must, record why in `log.md` first.
   - Answer: Unchanged.
 - [x] **C4.** Add the `.gsd/` sharing setup that worked in B1 or B2 to the README's Orca section.
@@ -106,7 +106,8 @@ Fill the two placeholder sections in `skills/coordinator/SKILL.md`. Use only com
 
 ## Part D: Dry run in Orca
 
-- [ ] **D1.** One behavior-changing ticket from workspace creation to `ship-approval`. The user is stopped only at the three gates.
+- [x] **D1.** One behavior-changing ticket from workspace creation to `ship-approval`. The user is stopped only at the three gates.
+  - Answer: 2026-11-28, ticket `days-in-duration` in `v2-dryrun`. The Architect opened in its own tab; after plan approval each role ran in its own tab and closed. The user was stopped only at plan approval and ship approval, and reported that everything worked as expected. `status.md` shows one History line per role and the gates run by the coordinator; PR #2 opened with two commits and no findings. The ship-approval stop was answered before the C2 typed-answer test was run, so that test moves to the next stop.
 - [ ] **D2.** One ticket whose Protected Behaviors are `None`. QA is skipped.
 - [ ] **D3.** Two tickets in two workspaces at once. Neither touches the other's `.gsd/<slug>/` folder, and `project-context.md` is intact afterwards.
 - [ ] **D4.** Annotate a diff line and send it to an agent. Confirm the change request is treated as unplanned work and routed, not applied directly by the Builder.
