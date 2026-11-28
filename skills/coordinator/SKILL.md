@@ -142,7 +142,12 @@ orca terminal wait --terminal <handle> --for tui-idle --timeout-ms 540000 --json
 - Exit 0 means the tab is idle, not that the role succeeded. Re-read `status.md` and the findings, and take the next row of the loop from them.
 - Exit 1 with `error.code` `timeout` means it is still working. Before waiting again, run `orca worktree ps --agent-wait --json` and find the row whose `address` is the handle. If its `state` is `waiting`, the role is stuck on a question in its own tab, which no role should ask. Tell the user which tab it is, and wait for them.
 - If the tab is idle and the role has not added a `## History` line, wait on the same handle once more before treating it as a role that ended without updating `status.md`.
-- When you have read the result, close the tab: `orca terminal close --terminal <handle> --tab --json`.
+- When you have read the result, end the role's session, then close its tab:
+  ```
+  orca terminal send --terminal <handle> --text "/exit" --enter --json
+  orca terminal close --terminal <handle> --tab --json
+  ```
+  The close can fail with `terminal_tab_close_timeout` while the session keeps running, and every session left open holds memory, so `/exit` comes first. If the close still fails, carry on: the tab holds only an idle shell.
 
 **Showing a stop.** Show `stop_detail` verbatim in this session, as row 1 says, and mark the workspace so the user is notified even when they are looking elsewhere. This fires a system notification:
 
